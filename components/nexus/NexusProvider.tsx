@@ -36,6 +36,8 @@ export interface NewPostInput {
   avatarSticker?: string;
   avatarStickerCaption?: string;
   avatarDuoFriend?: string;
+  videoUrl?: string;
+  videoLabel?: string;
   poll?: { id: string; label: string }[];
   quote?: Post["quote"];
 }
@@ -90,6 +92,12 @@ export interface NexusContextValue {
   quoteTarget: Post | null;
   setQuoteTarget: (post: Post | null) => void;
   addPost: (input: NewPostInput) => Promise<void> | void;
+  deletePost: (id: string) => void;
+  pinPost: (id: string) => void;
+  reportPost: (postId: string, reason?: string) => void;
+  walletBalance: number;
+  addGems: (amount: number) => void;
+  tipCreator: (creatorName: string, amount: number) => boolean;
   reactToPost: (id: string, reaction: ReactionId) => void;
   toggleRepost: (id: string) => void;
   toggleSave: (id: string) => void;
@@ -210,6 +218,7 @@ export function NexusProvider({ children }: { children: ReactNode }) {
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
   const [isAuthLoading, setIsAuthLoading] = useState(true);
+  const [walletBalance, setWalletBalance] = useState(1500);
 
   // Nexus Bitmoji-style Custom Avatar State (initialized consistently to prevent hydration mismatch)
   const [userAvatar, setUserAvatarState] = useState<AvatarConfig>(DEFAULT_AVATAR);
@@ -549,6 +558,36 @@ export function NexusProvider({ children }: { children: ReactNode }) {
         setCustomWidgets((prev) => ({ ...prev, [widget]: enabled })),
       quoteTarget,
       setQuoteTarget,
+      deletePost: (id: string) => {
+        setPosts((current) => current.filter((p) => p.id !== id));
+      },
+      pinPost: (id: string) => {
+        update(id, (p) => ({ ...p, pinned: !p.pinned }));
+      },
+      reportPost: (postId: string) => {
+        update(postId, (p) => ({ ...p, reported: true }));
+      },
+      walletBalance,
+      addGems: (amount: number) => {
+        setWalletBalance((prev) => {
+          const next = prev + amount;
+          try {
+            localStorage.setItem("nexus-gems-balance", String(next));
+          } catch {}
+          return next;
+        });
+      },
+      tipCreator: (creatorName: string, amount: number) => {
+        if (walletBalance < amount) return false;
+        setWalletBalance((prev) => {
+          const next = prev - amount;
+          try {
+            localStorage.setItem("nexus-gems-balance", String(next));
+          } catch {}
+          return next;
+        });
+        return true;
+      },
       addPost: async (input: NewPostInput) => {
         const authorName =
           userProfile?.display_name ||
@@ -578,6 +617,8 @@ export function NexusProvider({ children }: { children: ReactNode }) {
           tone: 1,
           imageUrl: input.imageUrl,
           imageLabel: input.imageLabel,
+          videoUrl: input.videoUrl,
+          videoLabel: input.videoLabel,
           avatarSticker: input.avatarSticker,
           avatarStickerCaption: input.avatarStickerCaption,
           avatarDuoFriend: input.avatarDuoFriend,
@@ -704,6 +745,7 @@ export function NexusProvider({ children }: { children: ReactNode }) {
     activeSpace,
     customWidgets,
     quoteTarget,
+    walletBalance,
   ]);
 
   return <NexusContext.Provider value={value}>{children}</NexusContext.Provider>;

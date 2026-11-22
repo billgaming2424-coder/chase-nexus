@@ -9,6 +9,7 @@ export interface NavItem {
     | "discussions"
     | "messages"
     | "calls"
+    | "marketplace"
     | "stories"
     | "notifications"
     | "saved"
@@ -22,6 +23,7 @@ export const NAV_ITEMS: NavItem[] = [
   { href: "/video", label: "Nexus Video", icon: "video" },
   { href: "/communities", label: "Communities", icon: "communities" },
   { href: "/discussions", label: "Discussions", icon: "discussions" },
+  { href: "/marketplace", label: "Marketplace", icon: "marketplace" },
   { href: "/stories", label: "Stories", icon: "stories" },
   { href: "/messages", label: "Messages", icon: "messages" },
   { href: "/calls", label: "Calls", icon: "calls" },

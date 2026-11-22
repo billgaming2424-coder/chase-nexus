@@ -1,5 +1,5 @@
-// Chase Nexus Service Worker · Production v10
-const CACHE_NAME = "chase-nexus-v10";
+// Chase Nexus Service Worker · Production v11 (Massive Update Release)
+const CACHE_NAME = "chase-nexus-v11";
 const PRECACHE_ASSETS = ["/icon.svg"];
 
 self.addEventListener("install", (event) => {

@@ -199,6 +199,9 @@ export interface Comment {
   verified?: boolean;
   badgeType?: BadgeCategory;
   avatarConfig?: AvatarConfig;
+  likes?: number;
+  liked?: boolean;
+  timeAgo?: string;
 }
 
 export interface QuoteRef {
@@ -222,6 +225,9 @@ export interface Post {
   avatarStickerCaption?: string;
   avatarDuoFriend?: string;
   videoLabel?: string;
+  videoUrl?: string;
+  pinned?: boolean;
+  reported?: boolean;
   poll?: PollChoice[];
   pollVote?: string;
   quote?: QuoteRef;
@@ -234,6 +240,19 @@ export interface Post {
   discussionScore: number;
   discussionVote: -1 | 0 | 1;
   yours?: boolean;
+}
+
+export interface MarketplaceItem {
+  id: string;
+  title: string;
+  category: "avatar-gear" | "game-pass" | "chase-plus" | "collectible";
+  price: number;
+  currency: "gems" | "usd";
+  badge?: string;
+  description: string;
+  image?: string;
+  features: string[];
+  rarity?: "common" | "rare" | "epic" | "legendary";
 }
 
 export interface StoryPreview {

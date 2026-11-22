@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { ImagePlus, ListPlus, Sparkles, X, Smile, Flame, Check } from "lucide-react";
+import { ImagePlus, ListPlus, Sparkles, X, Smile, Flame, Check, Video } from "lucide-react";
 import { useNexus } from "@/components/nexus/NexusProvider";
 import { NexusAvatar } from "@/components/nexus/NexusAvatar";
 import { NexusAvatarBuilder } from "@/components/nexus/NexusAvatarBuilder";
@@ -35,6 +35,9 @@ export function Composer() {
   const [body, setBody] = useState("");
   const [audience, setAudience] = useState<Audience>("public");
   const [imageUrl, setImageUrl] = useState<string | null>(null);
+  const [videoUrl, setVideoUrl] = useState<string | null>(null);
+  const [videoModalOpen, setVideoModalOpen] = useState(false);
+  const [videoInputUrl, setVideoInputUrl] = useState("");
   const [avatarSticker, setAvatarSticker] = useState<string | null>(null);
   const [stickerCaption, setStickerCaption] = useState("");
   const [stickerDrawerOpen, setStickerDrawerOpen] = useState(false);
@@ -44,7 +47,7 @@ export function Composer() {
 
   const filledChoices = choices.map((choice) => choice.trim()).filter(Boolean);
   const pollReady = !pollOn || (body.trim().length > 0 && filledChoices.length >= 2);
-  const hasContent = body.trim().length > 0 || Boolean(imageUrl) || Boolean(avatarSticker);
+  const hasContent = body.trim().length > 0 || Boolean(imageUrl) || Boolean(videoUrl) || Boolean(avatarSticker);
   const quoteReady = !quoteTarget || body.trim().length > 0;
   const canSubmit = hasContent && pollReady && quoteReady;
 
@@ -54,6 +57,10 @@ export function Composer() {
     setChoices(["", ""]);
     if (imageUrl) URL.revokeObjectURL(imageUrl);
     setImageUrl(null);
+    if (videoUrl && videoUrl.startsWith("blob:")) URL.revokeObjectURL(videoUrl);
+    setVideoUrl(null);
+    setVideoInputUrl("");
+    setVideoModalOpen(false);
     setAvatarSticker(null);
     setStickerCaption("");
     setStickerDrawerOpen(false);
@@ -71,6 +78,8 @@ export function Composer() {
             audience,
             imageUrl: imageUrl ?? undefined,
             imageLabel: imageUrl ? "Photo attached" : undefined,
+            videoUrl: videoUrl ?? undefined,
+            videoLabel: videoUrl ? "Nexus Video" : undefined,
             avatarSticker: avatarSticker ?? undefined,
             avatarStickerCaption: stickerCaption ? stickerCaption.trim() : undefined,
             poll: pollOn
@@ -196,6 +205,29 @@ export function Composer() {
           </div>
         ) : null}
 
+        {videoUrl ? (
+          <div className="media video-preview-wrap" style={{ position: "relative", borderRadius: 14, overflow: "hidden", margin: "10px 0", background: "#05030a", border: "1px solid var(--line)" }}>
+            <video
+              src={videoUrl}
+              controls
+              playsInline
+              style={{ width: "100%", maxHeight: 280, display: "block" }}
+            />
+            <button
+              type="button"
+              className="icon-btn media-remove"
+              aria-label="Remove video"
+              style={{ position: "absolute", top: 8, right: 8, background: "rgba(0, 0, 0, 0.7)" }}
+              onClick={() => {
+                if (videoUrl.startsWith("blob:")) URL.revokeObjectURL(videoUrl);
+                setVideoUrl(null);
+              }}
+            >
+              <X size={16} />
+            </button>
+          </div>
+        ) : null}
+
         {pollOn ? (
           <fieldset className="poll-editor">
             <legend>Poll choices</legend>
@@ -290,6 +322,22 @@ export function Composer() {
                 if (!file) return;
                 if (imageUrl) URL.revokeObjectURL(imageUrl);
                 setImageUrl(URL.createObjectURL(file));
+                event.target.value = "";
+              }}
+            />
+          </label>
+
+          <label className="icon-btn" title="Upload a video clip (MP4 / WebM)">
+            <Video size={18} aria-hidden="true" className="purple-icon" />
+            <span className="sr-only">Upload a video</span>
+            <input
+              type="file"
+              accept="video/mp4,video/webm"
+              onChange={(event) => {
+                const file = event.target.files?.[0];
+                if (!file) return;
+                if (videoUrl && videoUrl.startsWith("blob:")) URL.revokeObjectURL(videoUrl);
+                setVideoUrl(URL.createObjectURL(file));
                 event.target.value = "";
               }}
             />

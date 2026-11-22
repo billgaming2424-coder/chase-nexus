@@ -25,11 +25,26 @@ function AppShellContent({ children }: { children: ReactNode }) {
   const [open, setOpen] = useState(false);
   const [authModalOpen, setAuthModalOpen] = useState(false);
   const [avatarStudioOpen, setAvatarStudioOpen] = useState(false);
+  const [isOnline, setIsOnline] = useState(true);
   const { currentUser, userProfile, userAvatar } = useNexus();
 
   useEffect(() => {
     setOpen(false);
   }, [pathname]);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      setIsOnline(navigator.onLine);
+      const handleOnline = () => setIsOnline(true);
+      const handleOffline = () => setIsOnline(false);
+      window.addEventListener("online", handleOnline);
+      window.addEventListener("offline", handleOffline);
+      return () => {
+        window.removeEventListener("online", handleOnline);
+        window.removeEventListener("offline", handleOffline);
+      };
+    }
+  }, []);
 
   return (
     <>
@@ -83,6 +98,25 @@ function AppShellContent({ children }: { children: ReactNode }) {
               </button>
             </div>
           </header>
+
+          {!isOnline && (
+            <div
+              style={{
+                background: "#7f1d1d",
+                color: "#fecaca",
+                padding: "8px 16px",
+                textAlign: "center",
+                fontSize: "0.85rem",
+                fontWeight: 600,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: 8,
+              }}
+            >
+              <span>⚠️ Network connection offline · Operating in offline cached mode. Posts will sync when reconnected.</span>
+            </div>
+          )}
 
           <div className="banner cloud-banner">
             <div className="banner-content">

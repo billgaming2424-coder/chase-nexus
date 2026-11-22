@@ -29,6 +29,21 @@ import {
   Hash,
   Users,
   X,
+  ShoppingBag,
+  Coins,
+  Gift,
+  Zap,
+  ShieldAlert,
+  Volume2,
+  Play,
+  Pause,
+  Compass,
+  Heart,
+  Share2,
+  ThumbsUp,
+  AlertTriangle,
+  ShieldCheck,
+  Star,
 } from "lucide-react";
 import { PostCard } from "@/components/feed/PostCard";
 import { StoriesRow } from "@/components/feed/StoriesRow";
@@ -332,9 +347,32 @@ export function ExploreScreen() {
 }
 
 export function CommunitiesScreen() {
+  const [activeTab, setActiveTab] = useState<"guilds" | "moderation">("guilds");
   const [joined, setJoined] = useState<Record<string, boolean>>({
     "unimon-legends": true,
     "deadeye": true,
+  });
+  const [flaggedReports, setFlaggedReports] = useState([
+    {
+      id: "rep-1",
+      author: "ShadowBot99",
+      reason: "Suspicious external phishing link",
+      content: "Free game keys at http://shady-link.xyz claim now!!",
+      time: "10m ago",
+    },
+    {
+      id: "rep-2",
+      author: "ToxicGamer2026",
+      reason: "Harassment in DEADEYE Survival raid thread",
+      content: "You all suck at this game stop playing forever",
+      time: "24m ago",
+    },
+  ]);
+  const [autoModFilters, setAutoModFilters] = useState({
+    antiSpam: true,
+    antiPhishing: true,
+    toxicLanguage: true,
+    requireVerifiedAccount: false,
   });
 
   const toggleJoin = (id: string) => {
@@ -343,39 +381,185 @@ export function CommunitiesScreen() {
 
   return (
     <section className="page">
-      <p className="eyebrow">Nexus Communities</p>
+      <p className="eyebrow">Nexus Communities & Guilds</p>
       <h1>Official Studio Communities</h1>
-      <p>Nexus Communities combines Discord-style guild channels with Reddit-style discussion boards for Chase Studios titles.</p>
-      <div className="stack">
-        {COMMUNITIES.map((community) => {
-          const isMember = Boolean(joined[community.id]);
-          return (
-            <article key={community.id} className="card info-card">
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: 10 }}>
-                <div className="author-name">
-                  <h2>{community.name}</h2>
-                  <ChaseBadge type="official" />
+      <p>
+        Nexus Communities combines Discord-style guild channels with Reddit-style discussion boards for Chase Studios titles.
+      </p>
+
+      {/* Tab Switcher */}
+      <div style={{ display: "flex", gap: 8, margin: "16px 0 20px" }}>
+        <button
+          type="button"
+          className={`btn btn-sm ${activeTab === "guilds" ? "btn-primary" : "btn-secondary"}`}
+          onClick={() => setActiveTab("guilds")}
+        >
+          <Users size={14} /> Official Guilds ({COMMUNITIES.length})
+        </button>
+        <button
+          type="button"
+          className={`btn btn-sm ${activeTab === "moderation" ? "btn-primary" : "btn-secondary"}`}
+          onClick={() => setActiveTab("moderation")}
+        >
+          <ShieldAlert size={14} /> Community Moderation Hub {flaggedReports.length > 0 && <span className="pill" style={{ background: "#ef4444", color: "#fff", marginLeft: 4 }}>{flaggedReports.length}</span>}
+        </button>
+      </div>
+
+      {activeTab === "guilds" ? (
+        <div className="stack">
+          {COMMUNITIES.map((community) => {
+            const isMember = Boolean(joined[community.id]);
+            return (
+              <article key={community.id} className="card info-card">
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: 10 }}>
+                  <div className="author-name">
+                    <h2>{community.name}</h2>
+                    <ChaseBadge type="official" />
+                  </div>
+                  <button
+                    type="button"
+                    className={`btn btn-sm ${isMember ? "btn-secondary" : "btn-primary"}`}
+                    onClick={() => toggleJoin(community.id)}
+                  >
+                    {isMember ? "Joined ✓" : "Join Guild"}
+                  </button>
                 </div>
-                <button
-                  type="button"
-                  className={`btn btn-sm ${isMember ? "btn-secondary" : "btn-primary"}`}
-                  onClick={() => toggleJoin(community.id)}
-                >
-                  {isMember ? "Joined ✓" : "Join Guild"}
-                </button>
+                <p>{community.description}</p>
+                <div className="community-pills-row" style={{ marginTop: 8 }}>
+                  {community.channels.map((channel) => (
+                    <span key={channel} className="community-chip">
+                      #{channel}
+                    </span>
+                  ))}
+                </div>
+              </article>
+            );
+          })}
+        </div>
+      ) : (
+        <div className="stack">
+          {/* Moderation Queue */}
+          <div className="card">
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 14 }}>
+              <div>
+                <h2 style={{ margin: 0, fontSize: "1.2rem", display: "flex", alignItems: "center", gap: 8 }}>
+                  <ShieldCheck size={18} className="purple-icon" /> Reported Content Queue
+                </h2>
+                <p className="hint" style={{ margin: "4px 0 0" }}>
+                  Items flagged by community members or automated safety filters.
+                </p>
               </div>
-              <p>{community.description}</p>
-              <div className="community-pills-row" style={{ marginTop: 8 }}>
-                {community.channels.map((channel) => (
-                  <span key={channel} className="community-chip">
-                    #{channel}
-                  </span>
+              <span className="pill">{flaggedReports.length} pending review</span>
+            </div>
+
+            {flaggedReports.length === 0 ? (
+              <div style={{ padding: "24px 0", textAlign: "center", color: "var(--muted)" }}>
+                <Check size={28} style={{ color: "#4ade80", margin: "0 auto 8px" }} />
+                <p style={{ margin: 0 }}>All clear! No pending reports in the moderation queue.</p>
+              </div>
+            ) : (
+              <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+                {flaggedReports.map((report) => (
+                  <div
+                    key={report.id}
+                    style={{
+                      background: "rgba(255, 255, 255, 0.03)",
+                      border: "1px solid rgba(239, 68, 68, 0.3)",
+                      borderRadius: 12,
+                      padding: "14px 16px",
+                    }}
+                  >
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
+                      <span style={{ fontSize: "0.85rem", color: "#f87171", fontWeight: 700, display: "flex", alignItems: "center", gap: 6 }}>
+                        <AlertTriangle size={14} /> {report.reason}
+                      </span>
+                      <small style={{ color: "var(--muted)" }}>{report.time}</small>
+                    </div>
+                    <div style={{ fontSize: "0.88rem", marginBottom: 10, color: "#fff", background: "rgba(0,0,0,0.3)", padding: "8px 12px", borderRadius: 8 }}>
+                      &ldquo;{report.content}&rdquo;
+                      <div style={{ fontSize: "0.75rem", color: "var(--muted)", marginTop: 4 }}>
+                        Reported user: @{report.author}
+                      </div>
+                    </div>
+                    <div style={{ display: "flex", gap: 8 }}>
+                      <button
+                        type="button"
+                        className="btn btn-alert btn-sm"
+                        onClick={() => {
+                          setFlaggedReports((prev) => prev.filter((r) => r.id !== report.id));
+                          alert(`Removed post by @${report.author} and issued safety strike.`);
+                        }}
+                      >
+                        Remove & Strike User
+                      </button>
+                      <button
+                        type="button"
+                        className="btn btn-ghost btn-sm"
+                        onClick={() => {
+                          setFlaggedReports((prev) => prev.filter((r) => r.id !== report.id));
+                        }}
+                      >
+                        Dismiss (False Positive)
+                      </button>
+                    </div>
+                  </div>
                 ))}
               </div>
-            </article>
-          );
-        })}
-      </div>
+            )}
+          </div>
+
+          {/* Auto-Moderation Settings */}
+          <div className="card">
+            <h2 style={{ fontSize: "1.2rem", marginBottom: 14 }}>Automated Safety & Filter Rules</h2>
+            <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+              <label style={{ display: "flex", justifyContent: "space-between", alignItems: "center", cursor: "pointer" }}>
+                <div>
+                  <strong>Anti-Spam Bot Filter</strong>
+                  <p className="hint" style={{ margin: 0 }}>Automatically rate-limit duplicate posts across guilds</p>
+                </div>
+                <input
+                  type="checkbox"
+                  checked={autoModFilters.antiSpam}
+                  onChange={(e) => setAutoModFilters({ ...autoModFilters, antiSpam: e.target.checked })}
+                />
+              </label>
+              <label style={{ display: "flex", justifyContent: "space-between", alignItems: "center", cursor: "pointer" }}>
+                <div>
+                  <strong>Anti-Phishing & Malware Guard</strong>
+                  <p className="hint" style={{ margin: 0 }}>Block unverified domain links not on Chase Studios allowlist</p>
+                </div>
+                <input
+                  type="checkbox"
+                  checked={autoModFilters.antiPhishing}
+                  onChange={(e) => setAutoModFilters({ ...autoModFilters, antiPhishing: e.target.checked })}
+                />
+              </label>
+              <label style={{ display: "flex", justifyContent: "space-between", alignItems: "center", cursor: "pointer" }}>
+                <div>
+                  <strong>Toxicity & Slur Protection</strong>
+                  <p className="hint" style={{ margin: 0 }}>Hold toxic comments and slurs in review queue</p>
+                </div>
+                <input
+                  type="checkbox"
+                  checked={autoModFilters.toxicLanguage}
+                  onChange={(e) => setAutoModFilters({ ...autoModFilters, toxicLanguage: e.target.checked })}
+                />
+              </label>
+              <label style={{ display: "flex", justifyContent: "space-between", alignItems: "center", cursor: "pointer" }}>
+                <div>
+                  <strong>Require Chase Account Verified</strong>
+                  <p className="hint" style={{ margin: 0 }}>Only allow purple-badged Chase Accounts to post in announcements</p>
+                </div>
+                <input
+                  type="checkbox"
+                  checked={autoModFilters.requireVerifiedAccount}
+                  onChange={(e) => setAutoModFilters({ ...autoModFilters, requireVerifiedAccount: e.target.checked })}
+                />
+              </label>
+            </div>
+          </div>
+        </div>
+      )}
     </section>
   );
 }
@@ -655,10 +839,14 @@ export function ProfileScreen() {
 }
 
 export function MessagesScreen() {
-  const { userAvatar } = useNexus();
+  const { userAvatar, walletBalance, tipCreator } = useNexus();
   const [conversations, setConversations] = useState<DemoConversation[]>(CONVERSATIONS);
   const [activeId, setActiveId] = useState<string>("avery");
   const [inputMessage, setInputMessage] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [isRecordingVoice, setIsRecordingVoice] = useState(false);
+  const [messageReactions, setMessageReactions] = useState<Record<string, string>>({});
+  const [typingSim, setTypingSim] = useState(false);
 
   const activeChat = conversations.find((c) => c.id === activeId) ?? conversations[0];
 
@@ -680,6 +868,25 @@ export function MessagesScreen() {
       )
     );
     setInputMessage("");
+
+    // Trigger simulated reply typing after 1.5s
+    setTimeout(() => {
+      setTypingSim(true);
+      setTimeout(() => {
+        setTypingSim(false);
+        const replyMsg: DemoMessage = {
+          id: crypto.randomUUID(),
+          sender: "them",
+          text: `Awesome! Let's jump into DEADEYE Survival raid tonight 🔥`,
+          time: "Just now",
+        };
+        setConversations((prev) =>
+          prev.map((conv) =>
+            conv.id === activeId ? { ...conv, messages: [...conv.messages, replyMsg] } : conv
+          )
+        );
+      }, 2000);
+    }, 800);
   };
 
   const handleSendSticker = (pose: string) => {
@@ -698,13 +905,62 @@ export function MessagesScreen() {
     );
   };
 
+  const handleSendVoiceNote = () => {
+    setIsRecordingVoice(true);
+    setTimeout(() => {
+      setIsRecordingVoice(false);
+      const newMsg: DemoMessage = {
+        id: crypto.randomUUID(),
+        sender: "you",
+        text: "🎙️ Voice Note (0:08) · [▶ •••••••••••]",
+        time: "Just now",
+      };
+      setConversations((prev) =>
+        prev.map((conv) =>
+          conv.id === activeId ? { ...conv, messages: [...conv.messages, newMsg] } : conv
+        )
+      );
+    }, 1800);
+  };
+
+  const handleSendGemsGift = (amount: number) => {
+    if (walletBalance < amount) {
+      alert(`Insufficient gems! Top up in the Marketplace.`);
+      return;
+    }
+    tipCreator(activeChat.name, amount);
+    const newMsg: DemoMessage = {
+      id: crypto.randomUUID(),
+      sender: "you",
+      text: `💎 Sent a gift of ${amount} Nexus Gems!`,
+      time: "Just now",
+    };
+    setConversations((prev) =>
+      prev.map((conv) =>
+        conv.id === activeId ? { ...conv, messages: [...conv.messages, newMsg] } : conv
+      )
+    );
+  };
+
+  const toggleReaction = (msgId: string, emoji: string) => {
+    setMessageReactions((prev) => ({
+      ...prev,
+      [msgId]: prev[msgId] === emoji ? "" : emoji,
+    }));
+  };
+
+  const filteredConversations = conversations.filter((c) =>
+    c.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    c.handle.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
   return (
     <section className="page messages-page">
       <header className="page-head">
         <p className="eyebrow">Nexus Messages & Streaks</p>
         <h1>Direct Messages & Streaks</h1>
         <p>
-          Private conversations with streak fire milestones and Bitmoji avatar chat.
+          Private conversations with streak fire milestones, voice notes, and Bitmoji avatar chat.
         </p>
       </header>
 
@@ -715,8 +971,30 @@ export function MessagesScreen() {
             <h3>Direct Messages</h3>
             <span className="pill">Cloud Chat</span>
           </div>
+
+          {/* Search Contacts Bar */}
+          <div style={{ padding: "8px 12px", borderBottom: "1px solid var(--line)" }}>
+            <div style={{ position: "relative" }}>
+              <Search size={14} style={{ position: "absolute", left: 10, top: 10, color: "var(--muted)" }} />
+              <input
+                type="text"
+                placeholder="Search conversations..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                style={{
+                  width: "100%",
+                  padding: "6px 10px 6px 30px",
+                  fontSize: "0.82rem",
+                  background: "var(--surface)",
+                  border: "1px solid var(--line)",
+                  borderRadius: 10,
+                }}
+              />
+            </div>
+          </div>
+
           <ul className="chat-thread-list">
-            {conversations.map((conv) => {
+            {filteredConversations.map((conv) => {
               const lastMsg = conv.messages[conv.messages.length - 1];
               const isSelected = conv.id === activeId;
               return (
@@ -740,7 +1018,7 @@ export function MessagesScreen() {
                           </span>
                         ) : null}
                       </div>
-                      <small className="chat-last-msg">{lastMsg?.text ?? "No messages"}</small>
+                      <small className="chat-last-msg">{lastMsg?.text || "Bitmoji sticker sent"}</small>
                     </div>
                   </button>
                 </li>
@@ -762,30 +1040,43 @@ export function MessagesScreen() {
                 <p className="hint">{activeChat.handle}</p>
               </div>
             </div>
-            {activeChat.streak && activeChat.streak.count > 0 ? (
-              <div className="streak-indicator-banner">
-                <Flame size={15} className="flame-icon" aria-hidden="true" />
-                <span>
-                  <strong>{activeChat.streak.count} Days</strong> · {activeChat.streak.hoursLeft}h left today
-                </span>
-                {activeChat.streak.milestone ? (
-                  <span className="milestone-badge">
-                    <Award size={12} aria-hidden="true" /> {activeChat.streak.milestone}
+
+            <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+              <button
+                type="button"
+                className="btn btn-secondary btn-sm"
+                style={{ fontSize: "0.78rem", gap: 6 }}
+                onClick={() => handleSendGemsGift(100)}
+                title="Send 100 Nexus Gems gift in DM"
+              >
+                <Coins size={14} className="purple-icon" /> Send 100 💎
+              </button>
+
+              {activeChat.streak && activeChat.streak.count > 0 ? (
+                <div className="streak-indicator-banner">
+                  <Flame size={15} className="flame-icon" aria-hidden="true" />
+                  <span>
+                    <strong>{activeChat.streak.count} Days</strong> · {activeChat.streak.hoursLeft}h left today
                   </span>
-                ) : null}
-              </div>
-            ) : null}
+                  {activeChat.streak.milestone ? (
+                    <span className="milestone-badge">
+                      <Award size={12} aria-hidden="true" /> {activeChat.streak.milestone}
+                    </span>
+                  ) : null}
+                </div>
+              ) : null}
+            </div>
           </header>
 
           <div className="chat-bubble-stream">
             <p className="hint center-hint">
-              Direct messaging with active streaks and Bitmoji sticker support.
+              Direct messaging with active streaks, voice notes, and Bitmoji sticker support.
             </p>
             {activeChat.messages.map((msg) => (
               <div
                 key={msg.id}
                 className={`chat-bubble-wrap ${msg.sender === "you" ? "is-mine" : "is-theirs"}`}
-                style={{ display: "flex", alignItems: "flex-end", gap: 8 }}
+                style={{ display: "flex", alignItems: "flex-end", gap: 8, position: "relative" }}
               >
                 {msg.sender === "them" && (
                   <span className="avatar avatar-xs">{activeChat.name.slice(0, 1)}</span>
@@ -813,9 +1104,65 @@ export function MessagesScreen() {
                     <small style={{ marginTop: 4, opacity: 0.7 }}>{msg.time}</small>
                   </div>
                 ) : (
-                  <div className="chat-bubble">
-                    <p>{msg.text}</p>
-                    <small>{msg.time}</small>
+                  <div
+                    className="chat-bubble"
+                    style={{
+                      position: "relative",
+                      background: msg.text.includes("💎 Sent a gift")
+                        ? "linear-gradient(135deg, rgba(124, 58, 237, 0.3), rgba(168, 85, 247, 0.15))"
+                        : undefined,
+                    }}
+                  >
+                    <p style={{ margin: 0 }}>{msg.text}</p>
+                    <small style={{ marginTop: 4, display: "block" }}>{msg.time}</small>
+
+                    {/* Reaction badge if applied */}
+                    {messageReactions[msg.id] && (
+                      <span
+                        style={{
+                          position: "absolute",
+                          bottom: -10,
+                          right: 8,
+                          background: "#181028",
+                          border: "1px solid rgba(168, 85, 247, 0.4)",
+                          borderRadius: 12,
+                          padding: "2px 6px",
+                          fontSize: "0.85rem",
+                          boxShadow: "0 2px 8px rgba(0,0,0,0.4)",
+                        }}
+                      >
+                        {messageReactions[msg.id]}
+                      </span>
+                    )}
+
+                    {/* Quick Reaction Tray on hover */}
+                    <div
+                      className="msg-reaction-bar"
+                      style={{
+                        display: "flex",
+                        gap: 4,
+                        marginTop: 4,
+                        opacity: 0.75,
+                      }}
+                    >
+                      {["❤️", "🔥", "😂", "👏", "💯"].map((emoji) => (
+                        <button
+                          key={emoji}
+                          type="button"
+                          style={{
+                            background: "none",
+                            border: "none",
+                            padding: "1px 3px",
+                            cursor: "pointer",
+                            fontSize: "0.8rem",
+                          }}
+                          onClick={() => toggleReaction(msg.id, emoji)}
+                          title={`React ${emoji}`}
+                        >
+                          {emoji}
+                        </button>
+                      ))}
+                    </div>
                   </div>
                 )}
                 {msg.sender === "you" && (
@@ -823,8 +1170,21 @@ export function MessagesScreen() {
                 )}
               </div>
             ))}
+
+            {/* Typing simulation bubble */}
+            {typingSim && (
+              <div style={{ display: "flex", alignItems: "center", gap: 8, padding: "6px 12px" }}>
+                <span className="avatar avatar-xs">{activeChat.name.slice(0, 1)}</span>
+                <div style={{ background: "rgba(255, 255, 255, 0.08)", padding: "8px 14px", borderRadius: 16, display: "flex", gap: 4 }}>
+                  <span className="typing-dot" style={{ width: 6, height: 6, background: "#c084fc", borderRadius: "50%", animation: "pulseBubble 0.6s infinite alternate" }} />
+                  <span className="typing-dot" style={{ width: 6, height: 6, background: "#c084fc", borderRadius: "50%", animation: "pulseBubble 0.6s infinite alternate 0.2s" }} />
+                  <span className="typing-dot" style={{ width: 6, height: 6, background: "#c084fc", borderRadius: "50%", animation: "pulseBubble 0.6s infinite alternate 0.4s" }} />
+                </div>
+              </div>
+            )}
           </div>
 
+          {/* Quick Bitmoji Sticker Tray */}
           <div
             className="chat-quick-stickers"
             style={{
@@ -838,7 +1198,7 @@ export function MessagesScreen() {
             }}
           >
             <span style={{ fontSize: "0.75rem", color: "var(--muted)", whiteSpace: "nowrap" }}>
-              Send Bitmoji:
+              Bitmoji Deluxe:
             </span>
             {[
               { pose: "fire", icon: "🔥 Fire" },
@@ -851,17 +1211,9 @@ export function MessagesScreen() {
               { pose: "raid", icon: "⚔️ Raid" },
               { pose: "love", icon: "❤️ Love" },
               { pose: "rocket", icon: "🚀 Moon" },
-              { pose: "levelup", icon: "⭐ Level Up" },
-              { pose: "ragequit", icon: "💥 Rage" },
-              { pose: "clutch", icon: "🎯 Clutch" },
-              { pose: "mindblown", icon: "🤯 Mind Blown" },
-              { pose: "skull", icon: "💀 Dead" },
-              { pose: "stream", icon: "🔴 Live" },
               { pose: "dance", icon: "💃 Dance" },
               { pose: "flex", icon: "💪 Flex" },
               { pose: "wave", icon: "👋 Wave" },
-              { pose: "co-op", icon: "🤝 Co-Op" },
-              { pose: "salute", icon: "🫡 Salute" },
             ].map((st) => (
               <button
                 key={st.pose}
@@ -876,13 +1228,26 @@ export function MessagesScreen() {
             ))}
           </div>
 
-          <form className="chat-composer" onSubmit={handleSend}>
+          {/* Chat Composer */}
+          <form className="chat-composer" onSubmit={handleSend} style={{ display: "flex", alignItems: "center", gap: 8 }}>
+            <button
+              type="button"
+              className={`icon-btn ${isRecordingVoice ? "is-alert" : ""}`}
+              style={{ width: 36, height: 36, flexShrink: 0 }}
+              title="Record voice note"
+              onClick={handleSendVoiceNote}
+            >
+              <Mic size={18} className={isRecordingVoice ? "alert-icon" : "purple-icon"} />
+            </button>
+
             <input
               type="text"
               value={inputMessage}
-              placeholder={`Message ${activeChat.name}...`}
+              placeholder={isRecordingVoice ? "Recording voice note (speak now)..." : `Message ${activeChat.name}...`}
               onChange={(e) => setInputMessage(e.target.value)}
+              disabled={isRecordingVoice}
             />
+
             <button
               type="submit"
               className="btn btn-primary icon-submit-btn"
@@ -899,55 +1264,370 @@ export function MessagesScreen() {
 }
 
 export function CallsScreen() {
-  const { userAvatar } = useNexus();
+  const { userAvatar, walletBalance, addGems } = useNexus();
   const [muted, setMuted] = useState(false);
-  const [videoOff, setVideoOff] = useState(false);
+  const [videoOn, setVideoOn] = useState(false);
+  const [screenSharing, setScreenSharing] = useState(false);
+  const [activeRoom, setActiveRoom] = useState("Chase Studios Alpha Dev Lounge");
+  const [reactions, setReactions] = useState<{ id: string; glyph: string; x: number }[]>([]);
+  const [callDuration, setCallDuration] = useState("06:42");
+
+  const sendCallReaction = (glyph: string) => {
+    const id = crypto.randomUUID();
+    const x = Math.random() * 80 + 10;
+    setReactions((prev) => [...prev, { id, glyph, x }]);
+    setTimeout(() => {
+      setReactions((prev) => prev.filter((r) => r.id !== id));
+    }, 2200);
+  };
 
   return (
     <section className="page">
-      <p className="eyebrow">Nexus Calls</p>
-      <h1>Voice & Video Calls</h1>
-      <p>
-        Nexus Calls supports native voice/video calls with custom Bitmoji avatar stages.
-      </p>
+      <header className="page-head" style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: 10 }}>
+        <div>
+          <p className="eyebrow">Nexus HD Conference & Calls</p>
+          <h1>Voice & Video Calling Suite</h1>
+          <p>Multi-participant spatial voice, WebRTC HD video, and dynamic Bitmoji avatar presence.</p>
+        </div>
+        <div style={{ display: "flex", gap: 8 }}>
+          {["Alpha Dev Lounge", "Unimon Squad", "Creators Stage"].map((room) => (
+            <button
+              key={room}
+              type="button"
+              className={`btn btn-sm ${activeRoom.includes(room) ? "btn-primary" : "btn-secondary"}`}
+              onClick={() => setActiveRoom(room)}
+            >
+              {room}
+            </button>
+          ))}
+        </div>
+      </header>
 
-      <div className="card call-preview-card">
-        <div className="call-avatar-grid">
-          <div className="call-tile">
-            <span className="avatar avatar-lg">A</span>
-            <strong>Avery Quinn</strong>
-            <small>Active in call · preview</small>
+      {/* Main Call Viewport */}
+      <div
+        className="card call-stage-card"
+        style={{
+          position: "relative",
+          background: "#080512",
+          border: "1px solid rgba(168, 85, 247, 0.3)",
+          borderRadius: 20,
+          overflow: "hidden",
+          padding: 16,
+        }}
+      >
+        {/* Floating reaction particles */}
+        <div style={{ position: "absolute", inset: 0, pointerEvents: "none", zIndex: 50, overflow: "hidden" }}>
+          {reactions.map((r) => (
+            <div
+              key={r.id}
+              style={{
+                position: "absolute",
+                left: `${r.x}%`,
+                bottom: 80,
+                fontSize: "2rem",
+                animation: "floatUpReaction 2.2s ease-out forwards",
+              }}
+            >
+              {r.glyph}
+            </div>
+          ))}
+        </div>
+
+        {/* Top Status Bar */}
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            padding: "8px 12px",
+            background: "rgba(255, 255, 255, 0.04)",
+            borderRadius: 12,
+            marginBottom: 16,
+          }}
+        >
+          <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+            <span className="status-dot live" />
+            <strong style={{ fontSize: "0.92rem" }}>{activeRoom}</strong>
+            <span className="pill">4 in Call</span>
           </div>
-          <div className="call-tile you-tile">
-            <NexusAvatar config={userAvatar} size={64} showStickerBadge />
-            <strong>You</strong>
-            <small>{muted ? "Muted" : "Speaking"}</small>
+          <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+            <span style={{ fontSize: "0.85rem", color: "#c084fc", fontFamily: "monospace", fontWeight: 700 }}>
+              {callDuration}
+            </span>
+            <span className="pill" style={{ background: "rgba(34, 197, 94, 0.2)", color: "#4ade80" }}>
+              HD 1080p
+            </span>
           </div>
         </div>
 
-        <div className="call-controls-bar">
+        {/* Screen Share Stage (if active) */}
+        {screenSharing && (
+          <div
+            style={{
+              height: 280,
+              borderRadius: 14,
+              background: "radial-gradient(circle, #231244 0%, #0d061c 100%)",
+              border: "1px solid rgba(168, 85, 247, 0.4)",
+              marginBottom: 16,
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              justifyContent: "center",
+              position: "relative",
+            }}
+          >
+            <span className="pill" style={{ position: "absolute", top: 12, left: 12, background: "rgba(168, 85, 247, 0.3)" }}>
+              Bill Chase · Unreal Engine 5 Dev Stream (DEADEYE Survival)
+            </span>
+            <Monitor size={48} className="purple-icon" style={{ marginBottom: 12, opacity: 0.8 }} />
+            <strong style={{ fontSize: "1.1rem" }}>Sharing Display: DEADEYE Weapon Workshop Live</strong>
+            <small style={{ color: "var(--muted)" }}>60 FPS · Spatial Audio Active</small>
+          </div>
+        )}
+
+        {/* Participant 4-Grid */}
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
+            gap: 14,
+            marginBottom: 16,
+          }}
+        >
+          {/* Bill Chase */}
+          <div
+            style={{
+              background: "rgba(255, 255, 255, 0.03)",
+              border: "1px solid rgba(234, 179, 8, 0.4)",
+              borderRadius: 16,
+              padding: 16,
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              position: "relative",
+            }}
+          >
+            <span className="pill" style={{ position: "absolute", top: 10, right: 10, background: "rgba(234, 179, 8, 0.2)", color: "#facc15" }}>
+              Speaking
+            </span>
+            <div style={{ position: "relative", margin: "10px 0" }}>
+              <span className="avatar avatar-lg" style={{ background: "#7c3aed", color: "#fff", width: 72, height: 72, fontSize: "1.8rem" }}>
+                B
+              </span>
+              <div
+                style={{
+                  position: "absolute",
+                  bottom: -4,
+                  right: -4,
+                  background: "#100922",
+                  borderRadius: "50%",
+                  padding: 2,
+                }}
+              >
+                <ChaseBadge type="staff" size={16} />
+              </div>
+            </div>
+            <strong style={{ display: "flex", alignItems: "center", gap: 6, fontSize: "0.95rem" }}>
+              Bill Chase <ChaseBadge type="staff" />
+            </strong>
+            <small style={{ color: "var(--muted)", margin: "2px 0 8px" }}>Founder · Chase Studios</small>
+            {/* Visualizer bars */}
+            <div style={{ display: "flex", alignItems: "center", gap: 3, height: 16 }}>
+              {[8, 14, 16, 12, 16, 10].map((h, i) => (
+                <span
+                  key={i}
+                  style={{
+                    width: 3,
+                    height: h,
+                    background: "#eab308",
+                    borderRadius: 2,
+                    animation: "pulseBubble 0.8s ease-in-out infinite alternate",
+                  }}
+                />
+              ))}
+            </div>
+          </div>
+
+          {/* Samira Cole */}
+          <div
+            style={{
+              background: "rgba(255, 255, 255, 0.03)",
+              border: "1px solid rgba(168, 85, 247, 0.2)",
+              borderRadius: 16,
+              padding: 16,
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              position: "relative",
+            }}
+          >
+            <div style={{ position: "relative", margin: "10px 0" }}>
+              <span className="avatar avatar-lg" style={{ background: "#2563eb", color: "#fff", width: 72, height: 72, fontSize: "1.8rem" }}>
+                S
+              </span>
+              <div
+                style={{
+                  position: "absolute",
+                  bottom: -4,
+                  right: -4,
+                  background: "#100922",
+                  borderRadius: "50%",
+                  padding: 2,
+                }}
+              >
+                <ChaseBadge type="chase-account" size={16} />
+              </div>
+            </div>
+            <strong style={{ display: "flex", alignItems: "center", gap: 6, fontSize: "0.95rem" }}>
+              Samira Cole <ChaseBadge type="chase-account" />
+            </strong>
+            <small style={{ color: "var(--muted)", margin: "2px 0 8px" }}>DEADEYE Raid Lead</small>
+            <span style={{ fontSize: "0.78rem", color: "#4ade80", display: "flex", alignItems: "center", gap: 4 }}>
+              <Volume2 size={12} /> Headset Active
+            </span>
+          </div>
+
+          {/* Jordan Hale */}
+          <div
+            style={{
+              background: "rgba(255, 255, 255, 0.03)",
+              border: "1px solid rgba(168, 85, 247, 0.2)",
+              borderRadius: 16,
+              padding: 16,
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              position: "relative",
+            }}
+          >
+            <div style={{ position: "relative", margin: "10px 0" }}>
+              <span className="avatar avatar-lg" style={{ background: "#059669", color: "#fff", width: 72, height: 72, fontSize: "1.8rem" }}>
+                J
+              </span>
+              <div
+                style={{
+                  position: "absolute",
+                  bottom: -4,
+                  right: -4,
+                  background: "#100922",
+                  borderRadius: "50%",
+                  padding: 2,
+                }}
+              >
+                <ChaseBadge type="chase-account" size={16} />
+              </div>
+            </div>
+            <strong style={{ display: "flex", alignItems: "center", gap: 6, fontSize: "0.95rem" }}>
+              Jordan Hale <ChaseBadge type="chase-account" />
+            </strong>
+            <small style={{ color: "var(--muted)", margin: "2px 0 8px" }}>Nexus Video Streamer</small>
+            <span style={{ fontSize: "0.78rem", color: "#c084fc" }}>Listening</span>
+          </div>
+
+          {/* You (with Bitmoji Deluxe or Camera Feed) */}
+          <div
+            style={{
+              background: "rgba(124, 58, 237, 0.08)",
+              border: "1px solid rgba(168, 85, 247, 0.5)",
+              borderRadius: 16,
+              padding: 16,
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              position: "relative",
+            }}
+          >
+            <span className="pill" style={{ position: "absolute", top: 10, right: 10, background: "rgba(124, 58, 237, 0.3)" }}>
+              {videoOn ? "Webcam HD" : "Bitmoji Virtual Avatar"}
+            </span>
+            <div style={{ position: "relative", margin: "6px 0" }}>
+              <NexusAvatar config={userAvatar} size={76} showStickerBadge />
+            </div>
+            <strong style={{ display: "flex", alignItems: "center", gap: 6, fontSize: "0.95rem" }}>
+              You (Your Profile) <ChaseBadge type="chase-account" />
+            </strong>
+            <small style={{ color: muted ? "#ef4444" : "#4ade80", margin: "2px 0 8px", fontWeight: 600 }}>
+              {muted ? "Microphone Muted" : "Mic Open · Transmitting"}
+            </small>
+            <div style={{ display: "flex", alignItems: "center", gap: 3, height: 16 }}>
+              {!muted &&
+                [4, 12, 18, 14, 8].map((h, i) => (
+                  <span
+                    key={i}
+                    style={{
+                      width: 3,
+                      height: h,
+                      background: "#a855f7",
+                      borderRadius: 2,
+                    }}
+                  />
+                ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Reaction Pill Bar */}
+        <div style={{ display: "flex", justifyContent: "center", gap: 10, marginBottom: 14 }}>
+          {["🔥", "🚀", "👑", "❤️", "👏", "💎", "⭐"].map((glyph) => (
+            <button
+              key={glyph}
+              type="button"
+              className="icon-btn"
+              style={{ fontSize: "1.2rem", width: 38, height: 38 }}
+              title={`Send ${glyph} reaction in call`}
+              onClick={() => sendCallReaction(glyph)}
+            >
+              {glyph}
+            </button>
+          ))}
+        </div>
+
+        {/* Interactive Controls Bar */}
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            gap: 12,
+            padding: "10px 0 4px",
+            borderTop: "1px solid rgba(255, 255, 255, 0.08)",
+          }}
+        >
           <button
             type="button"
-            className={`icon-btn ${muted ? "is-alert" : ""}`}
-            aria-label={muted ? "Unmute" : "Mute"}
+            className={`btn ${muted ? "btn-alert" : "btn-secondary"}`}
+            style={{ borderRadius: 24, padding: "8px 18px", gap: 8 }}
             onClick={() => setMuted((v) => !v)}
           >
             {muted ? <MicOff size={18} /> : <Mic size={18} />}
+            <span>{muted ? "Unmute" : "Mute"}</span>
           </button>
           <button
             type="button"
-            className={`icon-btn ${videoOff ? "is-alert" : ""}`}
-            aria-label={videoOff ? "Turn camera on" : "Turn camera off"}
-            onClick={() => setVideoOff((v) => !v)}
+            className={`btn ${videoOn ? "btn-primary" : "btn-secondary"}`}
+            style={{ borderRadius: 24, padding: "8px 18px", gap: 8 }}
+            onClick={() => setVideoOn((v) => !v)}
           >
-            {videoOff ? <VideoOff size={18} /> : <VideoIcon size={18} />}
+            {videoOn ? <VideoIcon size={18} /> : <VideoOff size={18} />}
+            <span>{videoOn ? "Camera On" : "Camera Off"}</span>
           </button>
-          <button type="button" className="icon-btn" aria-label="Screen share (planned)">
+          <button
+            type="button"
+            className={`btn ${screenSharing ? "btn-primary" : "btn-secondary"}`}
+            style={{ borderRadius: 24, padding: "8px 18px", gap: 8 }}
+            onClick={() => setScreenSharing((v) => !v)}
+          >
             <Monitor size={18} />
+            <span>{screenSharing ? "Stop Share" : "Share Screen"}</span>
           </button>
-          <button type="button" className="btn btn-alert call-end-btn" aria-label="End call preview">
+          <button
+            type="button"
+            className="btn btn-alert"
+            style={{ borderRadius: 24, padding: "8px 22px", gap: 8 }}
+            onClick={() => alert("Left call session. You can rejoin anytime.")}
+          >
             <PhoneOff size={18} />
-            <span>Leave</span>
+            <span>Leave Call</span>
           </button>
         </div>
       </div>
@@ -1238,6 +1918,378 @@ export function SettingsScreen() {
           </div>
         </div>
       </div>
+    </section>
+  );
+}
+
+export function MarketplaceScreen() {
+  const { walletBalance, addGems, tipCreator, userAvatar, setUserAvatar } = useNexus();
+  const [activeCategory, setActiveCategory] = useState<"all" | "bitmoji" | "passes" | "chase-plus" | "tips">("all");
+  const [unlockedItems, setUnlockedItems] = useState<Record<string, boolean>>({});
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
+
+  const showToast = (msg: string) => {
+    setToastMessage(msg);
+    setTimeout(() => setToastMessage(null), 3000);
+  };
+
+  const ITEMS = [
+    {
+      id: "cyber-samurai",
+      title: "Cyber Samurai Neon Armor",
+      category: "bitmoji",
+      rarity: "Legendary",
+      price: 800,
+      description: "Cybernetic battle suit with glowing neon purple kanji, laser katana prop, and high-tech visor.",
+      perks: ["Unlocks Ninja Shinobi Outfit", "Unlocks Laser Sword Prop", "Unlocks Cyber Visor Accessory"],
+      equipConfig: {
+        outfit: "ninja-shinobi",
+        prop: "laser-sword",
+        accessory: "cyber-visor",
+      },
+    },
+    {
+      id: "unimon-pass",
+      title: "Radiant Dragon Season Pass",
+      category: "passes",
+      rarity: "Legendary",
+      price: 1200,
+      description: "Official Season 1 Battle Pass for Unimon Legends. Unlocks 50 tiers, Celestial Dragon mount, and 2x XP boost.",
+      perks: ["Celestial Dragon Mount", "50 Season Tiers", "2x XP Boost across all arenas"],
+    },
+    {
+      id: "deadeye-damascus",
+      title: "Damascus Steel Camo Bundle",
+      category: "passes",
+      rarity: "Epic",
+      price: 650,
+      description: "For DEADEYE: Survival. Damascus steel pattern for all tactical rifles, sniper rifles, and combat knife.",
+      perks: ["Damascus Weapon Skins", "Custom Muzzle Flash FX", "Exclusive Survivor Tag"],
+    },
+    {
+      id: "chase-plus-pass",
+      title: "Chase+ All-Access Pass (1 Year)",
+      category: "chase-plus",
+      rarity: "Legendary",
+      price: 2500,
+      description: "The ultimate Chase Studios subscription. Official Purple Checkmark, 4K 60fps video uploads, and day-one access to all titles.",
+      perks: ["Chase Account Verified Badge", "Unlimited 4K Video Uploads", "All Future Chase Studios Titles Included", "10 Bitmoji Closet Slots"],
+    },
+    {
+      id: "mecha-kitty",
+      title: "Mecha Kitty Companion",
+      category: "passes",
+      rarity: "Rare",
+      price: 400,
+      description: "For Cat Clash. Robotic combat kitten with plasma eye beam emotes and battle meows.",
+      perks: ["Mecha Kitty Companion", "Exclusive Arena Intro Animation", "Laser Pounce Emote"],
+    },
+    {
+      id: "golden-mic",
+      title: "Golden Microphone & DJ Stage",
+      category: "bitmoji",
+      rarity: "Epic",
+      price: 500,
+      description: "Deluxe 24K golden microphone handheld prop and animated audio visualizer stage for your Bitmoji.",
+      perks: ["Unlocks Golden Mic Prop", "Cosmic Stars Background", "Hype Dance Pose"],
+      equipConfig: {
+        prop: "golden-mic",
+        background: "cosmic-stars",
+        pose: "dance",
+      },
+    },
+  ];
+
+  const handlePurchase = (item: (typeof ITEMS)[0]) => {
+    if (unlockedItems[item.id]) {
+      // Already unlocked, equip if avatar gear
+      if (item.equipConfig) {
+        setUserAvatar({
+          ...userAvatar,
+          ...(item.equipConfig as any),
+        });
+        showToast(`Equipped ${item.title} to your Bitmoji avatar!`);
+      }
+      return;
+    }
+
+    if (walletBalance < item.price) {
+      alert(`Insufficient Nexus Gems. You have ${walletBalance} Gems, but this item costs ${item.price} Gems. Click "+ Get Gems" to add more!`);
+      return;
+    }
+
+    const success = tipCreator("Marketplace", item.price);
+    if (success) {
+      setUnlockedItems((prev) => ({ ...prev, [item.id]: true }));
+      if (item.equipConfig) {
+        setUserAvatar({
+          ...userAvatar,
+          ...(item.equipConfig as any),
+        });
+        showToast(`Unlocked & equipped ${item.title}!`);
+      } else {
+        showToast(`Successfully unlocked ${item.title}!`);
+      }
+    }
+  };
+
+  const handleTip = (creator: string, amount: number) => {
+    if (walletBalance < amount) {
+      alert(`Insufficient Nexus Gems. Click "+ Get Gems" to top up!`);
+      return;
+    }
+    const success = tipCreator(creator, amount);
+    if (success) {
+      showToast(`Tipped ${amount} Gems to ${creator}! 🎉 Thank you for supporting creators!`);
+    }
+  };
+
+  const filteredItems = ITEMS.filter((item) => {
+    if (activeCategory === "all") return true;
+    return item.category === activeCategory;
+  });
+
+  return (
+    <section className="page marketplace-page">
+      {/* Toast Notification */}
+      {toastMessage && (
+        <div
+          style={{
+            position: "fixed",
+            bottom: 30,
+            left: "50%",
+            transform: "translateX(-50%)",
+            background: "linear-gradient(135deg, #7c3aed, #9333ea)",
+            color: "#fff",
+            padding: "12px 24px",
+            borderRadius: 30,
+            fontWeight: 700,
+            boxShadow: "0 10px 30px rgba(0,0,0,0.8), 0 0 20px rgba(168, 85, 247, 0.4)",
+            zIndex: 9999,
+            display: "flex",
+            alignItems: "center",
+            gap: 10,
+          }}
+        >
+          <Sparkles size={18} /> {toastMessage}
+        </div>
+      )}
+
+      {/* Header with Wallet */}
+      <header className="page-head" style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: 14 }}>
+        <div>
+          <p className="eyebrow">Chase Studios Digital Store</p>
+          <h1>Nexus Marketplace & Creator Economy</h1>
+          <p>Unlock official game season passes, exclusive Bitmoji skins, and tip your favorite creators.</p>
+        </div>
+
+        {/* User Gems Wallet Card */}
+        <div
+          className="card"
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: 14,
+            padding: "10px 18px",
+            background: "linear-gradient(135deg, rgba(124, 58, 237, 0.2), rgba(15, 10, 26, 0.8))",
+            border: "1px solid rgba(168, 85, 247, 0.4)",
+            borderRadius: 18,
+          }}
+        >
+          <div>
+            <span style={{ fontSize: "0.75rem", color: "#b7b1c4", textTransform: "uppercase", letterSpacing: 0.5, fontWeight: 700 }}>
+              Nexus Gems Balance
+            </span>
+            <div style={{ display: "flex", alignItems: "center", gap: 6, fontSize: "1.3rem", fontWeight: 800, color: "#fff" }}>
+              <Coins size={20} className="purple-icon" />
+              <span>{walletBalance.toLocaleString()}</span>
+              <small style={{ fontSize: "0.75rem", color: "#c084fc", fontWeight: 600 }}>GEMS</small>
+            </div>
+          </div>
+          <button
+            type="button"
+            className="btn btn-primary btn-sm"
+            style={{ borderRadius: 12, padding: "6px 14px" }}
+            onClick={() => {
+              addGems(1000);
+              showToast("Added +1,000 Nexus Gems to your wallet!");
+            }}
+          >
+            + Get Gems
+          </button>
+        </div>
+      </header>
+
+      {/* Category Navigation */}
+      <div style={{ display: "flex", gap: 8, margin: "16px 0 24px", flexWrap: "wrap" }}>
+        {[
+          { id: "all", label: "All Items", icon: ShoppingBag },
+          { id: "bitmoji", label: "Bitmoji Deluxe Gear", icon: Sparkles },
+          { id: "passes", label: "Game Season Passes", icon: Zap },
+          { id: "chase-plus", label: "Chase+ Subscriptions", icon: Star },
+          { id: "tips", label: "Tip Creators", icon: Gift },
+        ].map((cat) => {
+          const Icon = cat.icon;
+          return (
+            <button
+              key={cat.id}
+              type="button"
+              className={`btn btn-sm ${activeCategory === cat.id ? "btn-primary" : "btn-secondary"}`}
+              onClick={() => setActiveCategory(cat.id as any)}
+              style={{ gap: 6 }}
+            >
+              <Icon size={14} />
+              <span>{cat.label}</span>
+            </button>
+          );
+        })}
+      </div>
+
+      {/* Creator Tip Jar Section (if activeCategory is tips or all) */}
+      {(activeCategory === "tips" || activeCategory === "all") && (
+        <div className="card" style={{ marginBottom: 24, border: "1px solid rgba(168, 85, 247, 0.3)" }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 14 }}>
+            <div>
+              <h2 style={{ margin: 0, fontSize: "1.2rem", display: "flex", alignItems: "center", gap: 8 }}>
+                <Gift size={20} className="purple-icon" /> Creator Tip Jar & Super Stars
+              </h2>
+              <p className="hint" style={{ margin: "4px 0 0" }}>
+                Send instant Nexus Gems tips to official Chase Studios developers and verified community creators.
+              </p>
+            </div>
+            <span className="pill">100% Goes to Creators</span>
+          </div>
+
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: 14 }}>
+            {[
+              { name: "Bill Chase", role: "Chase Studios Founder", badge: "staff" as const },
+              { name: "Samira Cole", role: "DEADEYE Lead Designer", badge: "chase-account" as const },
+              { name: "Jordan Hale", role: "Nexus Video Partner", badge: "chase-account" as const },
+            ].map((creator) => (
+              <div
+                key={creator.name}
+                style={{
+                  background: "rgba(255, 255, 255, 0.03)",
+                  border: "1px solid rgba(255, 255, 255, 0.08)",
+                  borderRadius: 14,
+                  padding: 16,
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "space-between",
+                }}
+              >
+                <div>
+                  <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
+                    <strong style={{ fontSize: "1rem" }}>{creator.name}</strong>
+                    <ChaseBadge type={creator.badge} />
+                  </div>
+                  <small style={{ color: "var(--muted)" }}>{creator.role}</small>
+                </div>
+
+                <div style={{ display: "flex", gap: 6, marginTop: 14 }}>
+                  {[100, 250, 500].map((amt) => (
+                    <button
+                      key={amt}
+                      type="button"
+                      className="btn btn-secondary btn-sm"
+                      style={{ flex: 1, fontSize: "0.78rem", padding: "4px 8px" }}
+                      onClick={() => handleTip(creator.name, amt)}
+                    >
+                      +{amt} 💎
+                    </button>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Item Catalog Grid */}
+      {activeCategory !== "tips" && (
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))", gap: 16 }}>
+          {filteredItems.map((item) => {
+            const isUnlocked = Boolean(unlockedItems[item.id]);
+            return (
+              <article
+                key={item.id}
+                className="card item-card"
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "space-between",
+                  border: isUnlocked ? "1px solid #4ade80" : "1px solid rgba(168, 85, 247, 0.25)",
+                  position: "relative",
+                  overflow: "hidden",
+                }}
+              >
+                <div>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
+                    <span
+                      className="pill"
+                      style={{
+                        background:
+                          item.rarity === "Legendary"
+                            ? "rgba(234, 179, 8, 0.2)"
+                            : item.rarity === "Epic"
+                            ? "rgba(168, 85, 247, 0.2)"
+                            : "rgba(59, 130, 246, 0.2)",
+                        color:
+                          item.rarity === "Legendary"
+                            ? "#facc15"
+                            : item.rarity === "Epic"
+                            ? "#c084fc"
+                            : "#60a5fa",
+                        fontWeight: 700,
+                      }}
+                    >
+                      {item.rarity}
+                    </span>
+                    <span style={{ fontSize: "0.82rem", color: "var(--muted)", textTransform: "capitalize" }}>
+                      {item.category.replace("-", " ")}
+                    </span>
+                  </div>
+
+                  <h3 style={{ margin: "0 0 6px", fontSize: "1.15rem", fontWeight: 700 }}>{item.title}</h3>
+                  <p style={{ fontSize: "0.88rem", color: "var(--silver)", lineHeight: 1.5, margin: "0 0 14px" }}>
+                    {item.description}
+                  </p>
+
+                  <ul style={{ margin: "0 0 16px", paddingLeft: 18, fontSize: "0.82rem", color: "var(--muted)", display: "flex", flexDirection: "column", gap: 4 }}>
+                    {item.perks.map((perk, i) => (
+                      <li key={i}>{perk}</li>
+                    ))}
+                  </ul>
+                </div>
+
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    paddingTop: 12,
+                    borderTop: "1px solid rgba(255, 255, 255, 0.08)",
+                  }}
+                >
+                  <div style={{ display: "flex", alignItems: "center", gap: 4, fontWeight: 800, fontSize: "1.1rem" }}>
+                    <Coins size={16} className="purple-icon" />
+                    <span>{item.price.toLocaleString()}</span>
+                    <small style={{ fontSize: "0.75rem", color: "#c084fc", fontWeight: 600 }}>GEMS</small>
+                  </div>
+
+                  <button
+                    type="button"
+                    className={`btn btn-sm ${isUnlocked ? "btn-secondary" : "btn-primary"}`}
+                    onClick={() => handlePurchase(item)}
+                  >
+                    {isUnlocked ? (item.equipConfig ? "Equip Gear ✓" : "Unlocked ✓") : "Unlock Item"}
+                  </button>
+                </div>
+              </article>
+            );
+          })}
+        </div>
+      )}
     </section>
   );
 }
