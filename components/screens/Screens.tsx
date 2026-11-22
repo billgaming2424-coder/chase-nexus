@@ -51,6 +51,7 @@ import { ChaseBadge } from "@/components/nexus/ChaseBadge";
 import { NexusAvatar } from "@/components/nexus/NexusAvatar";
 import { NexusAvatarBuilder } from "@/components/nexus/NexusAvatarBuilder";
 import { useNexus } from "@/components/nexus/NexusProvider";
+import { sounds } from "@/lib/sounds";
 import {
   COMMUNITIES,
   CONVERSATIONS,
@@ -1650,53 +1651,307 @@ export function CallsScreen() {
   );
 }
 
+interface LocalNotif {
+  id: string;
+  type: string;
+  title: string;
+  time: string;
+  icon: string;
+  detail: string;
+  read: boolean;
+  hasStreakAction?: boolean;
+  streakReturned?: boolean;
+  giftClaimable?: boolean;
+  giftClaimed?: boolean;
+  audioLink?: string;
+}
+
 export function NotificationsScreen() {
-  const sampleNotifications = [
+  const { walletBalance, addGems } = useNexus();
+  const [filter, setFilter] = useState<"all" | "streaks" | "tips" | "mentions" | "system">("all");
+  const [dailyClaimed, setDailyClaimed] = useState(false);
+  const [notifications, setNotifications] = useState<LocalNotif[]>([
     {
       id: "n1",
+      type: "system",
       title: "Chase Studios published a preview update",
       time: "2h ago",
       icon: "official",
       detail: "Universal purple checkmark badges are now active across Nexus profiles and posts.",
+      read: false,
     },
     {
       id: "n2",
+      type: "streaks",
       title: "Avery Quinn maintained your streak 🔥",
       time: "3h ago",
       icon: "flame",
       detail: "Your 3-day friendship streak with Avery Quinn has been extended for today.",
+      read: false,
+      hasStreakAction: true,
+      streakReturned: false,
     },
     {
       id: "n3",
-      title: "Samira Cole commented on your discussion",
-      time: "5h ago",
-      icon: "comment",
-      detail: "“The 2D cartoon avatar creator fits the Chase Studios aesthetic.”",
+      type: "tips",
+      title: "Samira Cole sent you a gift of 250 Gems! 💎",
+      time: "4h ago",
+      icon: "gem",
+      detail: "“Thanks for the awesome co-op run in Unimon Legends today!”",
+      read: false,
+      giftClaimable: true,
+      giftClaimed: false,
     },
-  ];
+    {
+      id: "n4",
+      type: "mentions",
+      title: "Bill Chase mentioned you in an Audio Stage",
+      time: "6h ago",
+      icon: "audio",
+      detail: "“Join the live DEADEYE Weapon Workshop dev stage right now.”",
+      read: true,
+      audioLink: "/audio",
+    },
+    {
+      id: "n5",
+      type: "mentions",
+      title: "Jordan Hale liked your latest Bitmoji sticker post",
+      time: "8h ago",
+      icon: "heart",
+      detail: "Your Cyber Samurai post is trending in the #ChaseNexus community feed.",
+      read: true,
+    },
+  ]);
+
+  const handleClaimDaily = () => {
+    if (dailyClaimed) return;
+    sounds.playFanfare();
+    sounds.playCoin();
+    setDailyClaimed(true);
+    addGems(500);
+    alert("🎉 Daily streak bonus claimed! +500 Nexus Gems added to your wallet.");
+  };
+
+  const handleReturnStreak = (id: string) => {
+    sounds.playPop();
+    setNotifications((prev) =>
+      prev.map((n) => (n.id === id ? { ...n, streakReturned: true } : n))
+    );
+    alert("🔥 Reciprocal streak interaction sent back!");
+  };
+
+  const handleClaimGift = (id: string) => {
+    sounds.playCoin();
+    addGems(250);
+    setNotifications((prev) =>
+      prev.map((n) => (n.id === id ? { ...n, giftClaimed: true } : n))
+    );
+    alert("💎 250 Nexus Gems deposited to your wallet!");
+  };
+
+  const markAllRead = () => {
+    sounds.playPop();
+    setNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
+  };
+
+  const filteredNotifs = notifications.filter((n) => {
+    if (filter === "all") return true;
+    return n.type === filter;
+  });
 
   return (
-    <section className="page">
-      <p className="eyebrow">Notifications</p>
-      <h1>Notification Center</h1>
-      <p>Demonstration notifications preview. Push notifications and quiet hours can be configured in Settings.</p>
+    <section className="page notifications-page">
+      <header className="page-head" style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: 12 }}>
+        <div>
+          <p className="eyebrow">Nexus Inbox & Alerts</p>
+          <h1>Notification Center</h1>
+          <p>Real-time social alerts, reciprocal streak timers, gem gift deposits, and dev updates.</p>
+        </div>
+        <button type="button" className="btn btn-ghost btn-sm" onClick={markAllRead} style={{ borderRadius: 14 }}>
+          Mark all as read
+        </button>
+      </header>
 
-      <div className="stack">
-        {sampleNotifications.map((n) => (
-          <article key={n.id} className="card notif-card">
-            <div className="notif-icon-col">
-              {n.icon === "flame" ? (
-                <Flame size={20} className="flame-icon" />
-              ) : n.icon === "official" ? (
-                <Shield size={20} className="purple-icon" />
-              ) : (
-                <Bell size={20} className="silver-icon" />
-              )}
+      {/* Daily Login Streak Reward Banner */}
+      <div
+        className="card daily-reward-card"
+        style={{
+          background: "linear-gradient(135deg, rgba(147, 51, 234, 0.25) 0%, rgba(56, 189, 248, 0.2) 100%)",
+          border: "1px solid rgba(168, 85, 247, 0.4)",
+          borderRadius: 18,
+          padding: "16px 20px",
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          flexWrap: "wrap",
+          gap: 12,
+          marginBottom: 20,
+        }}
+      >
+        <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+          <div style={{ fontSize: "2rem" }}>🎁</div>
+          <div>
+            <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+              <strong style={{ fontSize: "1.05rem", color: "#fff" }}>Daily Nexus Login Streak Drop</strong>
+              <span className="pill" style={{ background: "#22c55e", color: "#000", fontWeight: 800, fontSize: "0.72rem" }}>
+                +500 💎
+              </span>
             </div>
-            <div className="notif-content">
-              <strong>{n.title}</strong>
-              <p>{n.detail}</p>
-              <small>{n.time}</small>
+            <p className="hint" style={{ margin: "2px 0 0" }}>
+              Log in every 24 hours to multiply your streak multiplier across the Arcade & Marketplace.
+            </p>
+          </div>
+        </div>
+
+        <button
+          type="button"
+          className="btn btn-primary"
+          style={{ padding: "8px 20px", borderRadius: 20, fontSize: "0.88rem" }}
+          disabled={dailyClaimed}
+          onClick={handleClaimDaily}
+        >
+          {dailyClaimed ? "Claimed for Today ✓" : "Claim +500 Gems"}
+        </button>
+      </div>
+
+      {/* Filter Tabs */}
+      <div className="tabs" role="tablist" style={{ marginBottom: 18 }}>
+        <button
+          type="button"
+          className={`tab ${filter === "all" ? "is-active" : ""}`}
+          onClick={() => {
+            sounds.playPop();
+            setFilter("all");
+          }}
+        >
+          All ({notifications.length})
+        </button>
+        <button
+          type="button"
+          className={`tab ${filter === "streaks" ? "is-active" : ""}`}
+          onClick={() => {
+            sounds.playPop();
+            setFilter("streaks");
+          }}
+        >
+          🔥 Streaks
+        </button>
+        <button
+          type="button"
+          className={`tab ${filter === "tips" ? "is-active" : ""}`}
+          onClick={() => {
+            sounds.playPop();
+            setFilter("tips");
+          }}
+        >
+          💎 Tips & Gifts
+        </button>
+        <button
+          type="button"
+          className={`tab ${filter === "mentions" ? "is-active" : ""}`}
+          onClick={() => {
+            sounds.playPop();
+            setFilter("mentions");
+          }}
+        >
+          Mentions
+        </button>
+        <button
+          type="button"
+          className={`tab ${filter === "system" ? "is-active" : ""}`}
+          onClick={() => {
+            sounds.playPop();
+            setFilter("system");
+          }}
+        >
+          System
+        </button>
+      </div>
+
+      {/* Notification Stream */}
+      <div className="stack" style={{ gap: 10 }}>
+        {filteredNotifs.map((n) => (
+          <article
+            key={n.id}
+            className="card notif-card"
+            style={{
+              padding: "14px 18px",
+              borderRadius: 16,
+              background: n.read ? "rgba(255, 255, 255, 0.02)" : "rgba(168, 85, 247, 0.08)",
+              border: n.read ? "1px solid rgba(255, 255, 255, 0.06)" : "1px solid rgba(168, 85, 247, 0.3)",
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              flexWrap: "wrap",
+              gap: 12,
+            }}
+          >
+            <div style={{ display: "flex", alignItems: "flex-start", gap: 14 }}>
+              <div
+                style={{
+                  width: 38,
+                  height: 38,
+                  borderRadius: 12,
+                  background: "rgba(255, 255, 255, 0.04)",
+                  display: "grid",
+                  placeItems: "center",
+                  flexShrink: 0,
+                }}
+              >
+                {n.icon === "flame" ? (
+                  <Flame size={20} className="flame-icon" />
+                ) : n.icon === "gem" ? (
+                  <Coins size={20} className="purple-icon" />
+                ) : n.icon === "audio" ? (
+                  <Radio size={20} style={{ color: "#38bdf8" }} />
+                ) : n.icon === "official" ? (
+                  <Shield size={20} className="purple-icon" />
+                ) : (
+                  <Heart size={20} style={{ color: "#ec4899" }} />
+                )}
+              </div>
+              <div>
+                <strong style={{ fontSize: "0.95rem", color: "#fff", display: "block" }}>{n.title}</strong>
+                <p style={{ margin: "4px 0 2px", fontSize: "0.85rem", color: "var(--silver)" }}>{n.detail}</p>
+                <small style={{ color: "var(--muted)", fontSize: "0.75rem" }}>{n.time}</small>
+              </div>
+            </div>
+
+            {/* Interactive Quick Actions */}
+            <div style={{ display: "flex", gap: 8 }}>
+              {n.hasStreakAction && (
+                <button
+                  type="button"
+                  className={`btn btn-sm ${n.streakReturned ? "btn-secondary" : "btn-primary"}`}
+                  disabled={n.streakReturned}
+                  onClick={() => handleReturnStreak(n.id)}
+                  style={{ borderRadius: 16 }}
+                >
+                  {n.streakReturned ? "Streak Returned 🔥" : "Send Streak Back 🔥"}
+                </button>
+              )}
+
+              {n.giftClaimable && (
+                <button
+                  type="button"
+                  className={`btn btn-sm ${n.giftClaimed ? "btn-secondary" : "btn-primary"}`}
+                  disabled={n.giftClaimed}
+                  onClick={() => handleClaimGift(n.id)}
+                  style={{ borderRadius: 16, background: n.giftClaimed ? undefined : "#22c55e" }}
+                >
+                  {n.giftClaimed ? "Deposited 💎" : "Claim 250 💎"}
+                </button>
+              )}
+
+              {n.audioLink && (
+                <Link
+                  href={n.audioLink}
+                  className="btn btn-secondary btn-sm"
+                  style={{ borderRadius: 16 }}
+                >
+                  Join Audio Stage
+                </Link>
+              )}
             </div>
           </article>
         ))}
@@ -1848,12 +2103,53 @@ export function SettingsScreen() {
           ))}
         </fieldset>
 
+        <div style={{ marginTop: 14 }}>
+          <label style={{ fontSize: "0.85rem", fontWeight: 700, display: "block", marginBottom: 8 }}>
+            Quick Color Swatches
+          </label>
+          <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginBottom: 14 }}>
+            {[
+              { label: "Chase Purple", color: "#9333ea" },
+              { label: "Neon Cyan", color: "#06b6d4" },
+              { label: "Rose Pink", color: "#ec4899" },
+              { label: "Amber Gold", color: "#f59e0b" },
+              { label: "Emerald", color: "#10b981" },
+              { label: "Obsidian", color: "#94a3b8" },
+            ].map((c) => (
+              <button
+                key={c.color}
+                type="button"
+                onClick={() => {
+                  sounds.playPop();
+                  setAccent(c.color);
+                }}
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 6,
+                  padding: "6px 12px",
+                  borderRadius: 20,
+                  background: "rgba(255,255,255,0.04)",
+                  border: accent === c.color ? `2px solid ${c.color}` : "1px solid rgba(255,255,255,0.1)",
+                  color: "#fff",
+                  fontSize: "0.8rem",
+                  cursor: "pointer",
+                }}
+              >
+                <span style={{ width: 12, height: 12, borderRadius: "50%", background: c.color }} />
+                <span>{c.label}</span>
+              </button>
+            ))}
+          </div>
+        </div>
+
         <form
           className="settings-form"
           onSubmit={(event) => {
             event.preventDefault();
             const data = new FormData(event.currentTarget);
             setAccent(String(data.get("accent") ?? ""));
+            sounds.playPop();
           }}
         >
           <label htmlFor="accent">Custom accent color</label>
@@ -1882,6 +2178,43 @@ export function SettingsScreen() {
           />
           Reduce motion animations
         </label>
+      </div>
+
+      {/* Audio & Synthesized Sound Engine */}
+      <div className="card info-card">
+        <h2>Audio & UI Feedback</h2>
+        <p className="hint">
+          Procedural synthesized Web Audio API sound effects for reactions, gem transactions, and arcade games.
+        </p>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "12px 0", borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
+          <div>
+            <strong>Interactive Sound Effects (SFX)</strong>
+            <p className="hint" style={{ margin: "2px 0 0" }}>Play low-latency audio for likes, coins, and victory fanfare</p>
+          </div>
+          <button
+            type="button"
+            className={`btn btn-sm ${sounds.isEnabled() ? "btn-primary" : "btn-secondary"}`}
+            style={{ borderRadius: 16 }}
+            onClick={() => {
+              const next = !sounds.isEnabled();
+              sounds.setEnabled(next);
+              if (next) sounds.playPop();
+            }}
+          >
+            {sounds.isEnabled() ? "SFX Enabled 🔊" : "SFX Muted 🔇"}
+          </button>
+        </div>
+        <div style={{ display: "flex", gap: 8, marginTop: 12, flexWrap: "wrap" }}>
+          <button type="button" className="btn btn-ghost btn-sm" onClick={() => sounds.playPop()}>
+            Test Pop
+          </button>
+          <button type="button" className="btn btn-ghost btn-sm" onClick={() => sounds.playCoin()}>
+            Test Gem Chime
+          </button>
+          <button type="button" className="btn btn-ghost btn-sm" onClick={() => sounds.playFanfare()}>
+            Test Fanfare
+          </button>
+        </div>
       </div>
 
       {/* Nexus Privacy Center Preview */}
@@ -2326,3 +2659,7 @@ export function HoldScreen({
     </section>
   );
 }
+
+export { ArcadeScreen } from "./ArcadeScreen";
+export { AudioStagesScreen } from "./AudioStagesScreen";
+export { StudioScreen } from "./StudioScreen";

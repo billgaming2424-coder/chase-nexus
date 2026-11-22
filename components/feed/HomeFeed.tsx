@@ -168,9 +168,14 @@ export function HomeFeed() {
               <p className="eyebrow">Creator Dashboard Preview</p>
               <h3>Channel Studio Overview</h3>
             </div>
-            <Link href="/video" className="btn btn-primary small-btn">
-              Explore Video Hub
-            </Link>
+            <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+              <Link href="/studio" className="btn btn-primary small-btn">
+                Creator Studio & Payouts
+              </Link>
+              <Link href="/video" className="btn btn-secondary small-btn">
+                Video Hub
+              </Link>
+            </div>
           </div>
           <div className="creator-metrics-grid">
             <div className="metric-box">

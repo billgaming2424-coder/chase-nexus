@@ -10,6 +10,9 @@ export interface NavItem {
     | "messages"
     | "calls"
     | "marketplace"
+    | "arcade"
+    | "audio"
+    | "studio"
     | "stories"
     | "notifications"
     | "saved"
@@ -21,6 +24,9 @@ export const NAV_ITEMS: NavItem[] = [
   { href: "/", label: "Home", icon: "home" },
   { href: "/explore", label: "Explore", icon: "explore" },
   { href: "/video", label: "Nexus Video", icon: "video" },
+  { href: "/arcade", label: "Arcade Realm", icon: "arcade" },
+  { href: "/audio", label: "Audio Pods", icon: "audio" },
+  { href: "/studio", label: "Creator Studio", icon: "studio" },
   { href: "/communities", label: "Communities", icon: "communities" },
   { href: "/discussions", label: "Discussions", icon: "discussions" },
   { href: "/marketplace", label: "Marketplace", icon: "marketplace" },

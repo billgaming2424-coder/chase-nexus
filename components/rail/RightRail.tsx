@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Flame, Sparkles, X, ChevronRight, Gamepad2, Gift, ShieldCheck, Coins } from "lucide-react";
 import { useNexus } from "@/components/nexus/NexusProvider";
 import { ChaseBadge } from "@/components/nexus/ChaseBadge";
+import { sounds } from "@/lib/sounds";
 import {
   COMMUNITIES,
   CONNECTIONS,
@@ -99,6 +100,7 @@ export function RightRail() {
                   alert("Insufficient gems! Top up in the Marketplace.");
                   return;
                 }
+                sounds.playCoin();
                 tipCreator("Chase Studios Creators", amt);
                 alert(`Tipped ${amt} Gems to creators! Thank you for supporting Chase Studios! 🎉`);
               }}

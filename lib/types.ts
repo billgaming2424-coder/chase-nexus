@@ -71,7 +71,13 @@ export interface AvatarConfig {
     | "ninja-shinobi"
     | "esports-jersey"
     | "retro-synth"
-    | "cozy-hoodie";
+    | "cozy-hoodie"
+    | "cyber-samurai"
+    | "void-paladin"
+    | "stealth-operative"
+    | "unimon-master"
+    | "retro-synthwave"
+    | "royal-cape";
   accessory:
     | "none"
     | "gamer-headset"
@@ -105,6 +111,13 @@ export interface AvatarConfig {
     | "cosmic-stars"
     | "cyber-grid"
     | "retro-sunset";
+  aura?:
+    | "none"
+    | "cosmic-void"
+    | "neon-lightning"
+    | "golden-halo"
+    | "flame-burst"
+    | "glitch-matrix";
   pose?:
     | "portrait"
     | "fire"
@@ -305,3 +318,34 @@ export const REACTIONS: { id: ReactionId; label: string; glyph: string }[] = [
   { id: "celebrate", label: "Celebrate", glyph: "✦" },
   { id: "support", label: "Support", glyph: "✚" },
 ];
+
+export interface AudioStage {
+  id: string;
+  title: string;
+  host: Person;
+  topic: string;
+  speakers: Person[];
+  listenersCount: number;
+  isLive: boolean;
+  tags: string[];
+}
+
+export interface ArcadeGame {
+  id: string;
+  title: string;
+  category: "unimon" | "deadeye" | "bitmoji";
+  description: string;
+  rewardGems: number;
+}
+
+export interface NotificationItem {
+  id: string;
+  type: "streak" | "tip" | "mention" | "like" | "system" | "reward";
+  title: string;
+  message: string;
+  timeAgo: string;
+  read: boolean;
+  gemReward?: number;
+  avatarConfig?: AvatarConfig;
+  actionLabel?: string;
+}

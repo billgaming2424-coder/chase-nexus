@@ -17,6 +17,7 @@ import { useNexus } from "@/components/nexus/NexusProvider";
 import { ChaseBadge } from "@/components/nexus/ChaseBadge";
 import { NexusAvatar } from "@/components/nexus/NexusAvatar";
 import { REACTIONS, DEFAULT_AVATAR, type Comment, type FeedId, type Post } from "@/lib/types";
+import { sounds } from "@/lib/sounds";
 
 function CommentThread({
   comments,
@@ -462,6 +463,7 @@ export function PostCard({ post, mode, onTag }: { post: Post; mode: FeedId; onTa
                     role="menuitem"
                     className={post.reaction === item.id ? "is-selected" : ""}
                     onClick={() => {
+                      sounds.playPop();
                       reactToPost(post.id, item.id);
                       setReactionsOpen(false);
                     }}
@@ -477,7 +479,10 @@ export function PostCard({ post, mode, onTag }: { post: Post; mode: FeedId; onTa
             type="button"
             className={post.reposted ? "action is-on" : "action"}
             aria-pressed={post.reposted}
-            onClick={() => toggleRepost(post.id)}
+            onClick={() => {
+              sounds.playPop();
+              toggleRepost(post.id);
+            }}
           >
             <Repeat2 size={16} />
             <span>{post.reposts}</span>
@@ -505,7 +510,10 @@ export function PostCard({ post, mode, onTag }: { post: Post; mode: FeedId; onTa
             type="button"
             className={post.saved ? "action is-on" : "action"}
             aria-pressed={post.saved}
-            onClick={() => toggleSave(post.id)}
+            onClick={() => {
+              sounds.playPop();
+              toggleSave(post.id);
+            }}
           >
             <Bookmark size={16} />
             <span>{post.saved ? "Saved" : "Save"}</span>

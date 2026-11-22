@@ -2090,6 +2090,77 @@ html.reduce-motion, html.reduce-motion *, html.reduce-motion *::before, html.red
   box-shadow: 0 8px 30px rgba(0, 0, 0, 0.6), 0 0 15px rgba(124, 58, 237, 0.15);
 }
 
+/* ----------------------------------------------------
+   Season 1 Animated Avatar Auras
+---------------------------------------------------- */
+.aura-cosmic {
+  animation: rotateAura 12s linear infinite;
+  transform-origin: 100px 100px;
+}
+.aura-lightning {
+  animation: pulseLightning 1.4s ease-in-out infinite alternate;
+}
+.aura-halo {
+  animation: floatHalo 3s ease-in-out infinite alternate;
+}
+.aura-flame {
+  animation: flickerFlame 0.8s ease-in-out infinite alternate;
+  transform-origin: 100px 100px;
+}
+.aura-matrix {
+  animation: matrixScan 2s linear infinite;
+}
+
+@keyframes rotateAura {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+@keyframes pulseLightning {
+  0% { opacity: 0.7; filter: drop-shadow(0 0 4px #06b6d4); }
+  100% { opacity: 1; filter: drop-shadow(0 0 12px #38bdf8); }
+}
+@keyframes floatHalo {
+  0% { transform: translateY(0); filter: drop-shadow(0 0 6px #f59e0b); }
+  100% { transform: translateY(-3px); filter: drop-shadow(0 0 14px #fde047); }
+}
+@keyframes flickerFlame {
+  0% { transform: scale(0.98); opacity: 0.8; }
+  100% { transform: scale(1.02); opacity: 1; filter: drop-shadow(0 0 10px #f97316); }
+}
+@keyframes matrixScan {
+  0% { opacity: 0.6; }
+  50% { opacity: 1; filter: drop-shadow(0 0 8px #22c55e); }
+  100% { opacity: 0.6; }
+}
+
+/* ----------------------------------------------------
+   Arcade Realm, Audio Stages & Creator Studio UI
+---------------------------------------------------- */
+.arcade-game-card {
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 10px 35px rgba(0, 0, 0, 0.6);
+  border: 1px solid rgba(168, 85, 247, 0.3);
+}
+
+.live-stage-card {
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.7), 0 0 25px rgba(168, 85, 247, 0.15);
+}
+
+.daily-reward-card {
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5), 0 0 15px rgba(124, 58, 237, 0.2);
+}
+
+.chase-os-modal {
+  animation: modalPopIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes modalPopIn {
+  from { opacity: 0; transform: scale(0.94) translateY(12px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+
 
 
 

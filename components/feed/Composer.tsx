@@ -5,6 +5,7 @@ import { ImagePlus, ListPlus, Sparkles, X, Smile, Flame, Check, Video } from "lu
 import { useNexus } from "@/components/nexus/NexusProvider";
 import { NexusAvatar } from "@/components/nexus/NexusAvatar";
 import { NexusAvatarBuilder } from "@/components/nexus/NexusAvatarBuilder";
+import { sounds } from "@/lib/sounds";
 import type { Audience } from "@/lib/types";
 
 const STICKER_PACK = [
@@ -73,6 +74,7 @@ export function Composer() {
         onSubmit={(event) => {
           event.preventDefault();
           if (!canSubmit) return;
+          sounds.playFanfare();
           addPost({
             body,
             audience,

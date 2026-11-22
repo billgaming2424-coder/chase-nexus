@@ -18,6 +18,10 @@ import {
   UserRound,
   Users,
   Video,
+  Gamepad2,
+  Radio,
+  TrendingUp,
+  Grid,
   type LucideIcon,
 } from "lucide-react";
 import { NAV_ITEMS, type NavItem } from "@/lib/navigation";
@@ -29,6 +33,9 @@ const ICONS: Record<NavItem["icon"], LucideIcon> = {
   home: Home,
   video: Video,
   explore: Compass,
+  arcade: Gamepad2,
+  audio: Radio,
+  studio: TrendingUp,
   communities: Users,
   discussions: MessagesSquare,
   marketplace: ShoppingBag,
@@ -46,11 +53,13 @@ export function Sidebar({
   onNavigate,
   onOpenAuth,
   onOpenAvatarStudio,
+  onOpenChaseOs,
 }: {
   open: boolean;
   onNavigate: () => void;
   onOpenAuth: () => void;
   onOpenAvatarStudio: () => void;
+  onOpenChaseOs?: () => void;
 }) {
   const pathname = usePathname();
   const { currentUser, userProfile, userAvatar } = useNexus();
@@ -123,6 +132,19 @@ export function Sidebar({
           <Sparkles size={14} className="purple-icon" />
           <span>Bitmoji Studio</span>
         </button>
+
+        {onOpenChaseOs && (
+          <button
+            type="button"
+            className="btn btn-ghost full-width"
+            style={{ marginTop: 6, fontSize: "0.78rem", gap: 6, minHeight: 30, color: "var(--silver)" }}
+            onClick={onOpenChaseOs}
+            title="Switch between Chase Studios Ecosystem Apps"
+          >
+            <Grid size={13} className="purple-icon" />
+            <span>Chase OS Apps</span>
+          </button>
+        )}
       </div>
 
       <p className="side-foot">

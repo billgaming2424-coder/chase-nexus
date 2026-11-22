@@ -23,6 +23,7 @@ import {
 } from "lucide-react";
 import type { AvatarConfig, AvatarPreset } from "@/lib/types";
 import { DEFAULT_AVATAR } from "@/lib/types";
+import { sounds } from "@/lib/sounds";
 import { NexusAvatar } from "./NexusAvatar";
 import { useNexus } from "./NexusProvider";
 
@@ -120,6 +121,21 @@ const OUTFITS: { id: AvatarConfig["outfit"]; label: string; desc: string }[] = [
   { id: "esports-jersey", label: "Pro Esports Jersey #24", desc: "Official Chase Studios competitive jersey" },
   { id: "retro-synth", label: "Synthwave Grid Jacket", desc: "80s neon motorcycle rider leather" },
   { id: "cozy-hoodie", label: "Oversized Chill Fleece", desc: "Ultra-comfortable pastel lounge hoodie" },
+  { id: "cyber-samurai", label: "Cyber Samurai Plate", desc: "Crimson & obsidian battle plate with neon crest" },
+  { id: "void-paladin", label: "Void Paladin Plate", desc: "Purple void-forged plate with cyan mana core" },
+  { id: "stealth-operative", label: "Stealth Operative", desc: "Tactical carbon weave with cyan night-vision badge" },
+  { id: "unimon-master", label: "Unimon Grandmaster", desc: "Gold trim ceremonial robes with monster sphere crest" },
+  { id: "retro-synthwave", label: "Retro Synthwave 84", desc: "Electric magenta & cyan geometric 80s track jacket" },
+  { id: "royal-cape", label: "Chase Studios Royal Cape", desc: "Regal purple velvet cape with solid gold chain clasp" },
+];
+
+const AURAS: { id: NonNullable<AvatarConfig["aura"]>; label: string; desc: string; icon: string }[] = [
+  { id: "none", label: "No Aura", desc: "Standard subtle profile look", icon: "🚫" },
+  { id: "cosmic-void", label: "Cosmic Void Ring", desc: "Pulsing galaxy energy with starlight particles", icon: "🌌" },
+  { id: "neon-lightning", label: "Neon Lightning", desc: "Electric cyan thunder bolts surrounding character", icon: "⚡" },
+  { id: "golden-halo", label: "Celestial Golden Halo", desc: "Divine shining light and gold crown ring", icon: "👑" },
+  { id: "flame-burst", label: "Inferno Flame Burst", desc: "Blazing fire streaks and embers", icon: "🔥" },
+  { id: "glitch-matrix", label: "Cyber Glitch Matrix", desc: "High-tech scanlines and digital neon data", icon: "👾" },
 ];
 
 const ACCESSORIES: { id: AvatarConfig["accessory"]; label: string }[] = [
@@ -231,7 +247,7 @@ const PRESET_FRIENDS = [
 export function NexusAvatarBuilder({ isOpen, onClose }: NexusAvatarBuilderProps) {
   const { userProfile, setUserAvatar, userAvatar } = useNexus();
   const [activeTab, setActiveTab] = useState<
-    "face" | "hair" | "eyes" | "outfit" | "accessories" | "props" | "stickers" | "friendmoji" | "presets" | "bubble"
+    "face" | "hair" | "eyes" | "outfit" | "accessories" | "props" | "auras" | "stickers" | "friendmoji" | "presets" | "bubble"
   >("face");
 
   const [avatar, setAvatar] = useState<AvatarConfig>(() => {
@@ -275,6 +291,7 @@ export function NexusAvatarBuilder({ isOpen, onClose }: NexusAvatarBuilderProps)
 
   const handleSave = async () => {
     try {
+      sounds.playFanfare();
       setUserAvatar(avatar);
       setSavedSuccess(true);
       setTimeout(() => {
@@ -287,6 +304,7 @@ export function NexusAvatarBuilder({ isOpen, onClose }: NexusAvatarBuilderProps)
   };
 
   const handleSaveToSlot = (slotIndex: number) => {
+    sounds.playCoin();
     const updated = [...savedPresets];
     updated[slotIndex] = {
       id: `p-${slotIndex}`,
@@ -300,6 +318,7 @@ export function NexusAvatarBuilder({ isOpen, onClose }: NexusAvatarBuilderProps)
   };
 
   const handleApplyPreset = (presetAvatar: AvatarConfig) => {
+    sounds.playPop();
     setAvatar({ ...presetAvatar });
   };
 
@@ -418,6 +437,14 @@ export function NexusAvatarBuilder({ isOpen, onClose }: NexusAvatarBuilderProps)
           >
             <Gamepad2 size={13} />
             <span>Props</span>
+          </button>
+          <button
+            type="button"
+            className={`cat-tab ${activeTab === "auras" ? "is-active" : ""}`}
+            onClick={() => setActiveTab("auras")}
+          >
+            <Zap size={13} className="purple-icon" />
+            <span>Aura (6)</span>
           </button>
           <button
             type="button"
@@ -635,6 +662,32 @@ export function NexusAvatarBuilder({ isOpen, onClose }: NexusAvatarBuilderProps)
                   >
                     <span>{p.icon}</span>
                     <span>{p.label}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Dynamic Energy Auras (Season 1 Cyber-Cosmetics) */}
+          {activeTab === "auras" && (
+            <div className="builder-section">
+              <label className="builder-label">Dynamic Energy Auras (Season 1 Cyber-Cosmetics)</label>
+              <p className="hint" style={{ marginBottom: 10 }}>
+                Equip a celestial cosmic aura, electric lightning shield, or digital glitch scanlines around your Bitmoji!
+              </p>
+              <div className="choice-chip-grid">
+                {AURAS.map((a) => (
+                  <button
+                    key={a.id}
+                    type="button"
+                    className={`choice-chip ${avatar.aura === a.id || (!avatar.aura && a.id === "none") ? "is-active" : ""}`}
+                    onClick={() => {
+                      sounds.playPop();
+                      setAvatar((prev) => ({ ...prev, aura: a.id }));
+                    }}
+                  >
+                    <span>{a.icon}</span>
+                    <span>{a.label}</span>
                   </button>
                 ))}
               </div>

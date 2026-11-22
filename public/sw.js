@@ -1,5 +1,5 @@
-// Chase Nexus Service Worker · Production v13 (Decluttered Mobile & Authentic Splash Screen)
-const CACHE_NAME = "chase-nexus-v13";
+// Chase Nexus Service Worker · Production v14 (The Biggest Update Ever: Arcade, Audio Pods, Studio & Chase OS)
+const CACHE_NAME = "chase-nexus-v14";
 const PRECACHE_ASSETS = ["/icon.svg", "/chase-studios-logo.svg", "/splash.js"];
 
 self.addEventListener("install", (event) => {

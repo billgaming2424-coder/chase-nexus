@@ -156,6 +156,40 @@ export function NexusAvatar({
           fill={`url(#bg-${c.background || "purple-gradient"})`}
         />
 
+        {/* Animated Aura Effects (Season 1 Cyber-Cosmetics) */}
+        {c.aura === "cosmic-void" && (
+          <g className="aura-cosmic">
+            <circle cx="100" cy="100" r="88" fill="none" stroke="#a855f7" strokeWidth="6" strokeDasharray="16 10" opacity="0.85" />
+            <circle cx="100" cy="100" r="94" fill="none" stroke="#ec4899" strokeWidth="3" opacity="0.65" />
+          </g>
+        )}
+        {c.aura === "neon-lightning" && (
+          <g className="aura-lightning">
+            <circle cx="100" cy="100" r="86" fill="none" stroke="#22d3ee" strokeWidth="5" strokeDasharray="8 6" opacity="0.9" />
+            <polygon points="100,10 108,35 96,35 104,58 92,58" fill="#38bdf8" />
+            <polygon points="185,100 160,108 160,96 138,104 138,92" fill="#38bdf8" />
+          </g>
+        )}
+        {c.aura === "golden-halo" && (
+          <g className="aura-halo">
+            <circle cx="100" cy="100" r="90" fill="none" stroke="#fbbf24" strokeWidth="6" opacity="0.8" />
+            <ellipse cx="100" cy="42" rx="38" ry="12" fill="none" stroke="#fde047" strokeWidth="4" />
+          </g>
+        )}
+        {c.aura === "flame-burst" && (
+          <g className="aura-flame">
+            <circle cx="100" cy="100" r="88" fill="none" stroke="#f97316" strokeWidth="6" strokeDasharray="12 8" opacity="0.85" />
+            <circle cx="100" cy="100" r="93" fill="none" stroke="#ef4444" strokeWidth="4" opacity="0.75" />
+          </g>
+        )}
+        {c.aura === "glitch-matrix" && (
+          <g className="aura-matrix">
+            <circle cx="100" cy="100" r="88" fill="none" stroke="#22c55e" strokeWidth="4" strokeDasharray="4 6" opacity="0.9" />
+            <line x1="20" y1="60" x2="180" y2="60" stroke="#4ade80" strokeWidth="2" strokeDasharray="20 15" opacity="0.7" />
+            <line x1="10" y1="140" x2="190" y2="140" stroke="#4ade80" strokeWidth="2" strokeDasharray="15 20" opacity="0.7" />
+          </g>
+        )}
+
         {/* 2. Avatar Torso / Wardrobe Base */}
         <g id="avatar-body">
           <ellipse cx="100" cy="180" rx="46" ry="32" fill={skin} />
@@ -286,6 +320,55 @@ export function NexusAvatar({
               <ellipse cx="100" cy="154" rx="24" ry="10" fill="#c7d2fe" />
               <circle cx="86" cy="180" r="5" fill="#818cf8" />
               <circle cx="114" cy="180" r="5" fill="#818cf8" />
+            </g>
+          )}
+
+          {c.outfit === "cyber-samurai" && (
+            <g id="outfit-cyber-samurai">
+              <path d="M46 160 C46 132 154 132 154 160 L158 200 L42 200 Z" fill="#0f0717" />
+              <path d="M72 150 L100 186 L128 150 Z" fill="#dc2626" />
+              <line x1="56" y1="168" x2="144" y2="168" stroke="#f43f5e" strokeWidth="3" />
+              <circle cx="100" cy="188" r="6" fill="#facc15" stroke="#ef4444" strokeWidth="2" />
+            </g>
+          )}
+
+          {c.outfit === "void-paladin" && (
+            <g id="outfit-void-paladin">
+              <path d="M44 158 C44 130 156 130 156 158 L160 200 L40 200 Z" fill="#1e1035" />
+              <polygon points="100,146 124,180 100,198 76,180" fill="#9333ea" stroke="#c084fc" strokeWidth="2" />
+              <circle cx="100" cy="180" r="5" fill="#22d3ee" />
+            </g>
+          )}
+
+          {c.outfit === "stealth-operative" && (
+            <g id="outfit-stealth-operative">
+              <path d="M48 162 C48 136 152 136 152 162 L156 200 L44 200 Z" fill="#09090b" />
+              <path d="M74 152 L100 184 L126 152 Z" fill="#18181b" />
+              <rect x="80" y="174" width="40" height="8" rx="4" fill="#06b6d4" opacity="0.85" />
+            </g>
+          )}
+
+          {c.outfit === "unimon-master" && (
+            <g id="outfit-unimon-master">
+              <path d="M46 160 C46 132 154 132 154 160 L158 200 L42 200 Z" fill="#b45309" />
+              <polygon points="100,148 126,186 74,186" fill="#fef3c7" stroke="#fbbf24" strokeWidth="2" />
+              <circle cx="100" cy="174" r="7" fill="#dc2626" stroke="#fff" strokeWidth="2" />
+            </g>
+          )}
+
+          {c.outfit === "retro-synthwave" && (
+            <g id="outfit-retro-synthwave">
+              <path d="M46 162 C46 134 154 134 154 162 L158 200 L42 200 Z" fill="#4a044e" />
+              <polygon points="70,152 100,186 130,152" fill="#ec4899" />
+              <polygon points="80,152 100,180 120,152" fill="#06b6d4" />
+            </g>
+          )}
+
+          {c.outfit === "royal-cape" && (
+            <g id="outfit-royal-cape">
+              <path d="M42 156 C42 128 158 128 158 156 L162 200 L38 200 Z" fill="#581c87" />
+              <path d="M68 148 L100 178 L132 148" stroke="#fbbf24" strokeWidth="5" fill="none" strokeLinecap="round" />
+              <circle cx="100" cy="178" r="6" fill="#38bdf8" stroke="#fbbf24" strokeWidth="2" />
             </g>
           )}
         </g>

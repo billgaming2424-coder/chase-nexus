@@ -18,6 +18,8 @@ import { Sidebar } from "@/components/shell/Sidebar";
 import { AuthModal } from "@/components/auth/AuthModal";
 import { NexusAvatar } from "@/components/nexus/NexusAvatar";
 import { NexusAvatarBuilder } from "@/components/nexus/NexusAvatarBuilder";
+import { ChaseOsLauncher } from "@/components/shell/ChaseOsLauncher";
+import { Grid } from "lucide-react";
 
 function AppShellContent({ children }: { children: ReactNode }) {
   const pathname = usePathname();
@@ -25,6 +27,7 @@ function AppShellContent({ children }: { children: ReactNode }) {
   const [open, setOpen] = useState(false);
   const [authModalOpen, setAuthModalOpen] = useState(false);
   const [avatarStudioOpen, setAvatarStudioOpen] = useState(false);
+  const [chaseOsOpen, setChaseOsOpen] = useState(false);
   const [isOnline, setIsOnline] = useState(true);
   const { currentUser, userProfile, userAvatar } = useNexus();
 
@@ -57,6 +60,7 @@ function AppShellContent({ children }: { children: ReactNode }) {
           onNavigate={() => setOpen(false)}
           onOpenAuth={() => setAuthModalOpen(true)}
           onOpenAvatarStudio={() => setAvatarStudioOpen(true)}
+          onOpenChaseOs={() => setChaseOsOpen(true)}
         />
         {open ? (
           <button
@@ -83,6 +87,15 @@ function AppShellContent({ children }: { children: ReactNode }) {
               <span className="mobile-brand">CHASE NEXUS</span>
             </div>
             <div style={{ marginLeft: "auto", display: "flex", alignItems: "center", gap: 10 }}>
+              <button
+                type="button"
+                className="mobile-os-trigger"
+                aria-label="Open Chase OS Apps"
+                onClick={() => setChaseOsOpen(true)}
+                style={{ background: "none", border: "none", padding: 0, cursor: "pointer", display: "flex", alignItems: "center" }}
+              >
+                <Grid size={20} className="silver-icon" />
+              </button>
               <button
                 type="button"
                 className="mobile-avatar-trigger"
@@ -208,6 +221,9 @@ function AppShellContent({ children }: { children: ReactNode }) {
 
       {/* Nexus Bitmoji Avatar Studio Modal */}
       <NexusAvatarBuilder isOpen={avatarStudioOpen} onClose={() => setAvatarStudioOpen(false)} />
+
+      {/* Chase Studios Universal Ecosystem App Switcher */}
+      <ChaseOsLauncher isOpen={chaseOsOpen} onClose={() => setChaseOsOpen(false)} />
     </>
   );
 }
