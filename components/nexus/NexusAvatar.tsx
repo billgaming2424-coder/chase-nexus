@@ -839,7 +839,7 @@ export function NexusAvatar({
               fontFamily="Impact, sans-serif"
               letterSpacing="0.5"
             >
-              {c.customCaption.toUpperCase().slice(0, 24)}
+              {String(c.customCaption || "").toUpperCase().slice(0, 24)}
             </text>
           </g>
         )}

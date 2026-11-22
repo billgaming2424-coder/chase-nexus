@@ -54,6 +54,8 @@ const THEMES: { id: ThemeName; label: string; detail: string }[] = [
 ];
 
 export function VideoScreen() {
+  const [loadStream, setLoadStream] = useState(false);
+
   return (
     <section className="page">
       <p className="eyebrow">Nexus Video & Streams</p>
@@ -70,22 +72,71 @@ export function VideoScreen() {
             <h2 style={{ margin: "4px 0 0", fontSize: "1.3rem" }}>Bill Chase Live on Twitch</h2>
             <p className="hint" style={{ margin: 0 }}>Watch game development, Unimon raids, and DEADEYE co-op live</p>
           </div>
-          <a
-            href="https://twitch.tv/billgaming2424"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="btn btn-primary btn-sm"
-            style={{ background: "#9146ff", color: "#fff" }}
-          >
-            Open on Twitch
-          </a>
+          <div style={{ display: "flex", gap: 8 }}>
+            <a
+              href="https://twitch.tv/billgaming2424"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="btn btn-secondary btn-sm"
+              style={{ background: "#9146ff", color: "#fff" }}
+            >
+              Open on Twitch
+            </a>
+            {!loadStream && (
+              <button
+                type="button"
+                className="btn btn-primary btn-sm"
+                onClick={() => setLoadStream(true)}
+              >
+                Load Stream Player
+              </button>
+            )}
+          </div>
         </div>
+
         <div className="twitch-embed-frame">
-          <iframe
-            src="https://player.twitch.tv/?channel=billgaming2424&parent=nexus.chase-studios.org&parent=chase-nexus.vercel.app&parent=localhost&muted=true"
-            allowFullScreen
-            title="Bill Chase Twitch Stream"
-          />
+          {loadStream ? (
+            <iframe
+              src="https://player.twitch.tv/?channel=billgaming2424&parent=nexus.chase-studios.org&parent=chase-nexus.vercel.app&parent=localhost&muted=true"
+              allowFullScreen
+              title="Bill Chase Twitch Stream"
+            />
+          ) : (
+            <div
+              style={{
+                width: "100%",
+                height: "100%",
+                minHeight: 240,
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                justifyContent: "center",
+                background: "radial-gradient(circle, #2e1065, #0f0a1c)",
+                cursor: "pointer",
+                padding: 20,
+                textAlign: "center",
+              }}
+              onClick={() => setLoadStream(true)}
+            >
+              <div
+                style={{
+                  width: 56,
+                  height: 56,
+                  borderRadius: "50%",
+                  background: "#9146ff",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  marginBottom: 12,
+                  boxShadow: "0 0 20px rgba(145, 71, 255, 0.6)",
+                }}
+              >
+                <Radio size={24} color="#fff" />
+              </div>
+              <h3 style={{ margin: "0 0 4px" }}>Click to Watch Bill Chase on Twitch</h3>
+              <p className="hint" style={{ margin: 0 }}>Live stream player loads on-demand for smooth PC performance</p>
+            </div>
+          )}
         </div>
       </div>
 

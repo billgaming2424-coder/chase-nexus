@@ -29,10 +29,10 @@ function CommentThread({
               {comment.avatarConfig ? (
                 <NexusAvatar config={comment.avatarConfig} size={26} />
               ) : (
-                <span className="avatar avatar-xs">{comment.author.slice(0, 1)}</span>
+                <span className="avatar avatar-xs">{(comment.author || "M").slice(0, 1)}</span>
               )}
               <span className="author-name">
-                <strong>{comment.author}</strong>
+                <strong>{comment.author || "Member"}</strong>
                 {comment.verified ? <ChaseBadge type={comment.badgeType} /> : null}
               </span>
               {comment.example ? <span className="pill">Sample</span> : <span className="pill">Cloud</span>}
@@ -63,20 +63,20 @@ export function PostCard({ post, mode, onTag }: { post: Post; mode: FeedId; onTa
   return (
     <article className="post card">
       <header className="post-head">
-        {post.author.avatarConfig ? (
+        {post.author?.avatarConfig ? (
           <NexusAvatar config={post.author.avatarConfig} size={42} showStickerBadge />
         ) : (
           <span className="avatar" aria-hidden="true">
-            {post.author.name.slice(0, 1)}
+            {(post.author?.name || "M").slice(0, 1)}
           </span>
         )}
         <div>
           <span className="author-name">
-            <strong>{post.author.name}</strong>
-            {post.author.verified ? <ChaseBadge type={post.author.badgeType} /> : null}
+            <strong>{post.author?.name || "Member"}</strong>
+            {post.author?.verified ? <ChaseBadge type={post.author?.badgeType} /> : null}
           </span>
           <p>
-            {post.author.handle} · {post.timeLabel} · {post.audience}
+            {post.author?.handle || "@member"} · {post.timeLabel} · {post.audience}
           </p>
         </div>
         <span className="pill">{post.yours ? "This device" : "Cloud"}</span>

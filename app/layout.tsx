@@ -44,12 +44,32 @@ try {
     navigator.serviceWorker.register('/sw.js').catch(function(){});
   }
 } catch (error) {}
+
+window.addEventListener('error', function(event) {
+  if (event && event.message && (
+    event.message.indexOf('Loading chunk') !== -1 ||
+    event.message.indexOf('Failed to fetch dynamically imported module') !== -1
+  )) {
+    console.warn('Stale build chunk detected. Clearing cache and reloading...');
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.getRegistrations().then(function(regs) {
+        for (var i = 0; i < regs.length; i++) regs[i].unregister();
+      });
+    }
+    if ('caches' in window) {
+      caches.keys().then(function(keys) {
+        for (var i = 0; i < keys.length; i++) caches.delete(keys[i]);
+      });
+    }
+    window.location.reload();
+  }
+});
 `;
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="en" data-theme="chase-purple">
-      <body>
+    <html lang="en" data-theme="chase-purple" suppressHydrationWarning>
+      <body suppressHydrationWarning>
         <script dangerouslySetInnerHTML={{ __html: themeBoot }} />
         <AppShell>{children}</AppShell>
       </body>

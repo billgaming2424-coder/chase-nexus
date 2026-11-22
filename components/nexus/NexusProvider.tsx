@@ -211,14 +211,8 @@ export function NexusProvider({ children }: { children: ReactNode }) {
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
   const [isAuthLoading, setIsAuthLoading] = useState(true);
 
-  // Nexus Bitmoji-style Custom Avatar State
-  const [userAvatar, setUserAvatarState] = useState<AvatarConfig>(() => {
-    try {
-      const raw = localStorage.getItem("nexus-custom-avatar");
-      if (raw) return JSON.parse(raw);
-    } catch {}
-    return DEFAULT_AVATAR;
-  });
+  // Nexus Bitmoji-style Custom Avatar State (initialized consistently to prevent hydration mismatch)
+  const [userAvatar, setUserAvatarState] = useState<AvatarConfig>(DEFAULT_AVATAR);
 
   const setUserAvatar = useCallback(async (avatar: AvatarConfig) => {
     setUserAvatarState(avatar);
@@ -365,7 +359,7 @@ export function NexusProvider({ children }: { children: ReactNode }) {
     };
   }, [currentUser]);
 
-  // Sync avatar updates across tabs
+  // Sync avatar updates across tabs and on initial mount (post-hydration)
   useEffect(() => {
     const handleAvatarUpdate = () => {
       try {
@@ -373,6 +367,7 @@ export function NexusProvider({ children }: { children: ReactNode }) {
         if (raw) setUserAvatarState(JSON.parse(raw));
       } catch {}
     };
+    handleAvatarUpdate();
     window.addEventListener("nexus-avatar-updated", handleAvatarUpdate);
     return () => window.removeEventListener("nexus-avatar-updated", handleAvatarUpdate);
   }, []);

@@ -1,12 +1,12 @@
-// Chase Nexus Service Worker · Alpha 0.1
-const CACHE_NAME = "chase-nexus-v1";
-const PRECACHE_ASSETS = ["/", "/icon.svg"];
+// Chase Nexus Service Worker · Production v10
+const CACHE_NAME = "chase-nexus-v10";
+const PRECACHE_ASSETS = ["/icon.svg"];
 
 self.addEventListener("install", (event) => {
+  self.skipWaiting();
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => cache.addAll(PRECACHE_ASSETS))
   );
-  self.skipWaiting();
 });
 
 self.addEventListener("activate", (event) => {
@@ -20,12 +20,19 @@ self.addEventListener("activate", (event) => {
   self.clients.claim();
 });
 
+// Network-first strategy for navigation to prevent chunk load errors across deployments
 self.addEventListener("fetch", (event) => {
   if (event.request.mode === "navigate") {
     event.respondWith(
-      fetch(event.request).catch(() => caches.match("/") || caches.match("/icon.svg"))
+      fetch(event.request).catch(() => caches.match(event.request))
     );
+    return;
   }
+
+  // Static cache fallback
+  event.respondWith(
+    fetch(event.request).catch(() => caches.match(event.request))
+  );
 });
 
 // Prepared Web Push notification handler
