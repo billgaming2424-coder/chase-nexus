@@ -19,6 +19,9 @@ import {
   Video as VideoIcon,
   VideoOff,
   Smartphone,
+  Moon,
+  Eye,
+  Award,
 } from "lucide-react";
 import { PostCard } from "@/components/feed/PostCard";
 import { StoriesRow } from "@/components/feed/StoriesRow";
@@ -307,13 +310,18 @@ export function MessagesScreen() {
                 <span>
                   <strong>{activeChat.streak.count} Days</strong> · {activeChat.streak.hoursLeft}h left today
                 </span>
+                {activeChat.streak.milestone ? (
+                  <span className="milestone-badge">
+                    <Award size={12} aria-hidden="true" /> {activeChat.streak.milestone}
+                  </span>
+                ) : null}
               </div>
             ) : null}
           </header>
 
           <div className="chat-bubble-stream">
             <p className="hint center-hint">
-              This is a local demonstration. Real-time delivery and encryption arrive in Alpha 0.7.
+              This is a local demonstration. Real-time delivery, encryption, and streak synchronization arrive in Alpha 0.7 & 0.8.
             </p>
             {activeChat.messages.map((msg) => (
               <div
@@ -479,7 +487,7 @@ export function SettingsScreen() {
     <section className="page">
       <p className="eyebrow">Settings</p>
       <h1>Preferences & Safety</h1>
-      <p>Personalization, privacy settings, and application installation.</p>
+      <p>Personalization, PWA installation, notification controls, and privacy settings.</p>
 
       {/* PWA Installation Section */}
       <div className="card info-card">
@@ -489,11 +497,11 @@ export function SettingsScreen() {
         </p>
         {isStandalone ? (
           <p className="installed-badge">
-            <Check size={16} /> Running as an installed application
+            <Check size={16} /> Running as an installed standalone application
           </p>
         ) : (
           <div className="install-actions">
-            <p>Install Nexus on your device to launch it from your home screen or taskbar.</p>
+            <p>Install Nexus on your device to launch it from your home screen or desktop taskbar.</p>
             <div className="button-row">
               <button
                 type="button"
@@ -515,6 +523,72 @@ export function SettingsScreen() {
             ) : null}
           </div>
         )}
+      </div>
+
+      {/* Notification Categories & Push Infrastructure */}
+      <div className="card info-card">
+        <h2>Push Notifications & Alerts</h2>
+        <p className="hint">
+          Granular controls for Web Push notifications, quiet hours, and sensitive message preview privacy.
+        </p>
+        <div className="privacy-options-stack">
+          <div className="privacy-row">
+            <div>
+              <strong>Nexus Streak Reminders</strong>
+              <p className="hint">Alert when reciprocal daily streak interaction is nearing expiration</p>
+            </div>
+            <input type="checkbox" defaultChecked />
+          </div>
+          <div className="privacy-row">
+            <div>
+              <strong>Direct & Group Messages</strong>
+              <p className="hint">Notifications for incoming chats and message replies</p>
+            </div>
+            <input type="checkbox" defaultChecked />
+          </div>
+          <div className="privacy-row">
+            <div>
+              <strong>Friend Requests & Followers</strong>
+              <p className="hint">Alerts for new friend invitations and follower connections</p>
+            </div>
+            <input type="checkbox" defaultChecked />
+          </div>
+          <div className="privacy-row">
+            <div>
+              <strong>Comments & Reactions</strong>
+              <p className="hint">Responses and reactions on your posts and discussions</p>
+            </div>
+            <input type="checkbox" defaultChecked />
+          </div>
+          <div className="privacy-row">
+            <div>
+              <strong>Voice & Video Calls</strong>
+              <p className="hint">Incoming call ringing and screen share alerts</p>
+            </div>
+            <input type="checkbox" defaultChecked />
+          </div>
+          <div className="privacy-row">
+            <div>
+              <strong>Chase Studios & Chase+ Rewards</strong>
+              <p className="hint">Studio announcements, playtest invitations, and member drop notifications</p>
+            </div>
+            <input type="checkbox" defaultChecked />
+          </div>
+          <div className="privacy-row">
+            <div>
+              <strong>Notification Content Previews</strong>
+              <p className="hint">Hide message body content in lock screen push previews for privacy</p>
+            </div>
+            <input type="checkbox" defaultChecked />
+          </div>
+          <div className="privacy-row">
+            <div>
+              <strong>Quiet Hours (Do Not Disturb)</strong>
+              <p className="hint">Mute notification delivery during night hours (10:00 PM – 8:00 AM)</p>
+            </div>
+            <input type="checkbox" defaultChecked />
+          </div>
+        </div>
       </div>
 
       {/* Appearance Section */}

@@ -17,6 +17,12 @@ export const metadata: Metadata = {
   },
   description: "Connect. Create. Discover. Chase Nexus is the social platform from Chase Studios.",
   applicationName: "Chase Nexus",
+  manifest: "/manifest.webmanifest",
+  icons: {
+    icon: "/icon.svg",
+    shortcut: "/icon.svg",
+    apple: "/icon.svg",
+  },
   appleWebApp: {
     capable: true,
     statusBarStyle: "black-translucent",
@@ -34,7 +40,7 @@ try {
     }
     if (saved.reducedMotion) document.documentElement.classList.add("reduce-motion");
   }
-  if ('serviceWorker' in navigator && window.location.protocol === 'https:') {
+  if ('serviceWorker' in navigator && (window.location.protocol === 'https:' || window.location.hostname === 'localhost')) {
     navigator.serviceWorker.register('/sw.js').catch(function(){});
   }
 } catch (error) {}
