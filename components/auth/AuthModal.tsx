@@ -11,7 +11,7 @@ interface AuthModalProps {
 }
 
 export function AuthModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
-  const { currentUser, userProfile, signIn, signUp, signOut } = useNexus();
+  const { currentUser, userProfile, signIn, signUp, signOut, setOnboardingModalOpen } = useNexus();
   const [mode, setMode] = useState<"login" | "signup">("login");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -48,8 +48,11 @@ export function AuthModal({ isOpen, onClose }: { isOpen: boolean; onClose: () =>
         if (error) {
           setErrorMsg(error.message);
         } else {
-          setSuccessMsg("✓ Account created! You now have a verified Chase Studios Account.");
-          setTimeout(onClose, 1200);
+          setSuccessMsg("✓ Account created! Opening setup wizard...");
+          setTimeout(() => {
+            onClose();
+            setOnboardingModalOpen(true);
+          }, 600);
         }
       }
     } catch (err: unknown) {
@@ -102,16 +105,30 @@ export function AuthModal({ isOpen, onClose }: { isOpen: boolean; onClose: () =>
             <p className="hint">
               Your account automatically synchronizes posts, bookmarks, and preferences to the Chase Studios cloud.
             </p>
-            <button
-              type="button"
-              className="btn btn-alert full-width"
-              onClick={async () => {
-                await signOut();
-                onClose();
-              }}
-            >
-              Log Out
-            </button>
+            <div style={{ display: "flex", gap: 8, marginTop: 12 }}>
+              <button
+                type="button"
+                className="btn btn-secondary"
+                style={{ flex: 1, fontSize: "0.82rem", display: "flex", alignItems: "center", justifyContent: "center", gap: 6 }}
+                onClick={() => {
+                  onClose();
+                  setOnboardingModalOpen(true);
+                }}
+              >
+                <Sparkles size={14} /> Profile Wizard
+              </button>
+              <button
+                type="button"
+                className="btn btn-alert"
+                style={{ flex: 1, fontSize: "0.82rem" }}
+                onClick={async () => {
+                  await signOut();
+                  onClose();
+                }}
+              >
+                Log Out
+              </button>
+            </div>
           </div>
         ) : (
           <>

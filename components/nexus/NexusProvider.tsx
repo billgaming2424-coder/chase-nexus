@@ -17,6 +17,8 @@ import type {
   AvatarConfig,
   CustomSpaceWidgets,
   FeedId,
+  FriendConnection,
+  OnboardingData,
   Post,
   ReactionId,
   SpaceId,
@@ -25,8 +27,8 @@ import type {
 } from "@/lib/types";
 import { DEFAULT_AVATAR } from "@/lib/types";
 
-const STORAGE_KEY = "chase-nexus-alpha";
-const STORAGE_VERSION = 1;
+const STORAGE_KEY = "chase-nexus-v2";
+const STORAGE_VERSION = 2;
 
 export interface NewPostInput {
   body: string;
@@ -104,6 +106,17 @@ export interface NexusContextValue {
   addComment: (postId: string, body: string, parentId?: string) => void;
   votePoll: (postId: string, optionId: string) => void;
   voteDiscussion: (postId: string, direction: -1 | 1) => void;
+  friends: FriendConnection[];
+  addFriend: (friend: FriendConnection) => void;
+  removeFriend: (id: string) => void;
+  isFriend: (idOrHandle: string) => boolean;
+  followingHandles: string[];
+  followUser: (handle: string) => void;
+  unfollowUser: (handle: string) => void;
+  isFollowing: (handle: string) => boolean;
+  onboardingModalOpen: boolean;
+  setOnboardingModalOpen: (open: boolean) => void;
+  completeOnboarding: (data: OnboardingData) => Promise<void>;
 }
 
 const NexusContext = createContext<NexusContextValue | null>(null);
@@ -219,6 +232,139 @@ export function NexusProvider({ children }: { children: ReactNode }) {
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
   const [isAuthLoading, setIsAuthLoading] = useState(true);
   const [walletBalance, setWalletBalance] = useState(1500);
+
+  // Friends & Social Following State (Starts 100% empty until user actively adds friends!)
+  const [friends, setFriends] = useState<FriendConnection[]>([]);
+  const [followingHandles, setFollowingHandles] = useState<string[]>([]);
+  const [onboardingModalOpen, setOnboardingModalOpen] = useState(false);
+
+  const followUser = useCallback((handle: string) => {
+    const clean = handle.startsWith("@") ? handle.toLowerCase() : `@${handle.toLowerCase()}`;
+    setFollowingHandles((prev) => {
+      if (prev.includes(clean)) return prev;
+      const next = [...prev, clean];
+      try {
+        localStorage.setItem("nexus-following", JSON.stringify(next));
+      } catch {}
+      return next;
+    });
+  }, []);
+
+  const unfollowUser = useCallback((handle: string) => {
+    const clean = handle.startsWith("@") ? handle.toLowerCase() : `@${handle.toLowerCase()}`;
+    setFollowingHandles((prev) => {
+      const next = prev.filter((h) => h !== clean);
+      try {
+        localStorage.setItem("nexus-following", JSON.stringify(next));
+      } catch {}
+      return next;
+    });
+  }, []);
+
+  const isFollowing = useCallback(
+    (handle: string) => {
+      const clean = handle.startsWith("@") ? handle.toLowerCase() : `@${handle.toLowerCase()}`;
+      return followingHandles.includes(clean);
+    },
+    [followingHandles]
+  );
+
+  const addFriend = useCallback(
+    (friend: FriendConnection) => {
+      setFriends((prev) => {
+        if (prev.some((f) => f.handle.toLowerCase() === friend.handle.toLowerCase() || f.id === friend.id)) {
+          return prev;
+        }
+        const next = [...prev, friend];
+        try {
+          localStorage.setItem("nexus-friends", JSON.stringify(next));
+        } catch {}
+        return next;
+      });
+      followUser(friend.handle);
+    },
+    [followUser]
+  );
+
+  const removeFriend = useCallback((id: string) => {
+    setFriends((prev) => {
+      const next = prev.filter((f) => f.id !== id && f.handle !== id);
+      try {
+        localStorage.setItem("nexus-friends", JSON.stringify(next));
+      } catch {}
+      return next;
+    });
+  }, []);
+
+  const isFriend = useCallback(
+    (idOrHandle: string) => {
+      const clean = idOrHandle.toLowerCase();
+      return friends.some((f) => f.id.toLowerCase() === clean || f.handle.toLowerCase() === clean);
+    },
+    [friends]
+  );
+
+  const completeOnboarding = useCallback(
+    async (data: OnboardingData) => {
+      setDisplayNameState(data.displayName);
+      setUserAvatarState(data.avatar);
+      try {
+        localStorage.setItem("nexus-custom-avatar", JSON.stringify(data.avatar));
+        localStorage.setItem("nexus-onboarding-completed", "true");
+        if (currentUser?.id) {
+          localStorage.setItem(`nexus-onboarding-${currentUser.id}`, "true");
+        }
+      } catch {}
+
+      // Add followed creators to following
+      data.followedCreators.forEach((handle) => {
+        followUser(handle);
+      });
+
+      // Credit +250 Welcome Gems
+      setWalletBalance((prev) => {
+        const next = prev + 250;
+        try {
+          localStorage.setItem("nexus-gems-balance", String(next));
+        } catch {}
+        return next;
+      });
+
+      // Save profile to Supabase if authenticated
+      if (currentUser?.id) {
+        try {
+          await supabase.from("nexus_profiles").upsert({
+            id: currentUser.id,
+            display_name: data.displayName,
+            avatar_url: JSON.stringify(data.avatar),
+            bio: data.bio,
+            updated_at: new Date().toISOString(),
+          });
+        } catch {}
+      }
+
+      setOnboardingModalOpen(false);
+    },
+    [currentUser, followUser]
+  );
+
+  // Load persistent social connections (starts 100% empty until added)
+  useEffect(() => {
+    try {
+      const storedFriends = localStorage.getItem("nexus-friends");
+      if (storedFriends) {
+        setFriends(JSON.parse(storedFriends));
+      }
+      const storedFollowing = localStorage.getItem("nexus-following");
+      if (storedFollowing) {
+        setFollowingHandles(JSON.parse(storedFollowing));
+      }
+      const storedBalance = localStorage.getItem("nexus-gems-balance");
+      if (storedBalance) {
+        setWalletBalance(Number(storedBalance) || 1500);
+      }
+    } catch {}
+  }, []);
 
   // Nexus Bitmoji-style Custom Avatar State (initialized consistently to prevent hydration mismatch)
   const [userAvatar, setUserAvatarState] = useState<AvatarConfig>(DEFAULT_AVATAR);
@@ -727,6 +873,17 @@ export function NexusProvider({ children }: { children: ReactNode }) {
           };
         });
       },
+      friends,
+      addFriend,
+      removeFriend,
+      isFriend,
+      followingHandles,
+      followUser,
+      unfollowUser,
+      isFollowing,
+      onboardingModalOpen,
+      setOnboardingModalOpen,
+      completeOnboarding,
     };
   }, [
     ready,
@@ -746,6 +903,16 @@ export function NexusProvider({ children }: { children: ReactNode }) {
     customWidgets,
     quoteTarget,
     walletBalance,
+    friends,
+    addFriend,
+    removeFriend,
+    isFriend,
+    followingHandles,
+    followUser,
+    unfollowUser,
+    isFollowing,
+    onboardingModalOpen,
+    completeOnboarding,
   ]);
 
   return <NexusContext.Provider value={value}>{children}</NexusContext.Provider>;

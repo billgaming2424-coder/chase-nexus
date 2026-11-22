@@ -16,6 +16,7 @@ import { NexusProvider, useNexus } from "@/components/nexus/NexusProvider";
 import { RightRail } from "@/components/rail/RightRail";
 import { Sidebar } from "@/components/shell/Sidebar";
 import { AuthModal } from "@/components/auth/AuthModal";
+import { AccountSetupWizard } from "@/components/auth/AccountSetupWizard";
 import { NexusAvatar } from "@/components/nexus/NexusAvatar";
 import { NexusAvatarBuilder } from "@/components/nexus/NexusAvatarBuilder";
 import { ChaseOsLauncher } from "@/components/shell/ChaseOsLauncher";
@@ -29,7 +30,7 @@ function AppShellContent({ children }: { children: ReactNode }) {
   const [avatarStudioOpen, setAvatarStudioOpen] = useState(false);
   const [chaseOsOpen, setChaseOsOpen] = useState(false);
   const [isOnline, setIsOnline] = useState(true);
-  const { currentUser, userProfile, userAvatar } = useNexus();
+  const { currentUser, userProfile, userAvatar, onboardingModalOpen, setOnboardingModalOpen } = useNexus();
 
   useEffect(() => {
     setOpen(false);
@@ -218,6 +219,12 @@ function AppShellContent({ children }: { children: ReactNode }) {
 
       {/* Universal Chase Studios Account Modal */}
       <AuthModal isOpen={authModalOpen} onClose={() => setAuthModalOpen(false)} />
+
+      {/* Universal Chase Studios Account Setup Wizard */}
+      <AccountSetupWizard
+        isOpen={onboardingModalOpen}
+        onClose={() => setOnboardingModalOpen(false)}
+      />
 
       {/* Nexus Bitmoji Avatar Studio Modal */}
       <NexusAvatarBuilder isOpen={avatarStudioOpen} onClose={() => setAvatarStudioOpen(false)} />

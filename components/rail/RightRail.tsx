@@ -9,7 +9,6 @@ import { sounds } from "@/lib/sounds";
 import {
   COMMUNITIES,
   CONNECTIONS,
-  FRIEND_EXAMPLES,
   SUGGESTED,
   TRENDING,
   VIDEOS,
@@ -23,7 +22,18 @@ const THEME_SHORTCUTS: { id: ThemeName; label: string }[] = [
 ];
 
 export function RightRail() {
-  const { theme, setTheme, walletBalance, tipCreator } = useNexus();
+  const {
+    theme,
+    setTheme,
+    walletBalance,
+    tipCreator,
+    friends,
+    removeFriend,
+    isFollowing,
+    followUser,
+    unfollowUser,
+    setOnboardingModalOpen,
+  } = useNexus();
   const [account, setAccount] = useState<string | null>(null);
   const [showChasePlusModal, setShowChasePlusModal] = useState(false);
   const [railToast, setRailToast] = useState<string | null>(null);
@@ -49,19 +59,44 @@ export function RightRail() {
       <section className="rail-card">
         <h2>Suggested creators</h2>
         <ul className="plain-list">
-          {SUGGESTED.map((creator) => (
-            <li key={creator.handle}>
-              <span>
-                <span className="author-name">
-                  <strong>{creator.name}</strong>
-                  {creator.verified ? <ChaseBadge type={creator.badgeType} /> : null}
+          {SUGGESTED.map((creator) => {
+            const following = isFollowing(creator.handle);
+            return (
+              <li
+                key={creator.handle}
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  gap: 8,
+                }}
+              >
+                <span style={{ overflow: "hidden" }}>
+                  <span className="author-name">
+                    <strong>{creator.name}</strong>
+                    {creator.verified ? <ChaseBadge type={creator.badgeType} /> : null}
+                  </span>
+                  <small style={{ whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", display: "block" }}>
+                    {creator.handle} · {creator.note}
+                  </small>
                 </span>
-                <small>
-                  {creator.handle} · {creator.note}
-                </small>
-              </span>
-            </li>
-          ))}
+                <button
+                  type="button"
+                  onClick={() => (following ? unfollowUser(creator.handle) : followUser(creator.handle))}
+                  className={following ? "btn btn-ghost btn-sm" : "btn btn-primary btn-sm"}
+                  style={{
+                    fontSize: "0.72rem",
+                    padding: "4px 10px",
+                    borderRadius: 12,
+                    flexShrink: 0,
+                    touchAction: "manipulation",
+                  }}
+                >
+                  {following ? "Following ✓" : "+ Follow"}
+                </button>
+              </li>
+            );
+          })}
         </ul>
       </section>
 
@@ -188,7 +223,7 @@ export function RightRail() {
         </ul>
       </section>
 
-      {/* 6. Active Friends & Online Presence (Mockup Match) */}
+      {/* 6. Active Friends & Online Presence (Empty until user adds friends) */}
       <section className="rail-card active-friends-card">
         <div className="card-head-row">
           <h2>Active Friends</h2>
@@ -196,62 +231,105 @@ export function RightRail() {
             See all
           </Link>
         </div>
-        <ul className="friend-streak-list" style={{ marginTop: 10 }}>
-          {FRIEND_EXAMPLES.map((friend) => (
-            <li
-              key={friend.name}
-              className="friend-streak-item"
-              style={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "space-between",
-                padding: "6px 0",
-              }}
+        {friends.length === 0 ? (
+          <div style={{ textAlign: "center", padding: "18px 8px" }}>
+            <p style={{ fontSize: "0.8rem", color: "var(--muted)", margin: "0 0 12px", lineHeight: 1.4 }}>
+              No friends added yet. Connect with creators or add friends to build streaks and chat!
+            </p>
+            <button
+              type="button"
+              className="btn btn-primary btn-sm"
+              style={{ fontSize: "0.76rem", padding: "6px 14px", borderRadius: 12, touchAction: "manipulation" }}
+              onClick={() => setOnboardingModalOpen(true)}
             >
-              <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                <span
-                  className="avatar avatar-sm"
-                  style={{
-                    background: "rgba(124, 58, 237, 0.25)",
-                    border: "1px solid rgba(168, 85, 247, 0.35)",
-                    width: 32,
-                    height: 32,
-                    fontSize: "0.85rem",
-                    fontWeight: 700,
-                  }}
-                >
-                  {friend.name.slice(0, 1)}
-                </span>
-                <div>
-                  <div style={{ fontSize: "0.88rem", fontWeight: 600, display: "flex", alignItems: "center", gap: 4 }}>
-                    {friend.name}
-                    {friend.verified ? <ChaseBadge size={11} /> : null}
-                  </div>
-                  <div style={{ display: "flex", alignItems: "center", gap: 5, fontSize: "0.72rem", color: "#4ade80" }}>
-                    <span
+              + Find Friends
+            </button>
+          </div>
+        ) : (
+          <ul className="friend-streak-list" style={{ marginTop: 10 }}>
+            {friends.map((friend) => (
+              <li
+                key={friend.id}
+                className="friend-streak-item"
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  padding: "6px 0",
+                }}
+              >
+                <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                  <span
+                    className="avatar avatar-sm"
+                    style={{
+                      background: "rgba(124, 58, 237, 0.25)",
+                      border: "1px solid rgba(168, 85, 247, 0.35)",
+                      width: 32,
+                      height: 32,
+                      fontSize: "0.85rem",
+                      fontWeight: 700,
+                    }}
+                  >
+                    {friend.name.slice(0, 1)}
+                  </span>
+                  <div>
+                    <div style={{ fontSize: "0.88rem", fontWeight: 600, display: "flex", alignItems: "center", gap: 4 }}>
+                      {friend.name}
+                      {friend.verified ? <ChaseBadge size={11} /> : null}
+                    </div>
+                    <div
                       style={{
-                        width: 7,
-                        height: 7,
-                        borderRadius: "50%",
-                        background: "#22c55e",
-                        boxShadow: "0 0 8px #22c55e",
-                        display: "inline-block",
+                        display: "flex",
+                        alignItems: "center",
+                        gap: 5,
+                        fontSize: "0.72rem",
+                        color: friend.online ? "#4ade80" : "var(--muted)",
                       }}
-                    />
-                    <span>Online</span>
+                    >
+                      <span
+                        style={{
+                          width: 7,
+                          height: 7,
+                          borderRadius: "50%",
+                          background: friend.online ? "#22c55e" : "#64748b",
+                          boxShadow: friend.online ? "0 0 8px #22c55e" : "none",
+                          display: "inline-block",
+                        }}
+                      />
+                      <span>{friend.online ? "Online" : "Offline"}</span>
+                    </div>
                   </div>
                 </div>
-              </div>
 
-              {friend.streak > 0 ? (
-                <span className="streak-pill" title={`${friend.streak}-day streak`}>
-                  <Flame size={12} className="flame-icon" aria-hidden="true" />
-                  <strong>{friend.streak}</strong>
-                </span>
-              ) : null}
-            </li>
-          ))}
-        </ul>
+                <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                  {friend.streak > 0 ? (
+                    <span className="streak-pill" title={`${friend.streak}-day streak`}>
+                      <Flame size={12} className="flame-icon" aria-hidden="true" />
+                      <strong>{friend.streak}</strong>
+                    </span>
+                  ) : null}
+                  <button
+                    type="button"
+                    onClick={() => removeFriend(friend.id)}
+                    title="Remove friend"
+                    aria-label={`Remove ${friend.name}`}
+                    style={{
+                      background: "none",
+                      border: "none",
+                      color: "var(--muted)",
+                      cursor: "pointer",
+                      padding: "2px",
+                      display: "flex",
+                      alignItems: "center",
+                    }}
+                  >
+                    <X size={14} />
+                  </button>
+                </div>
+              </li>
+            ))}
+          </ul>
+        )}
       </section>
 
       {/* 7. Connected External Accounts */}

@@ -25,7 +25,18 @@ function isFeedId(value: string | null): value is FeedId {
 
 export function HomeFeed() {
   const params = useSearchParams();
-  const { posts, activeSpace, setActiveSpace, customWidgets, setCustomWidget, userAvatar } = useNexus();
+  const {
+    posts,
+    activeSpace,
+    setActiveSpace,
+    customWidgets,
+    setCustomWidget,
+    userAvatar,
+    friends,
+    isFriend,
+    isFollowing,
+    setOnboardingModalOpen,
+  } = useNexus();
   const [tab, setTab] = useState<FeedId>("for-you");
   const [query, setQuery] = useState("");
   const [tag, setTag] = useState("");
@@ -46,13 +57,24 @@ export function HomeFeed() {
   const visible = useMemo(() => {
     const needle = query.trim().toLowerCase();
     return posts.filter((post) => {
-      const inFeed = post.feeds.includes(tab) || (post.yours && (tab === "for-you" || tab === "following"));
+      let inFeed = false;
+      const isYours = Boolean(post.yours);
+      if (tab === "for-you") {
+        inFeed = post.feeds.includes("for-you") || isYours;
+      } else if (tab === "following") {
+        inFeed = isYours || isFollowing(post.author.handle);
+      } else if (tab === "friends") {
+        inFeed = isYours || isFriend(post.author.handle) || isFriend(post.author.name);
+      } else {
+        inFeed = post.feeds.includes(tab);
+      }
+
       const haystack = [post.body, post.author.name, post.author.handle, post.hashtags.join(" ")].join(" ").toLowerCase();
       const matchesQuery = !needle || haystack.includes(needle);
       const matchesTag = !tag || post.hashtags.some((item) => item.toLowerCase() === tag.toLowerCase());
       return inFeed && matchesQuery && matchesTag;
     });
-  }, [posts, query, tab, tag]);
+  }, [posts, query, tab, tag, isFollowing, isFriend]);
 
   const currentSpaceMeta = SPACES.find((s) => s.id === activeSpace) ?? SPACES[0];
 
@@ -280,10 +302,10 @@ export function HomeFeed() {
               ))}
             </div>
             <label className="search">
-              <span className="sr-only">Search this preview</span>
+              <span className="sr-only">Search feed</span>
               <input
                 value={query}
-                placeholder="Search this preview"
+                placeholder="Search posts, creators, #hashtags..."
                 onChange={(event) => setQuery(event.target.value)}
               />
             </label>
@@ -300,7 +322,41 @@ export function HomeFeed() {
 
           <div className="post-list">
             {visible.length === 0 ? (
-              <p className="empty card">Nothing in this preview matches the current feed.</p>
+              tab === "friends" ? (
+                <div className="empty card" style={{ textAlign: "center", padding: "36px 20px" }}>
+                  <div style={{ fontSize: "2.4rem", marginBottom: 10 }}>👥</div>
+                  <h3 style={{ fontSize: "1.1rem", marginBottom: 6, color: "#fff" }}>No posts from friends yet</h3>
+                  <p style={{ color: "var(--muted)", fontSize: "0.85rem", maxWidth: 420, margin: "0 auto 16px" }}>
+                    Your friends feed is completely empty until you connect with people. Add friends or launch the setup wizard to connect!
+                  </p>
+                  <button
+                    type="button"
+                    className="btn btn-primary"
+                    style={{ fontSize: "0.82rem", padding: "8px 18px", borderRadius: 12 }}
+                    onClick={() => setOnboardingModalOpen(true)}
+                  >
+                    + Find Friends & Creators
+                  </button>
+                </div>
+              ) : tab === "following" ? (
+                <div className="empty card" style={{ textAlign: "center", padding: "36px 20px" }}>
+                  <div style={{ fontSize: "2.4rem", marginBottom: 10 }}>✨</div>
+                  <h3 style={{ fontSize: "1.1rem", marginBottom: 6, color: "#fff" }}>You aren't following anyone yet</h3>
+                  <p style={{ color: "var(--muted)", fontSize: "0.85rem", maxWidth: 440, margin: "0 auto 16px" }}>
+                    Follow Chase Studios game directors, community moderators, and video creators to see their exclusive updates here.
+                  </p>
+                  <button
+                    type="button"
+                    className="btn btn-primary"
+                    style={{ fontSize: "0.82rem", padding: "8px 18px", borderRadius: 12 }}
+                    onClick={() => setOnboardingModalOpen(true)}
+                  >
+                    Explore Suggested Creators
+                  </button>
+                </div>
+              ) : (
+                <p className="empty card">No posts found matching the current search or feed filter.</p>
+              )
             ) : (
               visible.map((post) => <PostCard key={post.id} post={post} mode={tab} onTag={setTag} />)
             )}

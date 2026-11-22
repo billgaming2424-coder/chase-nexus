@@ -349,3 +349,24 @@ export interface NotificationItem {
   avatarConfig?: AvatarConfig;
   actionLabel?: string;
 }
+
+export interface FriendConnection {
+  id: string;
+  name: string;
+  handle: string;
+  verified: boolean;
+  streak: number;
+  badgeType?: "chase-account" | "staff" | "official";
+  online?: boolean;
+  avatar?: AvatarConfig;
+  bio?: string;
+}
+
+export interface OnboardingData {
+  displayName: string;
+  handle: string;
+  bio: string;
+  interests: string[];
+  avatar: AvatarConfig;
+  followedCreators: string[];
+}
