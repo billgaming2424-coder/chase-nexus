@@ -842,6 +842,7 @@ export function MessagesScreen() {
   const { userAvatar, walletBalance, tipCreator } = useNexus();
   const [conversations, setConversations] = useState<DemoConversation[]>(CONVERSATIONS);
   const [activeId, setActiveId] = useState<string>("avery");
+  const [mobileActiveView, setMobileActiveView] = useState<"threads" | "chat">("threads");
   const [inputMessage, setInputMessage] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
   const [isRecordingVoice, setIsRecordingVoice] = useState(false);
@@ -964,7 +965,7 @@ export function MessagesScreen() {
         </p>
       </header>
 
-      <div className="messages-layout card">
+      <div className={`messages-layout card view-${mobileActiveView}`}>
         {/* Conversations Sidebar */}
         <div className="messages-sidebar">
           <div className="messages-sidebar-head">
@@ -1002,7 +1003,10 @@ export function MessagesScreen() {
                   <button
                     type="button"
                     className={`chat-thread-btn ${isSelected ? "is-active" : ""}`}
-                    onClick={() => setActiveId(conv.id)}
+                    onClick={() => {
+                      setActiveId(conv.id);
+                      setMobileActiveView("chat");
+                    }}
                   >
                     <span className="avatar avatar-sm">{conv.name.slice(0, 1)}</span>
                     <div className="chat-thread-meta">
@@ -1030,14 +1034,25 @@ export function MessagesScreen() {
         {/* Active Conversation Pane */}
         <div className="messages-pane">
           <header className="chat-pane-head">
-            <div className="author-name">
-              <span className="avatar avatar-sm">{activeChat.name.slice(0, 1)}</span>
-              <div>
-                <span className="author-name">
-                  <strong>{activeChat.name}</strong>
-                  {activeChat.verified ? <ChaseBadge type={activeChat.badgeType} /> : null}
-                </span>
-                <p className="hint">{activeChat.handle}</p>
+            <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+              <button
+                type="button"
+                className="btn btn-ghost btn-sm mobile-chat-back-btn"
+                onClick={() => setMobileActiveView("threads")}
+                style={{ padding: "4px 8px", fontSize: "0.82rem", borderRadius: 8 }}
+                aria-label="Back to conversations"
+              >
+                ← Chats
+              </button>
+              <div className="author-name">
+                <span className="avatar avatar-sm">{activeChat.name.slice(0, 1)}</span>
+                <div>
+                  <span className="author-name">
+                    <strong>{activeChat.name}</strong>
+                    {activeChat.verified ? <ChaseBadge type={activeChat.badgeType} /> : null}
+                  </span>
+                  <p className="hint">{activeChat.handle}</p>
+                </div>
               </div>
             </div>
 

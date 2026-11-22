@@ -71,14 +71,24 @@ function AppShellContent({ children }: { children: ReactNode }) {
             <button type="button" aria-label="Open menu" onClick={() => setOpen(true)}>
               <Menu size={20} />
             </button>
-            <span className="mobile-brand">Chase Nexus</span>
-            <div style={{ marginLeft: "auto", display: "flex", alignItems: "center", gap: 8 }}>
+            <div className="mobile-brand-wrap" style={{ display: "flex", alignItems: "center", gap: 8 }}>
+              {/* Official Chase Studios Shield Logo */}
+              <img
+                src="/chase-studios-logo.svg"
+                alt="Chase Studios Shield"
+                width={24}
+                height={24}
+                style={{ objectFit: "contain", filter: "drop-shadow(0 0 8px rgba(168, 85, 247, 0.5))" }}
+              />
+              <span className="mobile-brand">CHASE NEXUS</span>
+            </div>
+            <div style={{ marginLeft: "auto", display: "flex", alignItems: "center", gap: 10 }}>
               <button
                 type="button"
                 className="mobile-avatar-trigger"
                 aria-label="Open Bitmoji Studio"
                 onClick={() => setAvatarStudioOpen(true)}
-                style={{ background: "none", border: "none", padding: 0, cursor: "pointer" }}
+                style={{ background: "none", border: "none", padding: 0, cursor: "pointer", display: "flex", alignItems: "center" }}
               >
                 <NexusAvatar config={userAvatar} size={28} showStickerBadge />
               </button>
@@ -87,13 +97,14 @@ function AppShellContent({ children }: { children: ReactNode }) {
                 className="mobile-auth-trigger"
                 aria-label="Chase Studios Account"
                 onClick={() => setAuthModalOpen(true)}
+                style={{ background: "none", border: "none", padding: 0, cursor: "pointer", display: "flex", alignItems: "center" }}
               >
                 {currentUser ? (
-                  <span className="badge-chase-account chase-badge" style={{ width: 18, height: 18 }}>
+                  <span className="badge-chase-account chase-badge" style={{ width: 22, height: 22 }}>
                     ✓
                   </span>
                 ) : (
-                  <ShieldCheck size={20} className="purple-icon" />
+                  <ShieldCheck size={22} className="purple-icon" />
                 )}
               </button>
             </div>
@@ -104,27 +115,32 @@ function AppShellContent({ children }: { children: ReactNode }) {
               style={{
                 background: "#7f1d1d",
                 color: "#fecaca",
-                padding: "8px 16px",
+                padding: "6px 12px",
                 textAlign: "center",
-                fontSize: "0.85rem",
+                fontSize: "0.8rem",
                 fontWeight: 600,
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
-                gap: 8,
+                gap: 6,
               }}
             >
-              <span>⚠️ Network connection offline · Operating in offline cached mode. Posts will sync when reconnected.</span>
+              <span>⚠️ Offline cached mode. Syncs when reconnected.</span>
             </div>
           )}
 
           <div className="banner cloud-banner">
             <div className="banner-content">
               <span className="status-dot live" aria-hidden="true" />
-              <span>
+              <span className="cloud-banner-desktop">
                 {currentUser
                   ? `Signed in as ${userProfile?.display_name || currentUser.email} · Chase Studios Cloud active`
                   : "Chase Studios Cloud live. Sign in with your Chase Account to save posts and verify your profile."}
+              </span>
+              <span className="cloud-banner-mobile">
+                {currentUser
+                  ? `${userProfile?.display_name || "Account"} · Cloud Active`
+                  : "Chase Cloud Live · Tap to Sign In"}
               </span>
             </div>
             {!currentUser ? (

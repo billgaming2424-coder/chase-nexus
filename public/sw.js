@@ -1,6 +1,6 @@
-// Chase Nexus Service Worker · Production v12 (Fancy Clean UI Release)
-const CACHE_NAME = "chase-nexus-v12";
-const PRECACHE_ASSETS = ["/icon.svg"];
+// Chase Nexus Service Worker · Production v13 (Decluttered Mobile & Authentic Splash Screen)
+const CACHE_NAME = "chase-nexus-v13";
+const PRECACHE_ASSETS = ["/icon.svg", "/chase-studios-logo.svg", "/splash.js"];
 
 self.addEventListener("install", (event) => {
   self.skipWaiting();

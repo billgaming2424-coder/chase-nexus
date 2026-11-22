@@ -71,6 +71,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
     <html lang="en" data-theme="chase-purple" suppressHydrationWarning>
       <body suppressHydrationWarning>
         <script dangerouslySetInnerHTML={{ __html: themeBoot }} />
+        <script src="/splash.js" defer />
         <AppShell>{children}</AppShell>
       </body>
     </html>
