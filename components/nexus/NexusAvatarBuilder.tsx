@@ -42,6 +42,9 @@ const SKIN_TONES = [
   { label: "Deep Obsidian", value: "#4a2a18" },
   { label: "Cosmic Amethyst", value: "#7c3aed" },
   { label: "Neon Cyber", value: "#06b6d4" },
+  { label: "Pure Cosmic White", value: "#f8fafc" },
+  { label: "Xbox Gamer Green", value: "#22c55e" },
+  { label: "Obsidian Void Chrome", value: "#09090b" },
 ];
 
 const HAIR_STYLES: { id: AvatarConfig["hairStyle"]; label: string }[] = [
@@ -78,6 +81,8 @@ const EYE_SHAPES: { id: AvatarConfig["eyeShape"]; label: string }[] = [
   { id: "round", label: "Expressive Round" },
   { id: "sharp", label: "Determined Anime" },
   { id: "starry", label: "Starry Sparkle" },
+  { id: "snoo-glow", label: "Alien Snoo Glow" },
+  { id: "cyber-swirl", label: "Cyber Hypno Swirl" },
 ];
 
 const EYE_COLORS = [
@@ -128,6 +133,9 @@ const OUTFITS: { id: AvatarConfig["outfit"]; label: string; desc: string }[] = [
   { id: "unimon-master", label: "Unimon Grandmaster", desc: "Gold trim ceremonial robes with monster sphere crest" },
   { id: "retro-synthwave", label: "Retro Synthwave 84", desc: "Electric magenta & cyan geometric 80s track jacket" },
   { id: "royal-cape", label: "Chase Studios Royal Cape", desc: "Regal purple velvet cape with solid gold chain clasp" },
+  { id: "spartan-tactical", label: "Spartan MJOLNIR Armor", desc: "Halo Master Chief olive tactical plate & gold shield" },
+  { id: "xbox-green-bomber", label: "Xbox 2005 Satin Bomber", desc: "Official Xbox 360 green varsity jacket with stitched crest" },
+  { id: "snoo-onesie", label: "Cosmic Snoo Plush Onesie", desc: "Pure chalk white plush onesie with glowing orange pull" },
 ];
 
 const AURAS: { id: NonNullable<AvatarConfig["aura"]>; label: string; desc: string; icon: string }[] = [
@@ -154,6 +162,9 @@ const ACCESSORIES: {
   { id: "cat-ears", label: "Cyber Neko Headband", category: "headwear", icon: "🐱" },
   { id: "halo", label: "Angelic Celestial Halo", category: "headwear", icon: "✨" },
   { id: "demon-horns", label: "Crimson Demon Horns", category: "headwear", icon: "😈" },
+  { id: "snoo-antenna", label: "Curved Snoo Alien Antenna", category: "headwear", icon: "📡" },
+  { id: "spartan-helmet", label: "Spartan Gold Visor Helmet", category: "headwear", icon: "🪖" },
+  { id: "floating-drone", label: "Halo Companion Drone", category: "headwear", icon: "🛸" },
   { id: "cyber-visor", label: "Neon Cyber Visor", category: "eyewear", icon: "🕶️" },
   { id: "aviators", label: "Gold Teardrop Aviators", category: "eyewear", icon: "🕶️" },
   { id: "heart-shades", label: "Ruby Heart Sunglasses", category: "eyewear", icon: "❤️" },
@@ -162,6 +173,7 @@ const ACCESSORIES: {
   { id: "oni-mask", label: "Cyber Oni Half-Mask", category: "face", icon: "👺" },
   { id: "earring", label: "Paired Gold Earring Hoops", category: "jewelry", icon: "💍" },
   { id: "paired-studs", label: "Paired Diamond Studs", category: "jewelry", icon: "💎" },
+  { id: "boxing-gloves", label: "Xbox Red Boxing Gloves", category: "jewelry", icon: "🥊" },
 ];
 
 const PROPS: { id: NonNullable<AvatarConfig["prop"]>; label: string; icon: string }[] = [
@@ -173,6 +185,9 @@ const PROPS: { id: NonNullable<AvatarConfig["prop"]>; label: string; icon: strin
   { id: "laser-sword", label: "Plasma Energy Saber", icon: "⚔️" },
   { id: "coffee-mug", label: "Chase Studios Ceramic Mug", icon: "☕" },
   { id: "trophy", label: "Championship Gold Cup", icon: "🏆" },
+  { id: "mini-warthog", label: "Mini RC Warthog Rover", icon: "🛞" },
+  { id: "guitar-axe", label: "Rock Hero Axe Guitar", icon: "🎸" },
+  { id: "retro-skateboard", label: "2000s Neon Skateboard", icon: "🛹" },
 ];
 
 const MOOD_POSES: { id: NonNullable<AvatarConfig["pose"]>; label: string; icon: string }[] = [
@@ -200,6 +215,9 @@ const MOOD_POSES: { id: NonNullable<AvatarConfig["pose"]>; label: string; icon: 
   { id: "cry-laugh", label: "Dead Laughing", icon: "😂" },
   { id: "co-op", label: "Co-Op Squad", icon: "🤝" },
   { id: "salute", label: "Respect Salute", icon: "🫡" },
+  { id: "achievement", label: "🏆 Achievement Unlocked! 100G", icon: "🏆" },
+  { id: "guitar-riff", label: "Rock Hero Guitar Riff", icon: "🎸" },
+  { id: "snoo-bounce", label: "Cosmic Snoo Bounce", icon: "👾" },
 ];
 
 const DUO_POSES = [
@@ -220,6 +238,9 @@ const BACKGROUNDS: { id: AvatarConfig["background"]; label: string; preview: str
   { id: "cosmic-stars", label: "Starlight Void", preview: "radial-gradient(circle, #3b0764, #030712)" },
   { id: "cyber-grid", label: "Cyber Grid", preview: "linear-gradient(135deg, #0f172a, #701a75)" },
   { id: "retro-sunset", label: "Retro Sunset", preview: "linear-gradient(180deg, #f43f5e, #0f172a)" },
+  { id: "xbox-360-blade", label: "Xbox 360 Blades", preview: "linear-gradient(135deg, #107c10, #22c55e, #0f172a)" },
+  { id: "retro-nxe-sphere", label: "NXE 3D Sphere Dome", preview: "radial-gradient(circle, #4ade80, #052e16)" },
+  { id: "reddit-vault", label: "Reddit Collectible Vault", preview: "linear-gradient(135deg, #312e81, #ff4500)" },
 ];
 
 const DEFAULT_PARTNERS = [
@@ -286,6 +307,9 @@ export function NexusAvatarBuilder({ isOpen, onClose }: NexusAvatarBuilderProps)
       { id: "p1", name: "Gamer Rig", avatar: { ...DEFAULT_AVATAR, prop: "rgb-controller", accessory: "gamer-headset" } },
       { id: "p2", name: "DEADEYE Outlaw", avatar: { ...DEFAULT_AVATAR, outfit: "survivor-duster", accessory: "bandana", prop: "laser-sword" } },
       { id: "p3", name: "Gala Velvet", avatar: { ...DEFAULT_AVATAR, outfit: "purple-tux", accessory: "crown", prop: "trophy" } },
+      { id: "p4", name: "Spartan 117", avatar: { ...DEFAULT_AVATAR, skinTone: "#22c55e", outfit: "spartan-tactical", accessory: "spartan-helmet", prop: "mini-warthog", background: "xbox-360-blade", pose: "achievement" } },
+      { id: "p5", name: "Cosmic Snoo", avatar: { ...DEFAULT_AVATAR, skinTone: "#f8fafc", eyeShape: "snoo-glow", eyeColor: "#ff4500", outfit: "snoo-onesie", accessory: "snoo-antenna", background: "reddit-vault", pose: "snoo-bounce" } },
+      { id: "p6", name: "Xbox Rock Star", avatar: { ...DEFAULT_AVATAR, skinTone: "#f8cbb0", outfit: "xbox-green-bomber", accessory: "boxing-gloves", prop: "guitar-axe", background: "retro-nxe-sphere", pose: "guitar-riff" } },
     ];
   });
 

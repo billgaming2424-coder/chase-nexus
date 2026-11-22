@@ -35,7 +35,7 @@ function renderPersonaCharacter(
   const skin = c.skinTone || "#f8cbb0";
   const hair = c.hairColor || "#1e1b2e";
   const eye = c.eyeColor || "#7c3aed";
-  const isHat = ["snapback", "snapback-back", "beanie", "crown"].includes(c.accessory);
+  const isHat = ["snapback", "snapback-back", "beanie", "crown", "spartan-helmet"].includes(c.accessory);
 
   return (
     <g key={keyPrefix} id={`${keyPrefix}-persona`}>
@@ -242,6 +242,46 @@ function renderPersonaCharacter(
             <circle cx="100" cy="178" r="6" fill="#38bdf8" stroke="#fbbf24" strokeWidth="2" />
           </g>
         )}
+
+        {/* Xbox 360 / Halo Master Chief Spartan Tactical Armor */}
+        {c.outfit === "spartan-tactical" && (
+          <g id={`${keyPrefix}-spartan-armor`}>
+            <path d="M44 158 C44 130 156 130 156 158 L160 200 L40 200 Z" fill="#2d4a22" stroke="#1b3014" strokeWidth="2" />
+            <path d="M72 148 L100 182 L128 148 Z" fill="#18181b" />
+            <polygon points="100,154 118,172 100,192 82,172" fill="url(#spartan-gold-visor)" stroke="#854d0e" strokeWidth="1.5" />
+            <rect x="42" y="162" width="22" height="14" rx="4" fill="#365e29" stroke="#1b3014" strokeWidth="1.5" />
+            <rect x="136" y="162" width="22" height="14" rx="4" fill="#365e29" stroke="#1b3014" strokeWidth="1.5" />
+            <line x1="64" y1="176" x2="84" y2="176" stroke="#15240f" strokeWidth="2" />
+            <line x1="116" y1="176" x2="136" y2="176" stroke="#15240f" strokeWidth="2" />
+            <circle cx="100" cy="172" r="3.5" fill="#22d3ee" stroke="#ffffff" strokeWidth="1" />
+          </g>
+        )}
+
+        {/* Xbox 360 2005 Emerald Satin Varsity Bomber */}
+        {c.outfit === "xbox-green-bomber" && (
+          <g id={`${keyPrefix}-xbox-bomber`}>
+            <path d="M46 160 C46 134 154 134 154 160 L158 200 L42 200 Z" fill="#107c10" stroke="#0b540b" strokeWidth="2" />
+            <path d="M76 150 L100 182 L124 150 Z" fill="#f8fafc" />
+            <path d="M82 152 L100 178 L118 152 Z" fill="#18181b" />
+            <line x1="100" y1="178" x2="100" y2="200" stroke="#cbd5e1" strokeWidth="3" strokeDasharray="3 2" />
+            <path d="M44 166 L62 178 L56 200 L42 200 Z" fill="#e2e8f0" />
+            <path d="M156 166 L138 178 L144 200 L158 200 Z" fill="#e2e8f0" />
+            <circle cx="78" cy="178" r="8" fill="#15803d" stroke="#22c55e" strokeWidth="1.5" />
+            <path d="M74 174 L82 182" stroke="#ffffff" strokeWidth="2" strokeLinecap="round" />
+            <path d="M82 174 L74 182" stroke="#ffffff" strokeWidth="2" strokeLinecap="round" />
+          </g>
+        )}
+
+        {/* Reddit Snoo Mascot Plush Onesie */}
+        {c.outfit === "snoo-onesie" && (
+          <g id={`${keyPrefix}-snoo-onesie`}>
+            <path d="M46 160 C46 132 154 132 154 160 L158 200 L42 200 Z" fill="#f8fafc" stroke="#cbd5e1" strokeWidth="2" />
+            <ellipse cx="100" cy="154" rx="26" ry="10" fill="#e2e8f0" />
+            <ellipse cx="100" cy="184" rx="28" ry="16" fill="#f1f5f9" stroke="#cbd5e1" strokeWidth="1.5" />
+            <line x1="100" y1="160" x2="100" y2="200" stroke="#94a3b8" strokeWidth="2" />
+            <circle cx="100" cy="168" r="3.5" fill="#ff4500" stroke="#ffffff" strokeWidth="1" />
+          </g>
+        )}
       </g>
 
       {/* 3. Neck */}
@@ -312,6 +352,30 @@ function renderPersonaCharacter(
             <ellipse cx="118" cy="98" rx="9" ry="7" fill="#ffffff" />
             <circle cx="118" cy="98" r="4.5" fill={eye} />
             <polygon points="118,93 120,97 124,98 120,99 118,103 116,99 112,98 116,97" fill="#ffffff" />
+          </g>
+        )}
+
+        {/* Reddit Mascot Snoo Alien Glow Eyes */}
+        {c.eyeShape === "snoo-glow" && (
+          <g id={`${keyPrefix}-eyes-snoo-glow`}>
+            <circle cx="82" cy="98" r="8.5" fill={eye === "#7c3aed" ? "#ff4500" : eye} stroke="#b91c1c" strokeWidth="1.5" />
+            <circle cx="82" cy="98" r="5.5" fill="#ffffff" opacity="0.35" />
+            <circle cx="84" cy="95" r="2.5" fill="#ffffff" />
+            <circle cx="118" cy="98" r="8.5" fill={eye === "#7c3aed" ? "#ff4500" : eye} stroke="#b91c1c" strokeWidth="1.5" />
+            <circle cx="118" cy="98" r="5.5" fill="#ffffff" opacity="0.35" />
+            <circle cx="120" cy="95" r="2.5" fill="#ffffff" />
+          </g>
+        )}
+
+        {/* Cyber Anime Hypnotic Spiral Swirl */}
+        {c.eyeShape === "cyber-swirl" && (
+          <g id={`${keyPrefix}-eyes-cyber-swirl`}>
+            <circle cx="82" cy="98" r="8.5" fill="#09090b" stroke={eye} strokeWidth="2" />
+            <path d="M82 98 A 2 2 0 0 1 84 96 A 4 4 0 0 1 86 98 A 6 6 0 0 1 80 102 A 8 8 0 0 1 74 95" stroke={eye} strokeWidth="1.8" fill="none" strokeLinecap="round" />
+            <circle cx="82" cy="98" r="2" fill="#ffffff" />
+            <circle cx="118" cy="98" r="8.5" fill="#09090b" stroke={eye} strokeWidth="2" />
+            <path d="M118 98 A 2 2 0 0 1 120 96 A 4 4 0 0 1 122 98 A 6 6 0 0 1 116 102 A 8 8 0 0 1 110 95" stroke={eye} strokeWidth="1.8" fill="none" strokeLinecap="round" />
+            <circle cx="118" cy="98" r="2" fill="#ffffff" />
           </g>
         )}
 
@@ -669,6 +733,71 @@ function renderPersonaCharacter(
         </g>
       )}
 
+      {/* Reddit Alien Mascot Curved Snoo Antenna */}
+      {c.accessory === "snoo-antenna" && (
+        <g id={`${keyPrefix}-snoo-antenna`}>
+          <path
+            d="M100 54 Q100 32 115 28 Q125 24 116 14"
+            stroke="#e2e8f0"
+            strokeWidth="4"
+            strokeLinecap="round"
+            fill="none"
+          />
+          <circle cx="116" cy="12" r="8" fill="url(#snoo-alien-glow)" />
+          <circle cx="116" cy="12" r="5" fill="#ff4500" stroke="#ffffff" strokeWidth="1.5" />
+          <circle cx="114" cy="10" r="1.5" fill="#ffffff" />
+        </g>
+      )}
+
+      {/* Halo 343 / Xbox Floating Orbital Drone */}
+      {c.accessory === "floating-drone" && (
+        <g id={`${keyPrefix}-floating-drone`}>
+          <ellipse cx="158" cy="54" rx="16" ry="16" fill="#334155" stroke="#64748b" strokeWidth="2" />
+          <circle cx="158" cy="54" r="10" fill="#0f172a" />
+          <circle cx="158" cy="54" r="6" fill="#38bdf8" />
+          <circle cx="156" cy="52" r="2" fill="#ffffff" />
+          <ellipse cx="158" cy="54" rx="22" ry="7" fill="none" stroke="#22d3ee" strokeWidth="2" strokeDasharray="6 3" />
+          <line x1="158" y1="70" x2="158" y2="78" stroke="#38bdf8" strokeWidth="2.5" strokeLinecap="round" opacity="0.8" />
+        </g>
+      )}
+
+      {/* Halo Master Chief Spartan Tactical Visor Helmet */}
+      {c.accessory === "spartan-helmet" && (
+        <g id={`${keyPrefix}-spartan-helmet`}>
+          <path
+            d="M52 92 C50 40 150 40 148 92 C148 116 144 142 100 144 C56 142 52 116 52 92 Z"
+            fill="#2d4a22"
+            stroke="#1b3014"
+            strokeWidth="2.5"
+          />
+          <path d="M68 60 Q100 52 132 60 L134 68 Q100 62 66 68 Z" fill="#3b5e2d" />
+          <path
+            d="M62 84 Q100 80 138 84 L132 108 Q100 114 68 108 Z"
+            fill="url(#spartan-gold-visor)"
+            stroke="#713f12"
+            strokeWidth="2"
+          />
+          <line x1="72" y1="88" x2="128" y2="88" stroke="#ffffff" strokeWidth="2" opacity="0.75" />
+          <rect x="88" y="122" width="24" height="14" rx="3" fill="#18181b" stroke="#334155" strokeWidth="1.5" />
+          <line x1="94" y1="126" x2="106" y2="126" stroke="#475569" strokeWidth="1.5" />
+          <line x1="94" y1="131" x2="106" y2="131" stroke="#475569" strokeWidth="1.5" />
+          <circle cx="58" cy="112" r="3.5" fill="#facc15" stroke="#18181b" strokeWidth="1" />
+          <circle cx="142" cy="112" r="3.5" fill="#facc15" stroke="#18181b" strokeWidth="1" />
+        </g>
+      )}
+
+      {/* Xbox 360 Avatar Red Boxing Gloves */}
+      {c.accessory === "boxing-gloves" && (
+        <g id={`${keyPrefix}-boxing-gloves`}>
+          <ellipse cx="60" cy="170" rx="14" ry="16" fill="#dc2626" stroke="#991b1b" strokeWidth="2" />
+          <rect x="54" y="156" width="12" height="6" rx="2" fill="#f8fafc" stroke="#94a3b8" strokeWidth="1" />
+          <ellipse cx="68" cy="172" rx="5" ry="7" fill="#b91c1c" />
+          <ellipse cx="140" cy="170" rx="14" ry="16" fill="#dc2626" stroke="#991b1b" strokeWidth="2" />
+          <rect x="134" y="156" width="12" height="6" rx="2" fill="#f8fafc" stroke="#94a3b8" strokeWidth="1" />
+          <ellipse cx="132" cy="172" rx="5" ry="7" fill="#b91c1c" />
+        </g>
+      )}
+
       {/* 10. Handheld Props with Natural Persona Hands */}
       {c.prop === "rgb-controller" && (
         <g id={`${keyPrefix}-prop-controller`}>
@@ -736,6 +865,61 @@ function renderPersonaCharacter(
           <path d="M136 150 L156 150 L152 170 C150 178 142 178 140 170 Z" fill="url(#gold-metal)" />
           <line x1="146" y1="174" x2="146" y2="184" stroke="url(#gold-metal)" strokeWidth="4" />
           <rect x="138" y="184" width="16" height="6" rx="2" fill="#78350f" />
+        </g>
+      )}
+
+      {/* Xbox Avatar Mini RC Warthog Rover */}
+      {c.prop === "mini-warthog" && (
+        <g id={`${keyPrefix}-prop-mini-warthog`}>
+          <ellipse cx="70" cy="176" rx="7" ry="6" fill={skin} />
+          <rect x="66" y="168" width="8" height="12" rx="2" fill="#18181b" />
+          <line x1="70" y1="168" x2="70" y2="152" stroke="#64748b" strokeWidth="2" />
+          <circle cx="70" cy="151" r="2" fill="#ef4444" />
+          <g transform="translate(120, 162) scale(0.68)">
+            <rect x="4" y="24" width="14" height="18" rx="4" fill="#09090b" stroke="#334155" strokeWidth="1.5" />
+            <rect x="38" y="24" width="14" height="18" rx="4" fill="#09090b" stroke="#334155" strokeWidth="1.5" />
+            <path d="M8 22 L16 10 L38 10 L48 22 Z" fill="#2d4a22" stroke="#1b3014" strokeWidth="2" />
+            <polygon points="18,12 28,12 26,20 18,20" fill="url(#spartan-gold-visor)" />
+            <path d="M26 10 L28 4 L38 4 L40 10" stroke="#18181b" strokeWidth="2.5" fill="none" />
+            <rect x="36" y="2" width="6" height="6" rx="1" fill="#475569" />
+            <line x1="42" y1="5" x2="52" y2="3" stroke="#18181b" strokeWidth="2" strokeLinecap="round" />
+          </g>
+        </g>
+      )}
+
+      {/* Rock Band / Guitar Hero Axe Guitar */}
+      {c.prop === "guitar-axe" && (
+        <g id={`${keyPrefix}-prop-guitar-axe`}>
+          <ellipse cx="66" cy="162" rx="7" ry="6" fill={skin} />
+          <ellipse cx="132" cy="176" rx="7" ry="6" fill={skin} />
+          <g transform="rotate(-28 100 165)">
+            <rect x="96" y="80" width="8" height="85" fill="#78350f" stroke="#451a03" strokeWidth="1" />
+            <circle cx="100" cy="94" r="2" fill="#22c55e" />
+            <circle cx="100" cy="102" r="2" fill="#ef4444" />
+            <circle cx="100" cy="110" r="2" fill="#eab308" />
+            <circle cx="100" cy="118" r="2" fill="#3b82f6" />
+            <circle cx="100" cy="126" r="2" fill="#f97316" />
+            <polygon points="100,165 72,195 90,205 100,185 110,205 128,195" fill="#dc2626" stroke="#991b1b" strokeWidth="2" />
+            <circle cx="100" cy="175" r="7" fill="#18181b" stroke="#ffffff" strokeWidth="1" />
+            <rect x="98" y="168" width="4" height="12" rx="1" fill="#ffffff" />
+            <line x1="106" y1="178" x2="114" y2="186" stroke="#94a3b8" strokeWidth="2" strokeLinecap="round" />
+          </g>
+        </g>
+      )}
+
+      {/* 2000s Street Neon Skateboard */}
+      {c.prop === "retro-skateboard" && (
+        <g id={`${keyPrefix}-prop-skateboard`}>
+          <ellipse cx="64" cy="170" rx="7" ry="6" fill={skin} />
+          <g transform="rotate(22 75 165)">
+            <rect x="68" y="115" width="16" height="90" rx="8" fill="#18181b" stroke="#ec4899" strokeWidth="2" />
+            <line x1="76" y1="130" x2="76" y2="190" stroke="#a855f7" strokeWidth="3" strokeDasharray="6 4" />
+            <circle cx="76" cy="160" r="4" fill="#22d3ee" />
+            <circle cx="65" cy="132" r="4" fill="#22c55e" stroke="#15803d" strokeWidth="1" />
+            <circle cx="87" cy="132" r="4" fill="#22c55e" stroke="#15803d" strokeWidth="1" />
+            <circle cx="65" cy="188" r="4" fill="#22c55e" stroke="#15803d" strokeWidth="1" />
+            <circle cx="87" cy="188" r="4" fill="#22c55e" stroke="#15803d" strokeWidth="1" />
+          </g>
         </g>
       )}
     </g>
@@ -855,6 +1039,38 @@ export function NexusAvatar({
             <stop offset="50%" stopColor="#8b5cf6" />
             <stop offset="100%" stopColor="#0f172a" />
           </linearGradient>
+
+          {/* Xbox 360 & Reddit Mascots Gradients */}
+          <linearGradient id="bg-xbox-360-blade" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="#107c10" />
+            <stop offset="35%" stopColor="#22c55e" />
+            <stop offset="70%" stopColor="#0f172a" />
+            <stop offset="100%" stopColor="#cbd5e1" />
+          </linearGradient>
+          <radialGradient id="bg-retro-nxe-sphere" cx="40%" cy="35%" r="70%">
+            <stop offset="0%" stopColor="#4ade80" />
+            <stop offset="40%" stopColor="#15803d" />
+            <stop offset="80%" stopColor="#052e16" />
+            <stop offset="100%" stopColor="#02140a" />
+          </radialGradient>
+          <linearGradient id="bg-reddit-vault" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="#312e81" />
+            <stop offset="45%" stopColor="#4c1d95" />
+            <stop offset="85%" stopColor="#0f172a" />
+            <stop offset="100%" stopColor="#ff4500" />
+          </linearGradient>
+          <linearGradient id="spartan-gold-visor" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="#fef08a" />
+            <stop offset="40%" stopColor="#eab308" />
+            <stop offset="70%" stopColor="#ca8a04" />
+            <stop offset="100%" stopColor="#713f12" />
+          </linearGradient>
+          <radialGradient id="snoo-alien-glow" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stopColor="#ffffff" />
+            <stop offset="35%" stopColor="#ff4500" />
+            <stop offset="80%" stopColor="#b91c1c" />
+            <stop offset="100%" stopColor="#7f1d1d" stopOpacity="0" />
+          </radialGradient>
 
           {/* Skin and Shading Gradients */}
           <linearGradient id="skin-shade" x1="0" y1="0" x2="0" y2="1">
@@ -1115,6 +1331,37 @@ export function NexusAvatar({
           <g id="pose-salute"><text x="100" y="194" textAnchor="middle" fontSize="22">🫡</text></g>
         )}
 
+        {/* Xbox 360 Achievement Unlocked Banner */}
+        {!isDuo && c.pose === "achievement" && (
+          <g id="pose-achievement">
+            <rect x="15" y="166" width="170" height="26" rx="13" fill="#0f172a" stroke="#22c55e" strokeWidth="2" />
+            <circle cx="30" cy="179" r="8" fill="#107c10" stroke="#22c55e" strokeWidth="1.5" />
+            <text x="30" y="183" textAnchor="middle" fontSize="10">🏆</text>
+            <text x="44" y="176" fill="#22c55e" fontSize="8" fontWeight="900" letterSpacing="0.5">ACHIEVEMENT UNLOCKED</text>
+            <text x="44" y="187" fill="#ffffff" fontSize="9" fontWeight="800">100G — Legendary</text>
+          </g>
+        )}
+
+        {/* Rock Hero Guitar Riff Pose */}
+        {!isDuo && c.pose === "guitar-riff" && (
+          <g id="pose-guitar-riff">
+            <rect x="58" y="172" width="84" height="22" rx="11" fill="#dc2626" stroke="#facc15" strokeWidth="2" />
+            <text x="100" y="187" textAnchor="middle" fill="#ffffff" fontSize="10" fontWeight="900">🎸 ROCK ON! ⚡</text>
+            <text x="28" y="150" fontSize="14">🎵</text>
+            <text x="165" y="145" fontSize="14">🎶</text>
+          </g>
+        )}
+
+        {/* Reddit Snoo Cosmic Bounce Pose */}
+        {!isDuo && c.pose === "snoo-bounce" && (
+          <g id="pose-snoo-bounce">
+            <rect x="52" y="172" width="96" height="22" rx="11" fill="#4c1d95" stroke="#ff4500" strokeWidth="2" />
+            <text x="100" y="187" textAnchor="middle" fill="#ffffff" fontSize="9" fontWeight="900">✨ SNOO BOUNCE 🪐</text>
+            <circle cx="28" cy="160" r="3" fill="#ff4500" />
+            <circle cx="172" cy="155" r="4" fill="#fbbf24" />
+          </g>
+        )}
+
         {/* 4. Custom Comic Meme Caption Ribbon Banner */}
         {!isDuo && c.customCaption && (
           <g id="avatar-comic-caption">
@@ -1193,6 +1440,12 @@ export function NexusAvatar({
             ? "💪"
             : c.pose === "wave"
             ? "👋"
+            : c.pose === "achievement"
+            ? "🏆"
+            : c.pose === "guitar-riff"
+            ? "🎸"
+            : c.pose === "snoo-bounce"
+            ? "👾"
             : "✨"}
         </span>
       )}

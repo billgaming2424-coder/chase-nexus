@@ -53,7 +53,7 @@ export interface AvatarConfig {
     | "ponytail"
     | "neon-locs";
   hairColor: string;
-  eyeShape: "almond" | "round" | "sharp" | "starry";
+  eyeShape: "almond" | "round" | "sharp" | "starry" | "snoo-glow" | "cyber-swirl";
   eyeColor: string;
   mouth: "smile" | "smirk" | "laugh" | "neutral" | "battle" | "wink";
   facialHair?: "none" | "stubble" | "beard" | "mustache" | "goatee";
@@ -77,7 +77,10 @@ export interface AvatarConfig {
     | "stealth-operative"
     | "unimon-master"
     | "retro-synthwave"
-    | "royal-cape";
+    | "royal-cape"
+    | "spartan-tactical"
+    | "xbox-green-bomber"
+    | "snoo-onesie";
   accessory:
     | "none"
     | "gamer-headset"
@@ -95,7 +98,11 @@ export interface AvatarConfig {
     | "vr-headset"
     | "halo"
     | "demon-horns"
-    | "oni-mask";
+    | "oni-mask"
+    | "snoo-antenna"
+    | "floating-drone"
+    | "spartan-helmet"
+    | "boxing-gloves";
   prop?:
     | "none"
     | "rgb-controller"
@@ -104,7 +111,10 @@ export interface AvatarConfig {
     | "golden-mic"
     | "laser-sword"
     | "coffee-mug"
-    | "trophy";
+    | "trophy"
+    | "mini-warthog"
+    | "guitar-axe"
+    | "retro-skateboard";
   background:
     | "purple-gradient"
     | "neon-cyan"
@@ -113,7 +123,10 @@ export interface AvatarConfig {
     | "fire-streak"
     | "cosmic-stars"
     | "cyber-grid"
-    | "retro-sunset";
+    | "retro-sunset"
+    | "xbox-360-blade"
+    | "retro-nxe-sphere"
+    | "reddit-vault";
   aura?:
     | "none"
     | "cosmic-void"
@@ -145,9 +158,17 @@ export interface AvatarConfig {
     | "wave"
     | "cry-laugh"
     | "co-op"
-    | "salute";
+    | "salute"
+    | "achievement"
+    | "guitar-riff"
+    | "snoo-bounce";
   statusBubble?: string;
   customCaption?: string;
+  gamerpicFrame?: "classic-ring" | "xbox-green" | "holo-vault" | "none";
+  collectibleCard?: {
+    serial: string;
+    tier?: string;
+  };
   duoFriend?: {
     name: string;
     avatar: AvatarConfig;
