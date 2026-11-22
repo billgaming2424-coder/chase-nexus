@@ -36,8 +36,9 @@
       width: 96px;
       height: 96px;
       object-fit: contain;
-      filter: drop-shadow(0 0 24px #a855f7aa);
+      filter: drop-shadow(0 0 20px rgba(168, 85, 247, 0.65));
       animation: nexus-pulse 2s ease-in-out infinite alternate;
+      will-change: transform;
     }
     #nexus-splash h1 {
       font-size: 30px;
@@ -112,8 +113,8 @@
       to { opacity: 1; transform: translateY(0) scale(1); }
     }
     @keyframes nexus-pulse {
-      from { filter: drop-shadow(0 0 16px rgba(168, 85, 247, 0.4)); }
-      to { filter: drop-shadow(0 0 28px rgba(168, 85, 247, 0.8)); }
+      from { transform: scale(0.96); opacity: 0.9; }
+      to { transform: scale(1.04); opacity: 1; }
     }
     @keyframes nexus-progress {
       0% { transform: translateX(-100%); }
@@ -163,7 +164,10 @@
 
     const btn = el.querySelector('button');
     if (btn) btn.addEventListener('click', close);
-    setTimeout(close, reduce ? 350 : 1700);
+    // Instant tap-to-dismiss anywhere on splash screen for zero mobile lag
+    el.addEventListener('touchstart', close, { passive: true, once: true });
+    el.addEventListener('click', close, { once: true });
+    setTimeout(close, reduce ? 350 : 1500);
   };
 
   if (document.readyState === 'loading') {

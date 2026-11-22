@@ -37,8 +37,8 @@ export function AudioStagesScreen() {
   const [activeRoomId, setActiveRoomId] = useState("stage-1");
   const [isMuted, setIsMuted] = useState(true);
   const [isHandRaised, setIsHandRaised] = useState(false);
-  const [audioWave, setAudioWave] = useState([40, 65, 80, 50, 95, 30, 85, 60, 75, 45, 90, 35]);
   const [soundboardToast, setSoundboardToast] = useState<string | null>(null);
+  const [toastMsg, setToastMsg] = useState<string | null>(null);
 
   const ROOMS: StageRoom[] = [
     {
@@ -72,16 +72,6 @@ export function AudioStagesScreen() {
 
   const currentRoom = ROOMS.find((r) => r.id === activeRoomId) ?? ROOMS[0];
 
-  // Animate dynamic audio waveform
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setAudioWave((prev) =>
-        prev.map(() => Math.floor(Math.random() * 70) + 25)
-      );
-    }, 150);
-    return () => clearInterval(interval);
-  }, []);
-
   const triggerSound = (name: string, playFn: () => void) => {
     playFn();
     setSoundboardToast(name);
@@ -92,7 +82,8 @@ export function AudioStagesScreen() {
     sounds.playPop();
     setIsHandRaised((prev) => {
       const next = !prev;
-      alert(next ? "Hand raised! The host has been notified." : "Hand lowered.");
+      setToastMsg(next ? "Hand raised! The host has been notified." : "Hand lowered.");
+      setTimeout(() => setToastMsg(null), 2500);
       return next;
     });
   };
@@ -172,24 +163,21 @@ export function AudioStagesScreen() {
           </div>
         </div>
 
-        {/* Live Audio Waveform Visualizer */}
+        {/* Live Audio Waveform Visualizer - Hardware Accelerated CSS */}
         <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 6, height: 60, margin: "16px 0", background: "rgba(0,0,0,0.35)", borderRadius: 14, padding: "0 20px" }}>
-          {audioWave.map((h, idx) => (
-            <div
-              key={idx}
-              style={{
-                width: 6,
-                height: `${h}%`,
-                background: "linear-gradient(180deg, #38bdf8 0%, #a855f7 100%)",
-                borderRadius: 99,
-                transition: "height 0.15s ease",
-              }}
-            />
+          {Array.from({ length: 14 }).map((_, idx) => (
+            <div key={idx} className="wave-bar" />
           ))}
           <span style={{ fontSize: "0.8rem", color: "#c084fc", fontWeight: 700, marginLeft: 14 }}>
             Spatial WebRTC Voice Active · 48kHz HD
           </span>
         </div>
+
+        {toastMsg && (
+          <div style={{ padding: "8px 14px", borderRadius: 12, background: "rgba(168, 85, 247, 0.25)", border: "1px solid rgba(168, 85, 247, 0.5)", color: "#fff", fontSize: "0.85rem", fontWeight: 600, textAlign: "center", marginBottom: 16 }}>
+            {toastMsg}
+          </div>
+        )}
 
         {/* Speakers Tier */}
         <div style={{ marginBottom: 24 }}>

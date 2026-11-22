@@ -80,6 +80,7 @@ export function PostCard({ post, mode, onTag }: { post: Post; mode: FeedId; onTa
   const [reactionsOpen, setReactionsOpen] = useState(false);
   const [optionsOpen, setOptionsOpen] = useState(false);
   const [copiedToast, setCopiedToast] = useState(false);
+  const [reportedToast, setReportedToast] = useState(false);
   const [draft, setDraft] = useState("");
   const [replyTo, setReplyTo] = useState<Comment | null>(null);
   const [videoOn, setVideoOn] = useState(false);
@@ -188,7 +189,8 @@ export function PostCard({ post, mode, onTag }: { post: Post; mode: FeedId; onTa
                 onClick={() => {
                   reportPost(post.id, "Community report");
                   setOptionsOpen(false);
-                  alert("Post reported to Chase Nexus moderation team. Thank you for keeping our community safe.");
+                  setReportedToast(true);
+                  setTimeout(() => setReportedToast(false), 2500);
                 }}
               >
                 <Flag size={14} />
@@ -236,6 +238,30 @@ export function PostCard({ post, mode, onTag }: { post: Post; mode: FeedId; onTa
           }}
         >
           <Check size={12} /> Link copied to clipboard!
+        </div>
+      )}
+
+      {reportedToast && (
+        <div
+          style={{
+            position: "absolute",
+            top: 10,
+            left: "50%",
+            transform: "translateX(-50%)",
+            background: "rgba(220, 38, 38, 0.95)",
+            color: "#fff",
+            padding: "4px 12px",
+            borderRadius: 20,
+            fontSize: "0.78rem",
+            fontWeight: 600,
+            display: "flex",
+            alignItems: "center",
+            gap: 6,
+            zIndex: 30,
+            boxShadow: "0 4px 14px rgba(0,0,0,0.5)",
+          }}
+        >
+          <Check size={12} /> Post reported to moderation team!
         </div>
       )}
 

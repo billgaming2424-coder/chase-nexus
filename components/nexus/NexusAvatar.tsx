@@ -30,6 +30,7 @@ export function NexusAvatar({
 }: NexusAvatarProps) {
   const c = config || DEFAULT_AVATAR;
   const dimension = typeof size === "number" ? size : SIZES[size] || 44;
+  const showAura = dimension >= 36 && Boolean(c.aura && c.aura !== "none");
 
   const skin = c.skinTone || "#f8cbb0";
   const hair = c.hairColor || "#1e1b2e";
@@ -156,33 +157,33 @@ export function NexusAvatar({
           fill={`url(#bg-${c.background || "purple-gradient"})`}
         />
 
-        {/* Animated Aura Effects (Season 1 Cyber-Cosmetics) */}
-        {c.aura === "cosmic-void" && (
+        {/* Animated Aura Effects (Season 1 Cyber-Cosmetics - Optimized for >= 36px) */}
+        {showAura && c.aura === "cosmic-void" && (
           <g className="aura-cosmic">
             <circle cx="100" cy="100" r="88" fill="none" stroke="#a855f7" strokeWidth="6" strokeDasharray="16 10" opacity="0.85" />
             <circle cx="100" cy="100" r="94" fill="none" stroke="#ec4899" strokeWidth="3" opacity="0.65" />
           </g>
         )}
-        {c.aura === "neon-lightning" && (
+        {showAura && c.aura === "neon-lightning" && (
           <g className="aura-lightning">
             <circle cx="100" cy="100" r="86" fill="none" stroke="#22d3ee" strokeWidth="5" strokeDasharray="8 6" opacity="0.9" />
             <polygon points="100,10 108,35 96,35 104,58 92,58" fill="#38bdf8" />
             <polygon points="185,100 160,108 160,96 138,104 138,92" fill="#38bdf8" />
           </g>
         )}
-        {c.aura === "golden-halo" && (
+        {showAura && c.aura === "golden-halo" && (
           <g className="aura-halo">
             <circle cx="100" cy="100" r="90" fill="none" stroke="#fbbf24" strokeWidth="6" opacity="0.8" />
             <ellipse cx="100" cy="42" rx="38" ry="12" fill="none" stroke="#fde047" strokeWidth="4" />
           </g>
         )}
-        {c.aura === "flame-burst" && (
+        {showAura && c.aura === "flame-burst" && (
           <g className="aura-flame">
             <circle cx="100" cy="100" r="88" fill="none" stroke="#f97316" strokeWidth="6" strokeDasharray="12 8" opacity="0.85" />
             <circle cx="100" cy="100" r="93" fill="none" stroke="#ef4444" strokeWidth="4" opacity="0.75" />
           </g>
         )}
-        {c.aura === "glitch-matrix" && (
+        {showAura && c.aura === "glitch-matrix" && (
           <g className="aura-matrix">
             <circle cx="100" cy="100" r="88" fill="none" stroke="#22c55e" strokeWidth="4" strokeDasharray="4 6" opacity="0.9" />
             <line x1="20" y1="60" x2="180" y2="60" stroke="#4ade80" strokeWidth="2" strokeDasharray="20 15" opacity="0.7" />

@@ -25,6 +25,7 @@ export function StudioScreen() {
   const [timeRange, setTimeRange] = useState<"24h" | "7d" | "30d" | "all">("30d");
   const [withdrawing, setWithdrawing] = useState(false);
   const [withdrawnAmount, setWithdrawnAmount] = useState<number | null>(null);
+  const [studioToast, setStudioToast] = useState<string | null>(null);
 
   const earnings = {
     totalGemsEarned: 18450,
@@ -37,7 +38,8 @@ export function StudioScreen() {
 
   const handleWithdraw = () => {
     if (walletBalance < 500) {
-      alert("Minimum payout threshold is 500 Gems ($5.00 USD). Keep creating!");
+      setStudioToast("⚠️ Minimum payout threshold is 500 Gems ($5.00 USD). Keep creating!");
+      setTimeout(() => setStudioToast(null), 3500);
       return;
     }
     sounds.playCoin();
@@ -46,7 +48,8 @@ export function StudioScreen() {
       setWithdrawnAmount(walletBalance);
       setWithdrawing(false);
       sounds.playFanfare();
-      alert(`Payout initiated! Transferring $${(walletBalance / 100).toFixed(2)} USD directly to your Chase Account.`);
+      setStudioToast(`🎉 Payout initiated! Transferring $${(walletBalance / 100).toFixed(2)} USD directly to your Chase Account.`);
+      setTimeout(() => setStudioToast(null), 5000);
     }, 1200);
   };
 
@@ -66,6 +69,27 @@ export function StudioScreen() {
           </span>
         </div>
       </header>
+
+      {/* Floating Non-Blocking Studio Toast */}
+      {studioToast && (
+        <div
+          style={{
+            padding: "10px 16px",
+            borderRadius: 14,
+            background: "linear-gradient(135deg, rgba(168, 85, 247, 0.35), rgba(34, 197, 94, 0.25))",
+            border: "1px solid rgba(168, 85, 247, 0.6)",
+            color: "#ffffff",
+            fontSize: "0.9rem",
+            fontWeight: 700,
+            textAlign: "center",
+            marginBottom: 16,
+            boxShadow: "0 4px 20px rgba(0, 0, 0, 0.4)",
+            animation: "modalPopIn 0.2s ease-out",
+          }}
+        >
+          {studioToast}
+        </div>
+      )}
 
       {/* Metric Cards Row */}
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 14, marginBottom: 20 }}>
@@ -123,7 +147,7 @@ export function StudioScreen() {
       </div>
 
       {/* Payout & Revenue Breakdown Section */}
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, marginBottom: 20 }}>
+      <div className="studio-split-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, marginBottom: 20 }}>
         {/* Direct Deposit Simulator */}
         <div className="card" style={{ padding: 20 }}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
@@ -139,7 +163,7 @@ export function StudioScreen() {
           <div style={{ background: "rgba(255, 255, 255, 0.03)", border: "1px solid rgba(255, 255, 255, 0.08)", borderRadius: 14, padding: 14, margin: "14px 0" }}>
             <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 6 }}>
               <span style={{ color: "var(--muted)" }}>Available to Cash Out:</span>
-              <strong style={{ color: "#fff" }}>{walletBalance} Gems ($${(walletBalance / 100).toFixed(2)})</strong>
+              <strong style={{ color: "#fff" }}>{walletBalance} Gems (${(walletBalance / 100).toFixed(2)})</strong>
             </div>
             <div style={{ display: "flex", justifyContent: "space-between" }}>
               <span style={{ color: "var(--muted)" }}>Destination Account:</span>

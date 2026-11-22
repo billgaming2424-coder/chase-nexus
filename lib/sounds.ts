@@ -4,6 +4,7 @@
 class SoundEngine {
   private ctx: AudioContext | null = null;
   private enabled: boolean = true;
+  private unlocked: boolean = false;
 
   constructor() {
     if (typeof window !== "undefined") {
@@ -11,18 +12,43 @@ class SoundEngine {
         const stored = localStorage.getItem("chase-nexus-sfx");
         this.enabled = stored !== null ? stored === "true" : true;
       } catch {}
+
+      // iOS & Android Web Audio unlocker on first user touch/click
+      const unlock = () => {
+        if (this.unlocked) return;
+        this.unlocked = true;
+        this.initCtx();
+        if (this.ctx && this.ctx.state === "suspended") {
+          this.ctx.resume().catch(() => {});
+        }
+        window.removeEventListener("touchstart", unlock);
+        window.removeEventListener("touchend", unlock);
+        window.removeEventListener("click", unlock);
+      };
+
+      window.addEventListener("touchstart", unlock, { passive: true, once: true });
+      window.addEventListener("touchend", unlock, { passive: true, once: true });
+      window.addEventListener("click", unlock, { passive: true, once: true });
     }
   }
 
-  private initCtx() {
-    if (!this.ctx && typeof window !== "undefined") {
-      const AudioCtx = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
-      if (AudioCtx) {
-        this.ctx = new AudioCtx();
+  private initCtx(): boolean {
+    if (!this.enabled || typeof window === "undefined") return false;
+    try {
+      if (!this.ctx) {
+        const AudioCtx =
+          window.AudioContext ||
+          (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
+        if (AudioCtx) {
+          this.ctx = new AudioCtx();
+        }
       }
-    }
-    if (this.ctx && this.ctx.state === "suspended") {
-      this.ctx.resume().catch(() => {});
+      if (this.ctx && this.ctx.state === "suspended") {
+        this.ctx.resume().catch(() => {});
+      }
+      return !!this.ctx && this.ctx.state === "running";
+    } catch {
+      return false;
     }
   }
 

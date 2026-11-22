@@ -52,26 +52,39 @@ export function ArcadeScreen() {
     c3: 189,
   });
   const [userVoted, setUserVoted] = useState<Record<string, boolean>>({});
+  const [arcadeToast, setArcadeToast] = useState<string | null>(null);
 
-  // DEADEYE Timer
+  // DEADEYE Timer (Smooth, no interval thrashing)
   useEffect(() => {
-    let timer: NodeJS.Timeout;
-    if (gameActive && timeLeft > 0) {
-      timer = setInterval(() => {
-        setTimeLeft((t) => t - 1);
-      }, 1000);
-    } else if (gameActive && timeLeft === 0) {
-      setGameActive(false);
-      sounds.playFanfare();
+    if (!gameActive) return;
+
+    const timer = setInterval(() => {
+      setTimeLeft((prev) => {
+        if (prev <= 1) {
+          clearInterval(timer);
+          setGameActive(false);
+          sounds.playFanfare();
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, [gameActive]);
+
+  // Handle game finish rewards
+  useEffect(() => {
+    if (timeLeft === 0 && !gameActive && score > 0) {
       if (score > highScore) {
         setHighScore(score);
       }
       const reward = Math.max(50, Math.floor(score / 5));
       addGems(reward);
-      alert(`Time's up! You scored ${score} points and earned ${reward} Nexus Gems!`);
+      setArcadeToast(`🎯 Time's up! You scored ${score} points and earned ${reward} Nexus Gems!`);
+      setTimeout(() => setArcadeToast(null), 4000);
     }
-    return () => clearInterval(timer);
-  }, [gameActive, timeLeft, score, highScore, addGems]);
+  }, [timeLeft, gameActive, score, highScore, addGems]);
 
   const handleStartDeadeye = () => {
     sounds.playPop();
@@ -200,7 +213,8 @@ export function ArcadeScreen() {
     setUserVoted((prev) => ({ ...prev, [id]: true }));
     setVotedOutfits((prev) => ({ ...prev, [id]: prev[id] + 1 }));
     addGems(25);
-    alert("Voted! You earned +25 Nexus Gems for rating community styles.");
+    setArcadeToast("⭐ Voted! You earned +25 Nexus Gems for rating community styles.");
+    setTimeout(() => setArcadeToast(null), 3500);
   };
 
   return (
@@ -225,6 +239,27 @@ export function ArcadeScreen() {
           </Link>
         </div>
       </header>
+
+      {/* Floating Non-Blocking Toast for Mobile & Desktop */}
+      {arcadeToast && (
+        <div
+          style={{
+            padding: "10px 16px",
+            borderRadius: 14,
+            background: "linear-gradient(135deg, rgba(168, 85, 247, 0.35), rgba(56, 189, 248, 0.25))",
+            border: "1px solid rgba(168, 85, 247, 0.6)",
+            color: "#ffffff",
+            fontSize: "0.9rem",
+            fontWeight: 700,
+            textAlign: "center",
+            marginBottom: 16,
+            boxShadow: "0 4px 20px rgba(0, 0, 0, 0.4)",
+            animation: "modalPopIn 0.2s ease-out",
+          }}
+        >
+          {arcadeToast}
+        </div>
+      )}
 
       {/* Arcade Navigation Switcher */}
       <div className="tabs" role="tablist" style={{ marginBottom: 20 }}>
@@ -315,7 +350,7 @@ export function ArcadeScreen() {
             }}
           >
             {/* Health Bars */}
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20, marginBottom: 24 }}>
+            <div className="arcade-health-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20, marginBottom: 24 }}>
               {/* Player Unimon */}
               <div style={{ background: "rgba(0,0,0,0.5)", padding: 12, borderRadius: 12, border: "1px solid rgba(255,255,255,0.08)" }}>
                 <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 6 }}>
@@ -344,9 +379,9 @@ export function ArcadeScreen() {
             </div>
 
             {/* Combatants Stage */}
-            <div style={{ display: "flex", justifyContent: "space-around", alignItems: "center", padding: "16px 0" }}>
+            <div className="arcade-combatants" style={{ display: "flex", justifyContent: "space-around", alignItems: "center", padding: "16px 0" }}>
               <div style={{ textAlign: "center" }}>
-                <div style={{ fontSize: "4rem", filter: "drop-shadow(0 0 16px rgba(168,85,247,0.6))" }}>
+                <div className="combatant-emoji" style={{ fontSize: "4rem", filter: "drop-shadow(0 0 16px rgba(168,85,247,0.6))" }}>
                   {unimonChoice === "ignifox" ? "🦊🔥" : unimonChoice === "voltkin" ? "⚡🐺" : "🌌🐉"}
                 </div>
                 <small style={{ color: "var(--muted)", textTransform: "uppercase", fontWeight: 700 }}>Lv. 35 Companion</small>
@@ -355,7 +390,7 @@ export function ArcadeScreen() {
               <div style={{ fontSize: "1.8rem", fontWeight: 900, color: "#a855f7" }}>VS</div>
 
               <div style={{ textAlign: "center" }}>
-                <div style={{ fontSize: "4rem", filter: "drop-shadow(0 0 16px rgba(239,68,68,0.6))" }}>
+                <div className="combatant-emoji" style={{ fontSize: "4rem", filter: "drop-shadow(0 0 16px rgba(239,68,68,0.6))" }}>
                   👾🕷️
                 </div>
                 <small style={{ color: "#f87171", textTransform: "uppercase", fontWeight: 700 }}>Void Boss</small>

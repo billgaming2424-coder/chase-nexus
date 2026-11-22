@@ -488,7 +488,6 @@ export function CommunitiesScreen() {
                         className="btn btn-alert btn-sm"
                         onClick={() => {
                           setFlaggedReports((prev) => prev.filter((r) => r.id !== report.id));
-                          alert(`Removed post by @${report.author} and issued safety strike.`);
                         }}
                       >
                         Remove & Strike User
@@ -927,7 +926,17 @@ export function MessagesScreen() {
 
   const handleSendGemsGift = (amount: number) => {
     if (walletBalance < amount) {
-      alert(`Insufficient gems! Top up in the Marketplace.`);
+      const errMsg: DemoMessage = {
+        id: crypto.randomUUID(),
+        sender: "them",
+        text: `⚠️ Insufficient gems to send ${amount} 💎 gift. Top up in the Marketplace!`,
+        time: "Just now",
+      };
+      setConversations((prev) =>
+        prev.map((conv) =>
+          conv.id === activeId ? { ...conv, messages: [...conv.messages, errMsg] } : conv
+        )
+      );
       return;
     }
     tipCreator(activeChat.name, amount);
@@ -1287,6 +1296,7 @@ export function CallsScreen() {
   const [activeRoom, setActiveRoom] = useState("Chase Studios Alpha Dev Lounge");
   const [reactions, setReactions] = useState<{ id: string; glyph: string; x: number }[]>([]);
   const [callDuration, setCallDuration] = useState("06:42");
+  const [callEnded, setCallEnded] = useState(false);
 
   const sendCallReaction = (glyph: string) => {
     const id = crypto.randomUUID();
@@ -1640,12 +1650,43 @@ export function CallsScreen() {
             type="button"
             className="btn btn-alert"
             style={{ borderRadius: 24, padding: "8px 22px", gap: 8 }}
-            onClick={() => alert("Left call session. You can rejoin anytime.")}
+            onClick={() => setCallEnded(true)}
           >
             <PhoneOff size={18} />
             <span>Leave Call</span>
           </button>
         </div>
+
+        {callEnded && (
+          <div
+            style={{
+              position: "absolute",
+              inset: 0,
+              background: "rgba(10, 6, 18, 0.95)",
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              justifyContent: "center",
+              zIndex: 100,
+              padding: 24,
+              textAlign: "center",
+            }}
+          >
+            <PhoneOff size={44} style={{ color: "#f87171", marginBottom: 12 }} />
+            <h3 style={{ margin: "0 0 6px" }}>You left the call session</h3>
+            <p className="hint" style={{ maxWidth: 320, marginBottom: 16 }}>
+              Microphone and screen transmission stopped. You can rejoin {activeRoom} anytime.
+            </p>
+            <button
+              type="button"
+              className="btn btn-primary"
+              style={{ borderRadius: 20, padding: "10px 24px" }}
+              onClick={() => setCallEnded(false)}
+            >
+              Rejoin Call
+            </button>
+          </div>
+        )}
       </div>
     </section>
   );
@@ -1670,6 +1711,7 @@ export function NotificationsScreen() {
   const { walletBalance, addGems } = useNexus();
   const [filter, setFilter] = useState<"all" | "streaks" | "tips" | "mentions" | "system">("all");
   const [dailyClaimed, setDailyClaimed] = useState(false);
+  const [notifToast, setNotifToast] = useState<string | null>(null);
   const [notifications, setNotifications] = useState<LocalNotif[]>([
     {
       id: "n1",
@@ -1729,7 +1771,8 @@ export function NotificationsScreen() {
     sounds.playCoin();
     setDailyClaimed(true);
     addGems(500);
-    alert("🎉 Daily streak bonus claimed! +500 Nexus Gems added to your wallet.");
+    setNotifToast("🎉 Daily streak bonus claimed! +500 Nexus Gems added to your wallet.");
+    setTimeout(() => setNotifToast(null), 4000);
   };
 
   const handleReturnStreak = (id: string) => {
@@ -1737,7 +1780,8 @@ export function NotificationsScreen() {
     setNotifications((prev) =>
       prev.map((n) => (n.id === id ? { ...n, streakReturned: true } : n))
     );
-    alert("🔥 Reciprocal streak interaction sent back!");
+    setNotifToast("🔥 Reciprocal streak interaction sent back!");
+    setTimeout(() => setNotifToast(null), 3000);
   };
 
   const handleClaimGift = (id: string) => {
@@ -1746,7 +1790,8 @@ export function NotificationsScreen() {
     setNotifications((prev) =>
       prev.map((n) => (n.id === id ? { ...n, giftClaimed: true } : n))
     );
-    alert("💎 250 Nexus Gems deposited to your wallet!");
+    setNotifToast("💎 250 Nexus Gems deposited to your wallet!");
+    setTimeout(() => setNotifToast(null), 3000);
   };
 
   const markAllRead = () => {
@@ -1771,6 +1816,27 @@ export function NotificationsScreen() {
           Mark all as read
         </button>
       </header>
+
+      {/* Floating Non-Blocking Notification Toast */}
+      {notifToast && (
+        <div
+          style={{
+            padding: "10px 16px",
+            borderRadius: 14,
+            background: "linear-gradient(135deg, rgba(168, 85, 247, 0.35), rgba(34, 197, 94, 0.25))",
+            border: "1px solid rgba(168, 85, 247, 0.6)",
+            color: "#ffffff",
+            fontSize: "0.9rem",
+            fontWeight: 700,
+            textAlign: "center",
+            marginBottom: 16,
+            boxShadow: "0 4px 20px rgba(0, 0, 0, 0.4)",
+            animation: "modalPopIn 0.2s ease-out",
+          }}
+        >
+          {notifToast}
+        </div>
+      )}
 
       {/* Daily Login Streak Reward Banner */}
       <div
@@ -2362,7 +2428,7 @@ export function MarketplaceScreen() {
     }
 
     if (walletBalance < item.price) {
-      alert(`Insufficient Nexus Gems. You have ${walletBalance} Gems, but this item costs ${item.price} Gems. Click "+ Get Gems" to add more!`);
+      showToast(`⚠️ Insufficient Nexus Gems. You have ${walletBalance} Gems, but this item costs ${item.price} Gems.`);
       return;
     }
 
@@ -2383,7 +2449,7 @@ export function MarketplaceScreen() {
 
   const handleTip = (creator: string, amount: number) => {
     if (walletBalance < amount) {
-      alert(`Insufficient Nexus Gems. Click "+ Get Gems" to top up!`);
+      showToast(`⚠️ Insufficient Nexus Gems. Click "+ Get Gems" to top up!`);
       return;
     }
     const success = tipCreator(creator, amount);

@@ -26,6 +26,7 @@ export function RightRail() {
   const { theme, setTheme, walletBalance, tipCreator } = useNexus();
   const [account, setAccount] = useState<string | null>(null);
   const [showChasePlusModal, setShowChasePlusModal] = useState(false);
+  const [railToast, setRailToast] = useState<string | null>(null);
 
   return (
     <aside className="rail" aria-label="Discovery">
@@ -94,21 +95,28 @@ export function RightRail() {
               key={amt}
               type="button"
               className="btn btn-primary btn-sm"
-              style={{ flex: 1, fontSize: "0.75rem", padding: "6px 2px", borderRadius: 10 }}
+              style={{ flex: 1, fontSize: "0.75rem", padding: "6px 2px", borderRadius: 10, touchAction: "manipulation" }}
               onClick={() => {
                 if (walletBalance < amt) {
-                  alert("Insufficient gems! Top up in the Marketplace.");
+                  setRailToast("⚠️ Insufficient gems! Top up in the Marketplace.");
+                  setTimeout(() => setRailToast(null), 3000);
                   return;
                 }
                 sounds.playCoin();
                 tipCreator("Chase Studios Creators", amt);
-                alert(`Tipped ${amt} Gems to creators! Thank you for supporting Chase Studios! 🎉`);
+                setRailToast(`🎉 Tipped ${amt} Gems! Thank you for supporting creators!`);
+                setTimeout(() => setRailToast(null), 3500);
               }}
             >
               +{amt} 💎
             </button>
           ))}
         </div>
+        {railToast && (
+          <p style={{ margin: "8px 0 0", fontSize: "0.75rem", color: "#c084fc", fontWeight: 700 }}>
+            {railToast}
+          </p>
+        )}
       </section>
 
       {/* 3. Chase+ Membership Preview Card */}

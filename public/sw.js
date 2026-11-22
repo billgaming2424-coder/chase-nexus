@@ -1,5 +1,5 @@
-// Chase Nexus Service Worker · Production v14 (The Biggest Update Ever: Arcade, Audio Pods, Studio & Chase OS)
-const CACHE_NAME = "chase-nexus-v14";
+// Chase Nexus Service Worker · Production v15 (Mobile iOS & Android Performance & Freeze Defenses)
+const CACHE_NAME = "chase-nexus-v15";
 const PRECACHE_ASSETS = ["/icon.svg", "/chase-studios-logo.svg", "/splash.js"];
 
 self.addEventListener("install", (event) => {
@@ -20,11 +20,17 @@ self.addEventListener("activate", (event) => {
   self.clients.claim();
 });
 
-// Network-first strategy for navigation to prevent chunk load errors across deployments
+// Non-blocking fetch handler: only intercept same-origin GET requests
 self.addEventListener("fetch", (event) => {
+  if (event.request.method !== "GET") return;
+  const url = new URL(event.request.url);
+
+  // Bypass service worker for external APIs, Supabase calls, and audio streams to prevent thread stalls
+  if (url.origin !== self.location.origin) return;
+
   if (event.request.mode === "navigate") {
     event.respondWith(
-      fetch(event.request).catch(() => caches.match(event.request))
+      fetch(event.request).catch(() => caches.match(event.request) || caches.match("/"))
     );
     return;
   }
