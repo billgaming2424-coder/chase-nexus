@@ -47,7 +47,6 @@ function CommentThread({
                 <strong>{comment.author || "Member"}</strong>
                 {comment.verified ? <ChaseBadge type={comment.badgeType} /> : null}
               </span>
-              {comment.example ? <span className="pill">Sample</span> : <span className="pill">Cloud</span>}
             </header>
             <p>{comment.body}</p>
             {depth < 2 ? (
@@ -124,7 +123,6 @@ export function PostCard({ post, mode, onTag }: { post: Post; mode: FeedId; onTa
         </div>
 
         <div style={{ display: "flex", alignItems: "center", gap: 6, position: "relative" }}>
-          <span className="pill">{post.yours ? "This device" : "Cloud"}</span>
           <button
             type="button"
             className="icon-btn"

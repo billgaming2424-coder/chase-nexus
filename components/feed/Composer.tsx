@@ -388,8 +388,6 @@ export function Composer() {
             Post
           </button>
         </div>
-
-        <p className="hint">Posts sync live to Chase Studios Cloud in real-time.</p>
       </form>
 
       <NexusAvatarBuilder isOpen={avatarStudioOpen} onClose={() => setAvatarStudioOpen(false)} />

@@ -100,29 +100,24 @@ export function RightRail() {
         </ul>
       </section>
 
-      {/* Creator Tip Jar (Concept Mockup Match) */}
+      {/* Creator Tip Jar (Sleek Compact Mode) */}
       <section
         className="rail-card tip-jar-card"
         style={{
-          background: "radial-gradient(circle at top, rgba(124, 58, 237, 0.25) 0%, rgba(14, 10, 24, 0.8) 70%)",
-          border: "1px solid rgba(168, 85, 247, 0.35)",
-          boxShadow: "0 8px 25px rgba(0, 0, 0, 0.5), 0 0 15px rgba(124, 58, 237, 0.15)",
-          textAlign: "center",
+          background: "linear-gradient(135deg, rgba(30, 16, 52, 0.6) 0%, rgba(14, 10, 24, 0.8) 100%)",
+          border: "1px solid rgba(168, 85, 247, 0.25)",
+          borderRadius: 16,
+          padding: 16,
         }}
       >
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
-          <h2 style={{ fontSize: "1.05rem", margin: 0 }}>Creator Tip Jar</h2>
-          <span className="pill" style={{ fontSize: "0.72rem" }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
+          <h2 style={{ fontSize: "0.95rem", fontWeight: 700, margin: 0 }}>Support Creators</h2>
+          <span className="pill" style={{ fontSize: "0.72rem", background: "rgba(168, 85, 247, 0.15)", color: "#c084fc" }}>
             {walletBalance.toLocaleString()} 💎
           </span>
         </div>
-        <div style={{ padding: "10px 0 6px", display: "flex", justifyContent: "center", alignItems: "center", gap: 10 }}>
-          <span style={{ fontSize: "1.5rem", filter: "drop-shadow(0 0 8px #a855f7)", animation: "pulseBubble 2s infinite alternate" }}>💎</span>
-          <span style={{ fontSize: "2.1rem", filter: "drop-shadow(0 0 14px #c084fc)", animation: "pulseBubble 1.8s infinite alternate 0.2s" }}>💎</span>
-          <span style={{ fontSize: "1.5rem", filter: "drop-shadow(0 0 8px #a855f7)", animation: "pulseBubble 2.2s infinite alternate 0.4s" }}>💎</span>
-        </div>
-        <p className="hint" style={{ fontSize: "0.78rem", margin: "0 0 10px" }}>
-          Support studio developers and community creators directly with Nexus Gems.
+        <p className="hint" style={{ fontSize: "0.76rem", margin: "0 0 10px", color: "var(--muted)" }}>
+          Send virtual gems to show appreciation for developers and creators.
         </p>
         <div style={{ display: "flex", gap: 6 }}>
           {[100, 250, 500].map((amt) => (
@@ -139,7 +134,7 @@ export function RightRail() {
                 }
                 sounds.playCoin();
                 tipCreator("Chase Studios Creators", amt);
-                setRailToast(`🎉 Tipped ${amt} Gems! Thank you for supporting creators!`);
+                setRailToast(`🎉 Tipped ${amt} Gems!`);
                 setTimeout(() => setRailToast(null), 3500);
               }}
             >
@@ -148,7 +143,7 @@ export function RightRail() {
           ))}
         </div>
         {railToast && (
-          <p style={{ margin: "8px 0 0", fontSize: "0.75rem", color: "#c084fc", fontWeight: 700 }}>
+          <p style={{ margin: "6px 0 0", fontSize: "0.72rem", color: "#4ade80", fontWeight: 700, textAlign: "center" }}>
             {railToast}
           </p>
         )}

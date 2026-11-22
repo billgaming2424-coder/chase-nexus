@@ -80,26 +80,27 @@ export function HomeFeed() {
 
   return (
     <div className="feed">
-      {/* Top Global Search & Quick Actions Bar (Concept Mockup Match) */}
+      {/* Top Unified Global Search & Quick Actions Bar */}
       <div
         className="concept-top-bar"
         style={{
           display: "flex",
           alignItems: "center",
           gap: 12,
-          marginBottom: 16,
-          background: "rgba(14, 10, 24, 0.65)",
+          marginBottom: 14,
+          background: "rgba(20, 12, 34, 0.75)",
           backdropFilter: "blur(20px)",
-          border: "1px solid rgba(168, 85, 247, 0.2)",
-          borderRadius: 18,
-          padding: "8px 14px",
+          border: "1px solid rgba(168, 85, 247, 0.18)",
+          borderRadius: 16,
+          padding: "7px 14px",
+          boxShadow: "0 4px 20px rgba(0, 0, 0, 0.25)",
         }}
       >
         <div style={{ position: "relative", flex: 1, display: "flex", alignItems: "center", gap: 10 }}>
           <Search size={16} style={{ color: "var(--muted)" }} />
           <input
             type="text"
-            placeholder="Search Chase Nexus, creators, #topics..."
+            placeholder="Search posts, creators, #hashtags..."
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             style={{
@@ -107,27 +108,43 @@ export function HomeFeed() {
               border: "none",
               outline: "none",
               color: "#fff",
-              fontSize: "0.88rem",
+              fontSize: "0.86rem",
               width: "100%",
             }}
           />
+          {query ? (
+            <button
+              type="button"
+              onClick={() => setQuery("")}
+              style={{
+                background: "none",
+                border: "none",
+                color: "var(--muted)",
+                cursor: "pointer",
+                padding: 2,
+                display: "flex",
+              }}
+            >
+              ✕
+            </button>
+          ) : null}
         </div>
-        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
           <Link
             href="/messages"
             className="icon-btn"
-            style={{ width: 34, height: 34, background: "rgba(255, 255, 255, 0.04)" }}
+            style={{ width: 32, height: 32, borderRadius: 10, background: "rgba(255, 255, 255, 0.04)" }}
             title="Direct Messages"
           >
-            <MessageCircle size={16} />
+            <MessageCircle size={15} />
           </Link>
           <Link
             href="/notifications"
             className="icon-btn"
-            style={{ width: 34, height: 34, background: "rgba(255, 255, 255, 0.04)" }}
+            style={{ width: 32, height: 32, borderRadius: 10, background: "rgba(255, 255, 255, 0.04)" }}
             title="Notifications"
           >
-            <Bell size={16} />
+            <Bell size={15} />
           </Link>
           <Link
             href="/profile"
@@ -135,34 +152,28 @@ export function HomeFeed() {
               display: "flex",
               alignItems: "center",
               gap: 6,
-              padding: "3px 10px 3px 4px",
+              padding: "2px 8px 2px 3px",
               background: "rgba(124, 58, 237, 0.15)",
               border: "1px solid rgba(168, 85, 247, 0.3)",
               borderRadius: 20,
               textDecoration: "none",
               color: "#fff",
-              fontSize: "0.8rem",
+              fontSize: "0.78rem",
               fontWeight: 600,
             }}
           >
-            <NexusAvatar config={userAvatar} size={24} showStickerBadge />
+            <NexusAvatar config={userAvatar} size={22} showStickerBadge />
             <span>Profile</span>
           </Link>
         </div>
       </div>
 
       {/* Nexus Spaces Header & Bar */}
-      <header className="feed-head">
-        <div className="space-header-row">
-          <div>
-            <p className="eyebrow">Nexus Spaces · {currentSpaceMeta.label}</p>
-            <h1>Home</h1>
-          </div>
-          <span className="pill">{currentSpaceMeta.subtitle}</span>
-        </div>
+      <header className="feed-head" style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12, flexWrap: "wrap", gap: 10 }}>
+        <h1 style={{ fontSize: "1.45rem", fontWeight: 800, margin: 0, letterSpacing: "-0.01em" }}>Home</h1>
 
         {/* Spaces Switcher Tabs */}
-        <div className="spaces-bar" role="tablist" aria-label="Nexus Spaces">
+        <div className="spaces-bar" role="tablist" aria-label="Nexus Spaces" style={{ margin: 0, padding: 0 }}>
           {SPACES.map((space) => {
             const isActive = activeSpace === space.id;
             return (
@@ -172,6 +183,7 @@ export function HomeFeed() {
                 role="tab"
                 aria-selected={isActive}
                 className={`space-btn ${isActive ? "is-active" : ""}`}
+                style={{ padding: "5px 12px", fontSize: "0.78rem" }}
                 onClick={() => setActiveSpace(space.id)}
               >
                 <span aria-hidden="true">{space.icon}</span>
@@ -283,10 +295,10 @@ export function HomeFeed() {
       {/* Post Composer */}
       {activeSpace !== "custom" || customWidgets.composer ? <Composer /> : null}
 
-      {/* Feed Filter & Search Tools */}
+      {/* Feed Filter Tools */}
       {activeSpace !== "custom" || customWidgets.feed ? (
         <>
-          <div className="feed-tools">
+          <div className="feed-tools" style={{ marginTop: 12, marginBottom: 8 }}>
             <div className="tabs" role="tablist" aria-label="Feed">
               {FEEDS.map((feed) => (
                 <button
@@ -301,14 +313,6 @@ export function HomeFeed() {
                 </button>
               ))}
             </div>
-            <label className="search">
-              <span className="sr-only">Search feed</span>
-              <input
-                value={query}
-                placeholder="Search posts, creators, #hashtags..."
-                onChange={(event) => setQuery(event.target.value)}
-              />
-            </label>
           </div>
 
           {tag ? (

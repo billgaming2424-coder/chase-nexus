@@ -11,6 +11,8 @@ import {
   ShieldCheck,
   UserRound,
   Video,
+  Grid,
+  X,
 } from "lucide-react";
 import { NexusProvider, useNexus } from "@/components/nexus/NexusProvider";
 import { RightRail } from "@/components/rail/RightRail";
@@ -20,7 +22,6 @@ import { AccountSetupWizard } from "@/components/auth/AccountSetupWizard";
 import { NexusAvatar } from "@/components/nexus/NexusAvatar";
 import { NexusAvatarBuilder } from "@/components/nexus/NexusAvatarBuilder";
 import { ChaseOsLauncher } from "@/components/shell/ChaseOsLauncher";
-import { Grid } from "lucide-react";
 
 function AppShellContent({ children }: { children: ReactNode }) {
   const pathname = usePathname();
@@ -30,6 +31,7 @@ function AppShellContent({ children }: { children: ReactNode }) {
   const [avatarStudioOpen, setAvatarStudioOpen] = useState(false);
   const [chaseOsOpen, setChaseOsOpen] = useState(false);
   const [isOnline, setIsOnline] = useState(true);
+  const [bannerDismissed, setBannerDismissed] = useState(false);
   const { currentUser, userProfile, userAvatar, onboardingModalOpen, setOnboardingModalOpen } = useNexus();
 
   useEffect(() => {
@@ -143,30 +145,45 @@ function AppShellContent({ children }: { children: ReactNode }) {
             </div>
           )}
 
-          <div className="banner cloud-banner">
-            <div className="banner-content">
-              <span className="status-dot live" aria-hidden="true" />
-              <span className="cloud-banner-desktop">
-                {currentUser
-                  ? `Signed in as ${userProfile?.display_name || currentUser.email} · Chase Studios Cloud active`
-                  : "Chase Studios Cloud live. Sign in with your Chase Account to save posts and verify your profile."}
-              </span>
-              <span className="cloud-banner-mobile">
-                {currentUser
-                  ? `${userProfile?.display_name || "Account"} · Cloud Active`
-                  : "Chase Cloud Live · Tap to Sign In"}
-              </span>
+          {!currentUser && !bannerDismissed ? (
+            <div className="banner cloud-banner" style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 10 }}>
+              <div className="banner-content" style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                <span className="status-dot live" aria-hidden="true" />
+                <span className="cloud-banner-desktop" style={{ fontSize: "0.84rem" }}>
+                  Sign in with your Chase Account to save posts, follow friends, and customize your Persona.
+                </span>
+                <span className="cloud-banner-mobile" style={{ fontSize: "0.78rem" }}>
+                  Sign in to save posts & customize Persona.
+                </span>
+              </div>
+              <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                <button
+                  type="button"
+                  className="banner-action-btn"
+                  onClick={() => setAuthModalOpen(true)}
+                  style={{ fontSize: "0.78rem", padding: "4px 10px", borderRadius: 8 }}
+                >
+                  Sign In
+                </button>
+                <button
+                  type="button"
+                  aria-label="Dismiss banner"
+                  onClick={() => setBannerDismissed(true)}
+                  style={{
+                    background: "none",
+                    border: "none",
+                    color: "var(--muted)",
+                    padding: 4,
+                    display: "flex",
+                    alignItems: "center",
+                    cursor: "pointer",
+                  }}
+                >
+                  <X size={14} />
+                </button>
+              </div>
             </div>
-            {!currentUser ? (
-              <button
-                type="button"
-                className="banner-action-btn"
-                onClick={() => setAuthModalOpen(true)}
-              >
-                Sign In
-              </button>
-            ) : null}
-          </div>
+          ) : null}
 
           <main id="main">{children}</main>
         </div>

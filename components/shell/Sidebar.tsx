@@ -48,6 +48,28 @@ const ICONS: Record<NavItem["icon"], LucideIcon> = {
   settings: Settings,
 };
 
+const CORE_NAV: NavItem[] = [
+  { href: "/", label: "Home", icon: "home" },
+  { href: "/explore", label: "Explore", icon: "explore" },
+  { href: "/video", label: "Nexus Video", icon: "video" },
+  { href: "/messages", label: "Messages", icon: "messages" },
+  { href: "/notifications", label: "Notifications", icon: "notifications" },
+];
+
+const HUBS_NAV: NavItem[] = [
+  { href: "/arcade", label: "Arcade Realm", icon: "arcade" },
+  { href: "/studio", label: "Creator Studio", icon: "studio" },
+  { href: "/communities", label: "Communities", icon: "communities" },
+  { href: "/audio", label: "Audio Pods", icon: "audio" },
+  { href: "/marketplace", label: "Marketplace", icon: "marketplace" },
+];
+
+const LIBRARY_NAV: NavItem[] = [
+  { href: "/profile", label: "Profile", icon: "profile" },
+  { href: "/saved", label: "Bookmarks", icon: "saved" },
+  { href: "/settings", label: "Settings", icon: "settings" },
+];
+
 export function Sidebar({
   open,
   onNavigate,
@@ -64,6 +86,25 @@ export function Sidebar({
   const pathname = usePathname();
   const { currentUser, userProfile, userAvatar } = useNexus();
 
+  const renderNavGroup = (items: NavItem[]) => (
+    items.map((item) => {
+      const Icon = ICONS[item.icon];
+      const active = item.href === "/" ? pathname === "/" : pathname.startsWith(item.href);
+      return (
+        <Link
+          key={item.href}
+          href={item.href}
+          className={active ? "nav-link is-active" : "nav-link"}
+          aria-current={active ? "page" : undefined}
+          onClick={onNavigate}
+        >
+          <Icon size={19} aria-hidden="true" />
+          <span className="nav-label">{item.label}</span>
+        </Link>
+      );
+    })
+  );
+
   return (
     <aside className={open ? "sidebar is-open" : "sidebar"} aria-label="Primary">
       <Link href="/" className="logo" onClick={onNavigate}>
@@ -77,22 +118,22 @@ export function Sidebar({
       </Link>
 
       <nav className="nav">
-        {NAV_ITEMS.map((item) => {
-          const Icon = ICONS[item.icon];
-          const active = item.href === "/" ? pathname === "/" : pathname.startsWith(item.href);
-          return (
-            <Link
-              key={item.href}
-              href={item.href}
-              className={active ? "nav-link is-active" : "nav-link"}
-              aria-current={active ? "page" : undefined}
-              onClick={onNavigate}
-            >
-              <Icon size={20} aria-hidden="true" />
-              <span className="nav-label">{item.label}</span>
-            </Link>
-          );
-        })}
+        {/* Core Navigation */}
+        <div className="nav-section">
+          {renderNavGroup(CORE_NAV)}
+        </div>
+
+        {/* Ecosystem & Hubs */}
+        <div className="nav-section" style={{ marginTop: 14 }}>
+          <span className="nav-section-title">HUBS & REALMS</span>
+          {renderNavGroup(HUBS_NAV)}
+        </div>
+
+        {/* Library & Settings */}
+        <div className="nav-section" style={{ marginTop: 14 }}>
+          <span className="nav-section-title">LIBRARY</span>
+          {renderNavGroup(LIBRARY_NAV)}
+        </div>
       </nav>
 
       <div className="sidebar-auth-section">
@@ -123,34 +164,34 @@ export function Sidebar({
           </button>
         )}
 
-        <button
-          type="button"
-          className="btn btn-secondary full-width"
-          style={{ marginTop: 8, fontSize: "0.82rem", gap: 6, minHeight: 34 }}
-          onClick={onOpenAvatarStudio}
-        >
-          <Sparkles size={14} className="purple-icon" />
-          <span>Persona Studio</span>
-        </button>
-
-        {onOpenChaseOs && (
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 6, marginTop: 8 }}>
           <button
             type="button"
-            className="btn btn-ghost full-width"
-            style={{ marginTop: 6, fontSize: "0.78rem", gap: 6, minHeight: 30, color: "var(--silver)" }}
-            onClick={onOpenChaseOs}
-            title="Switch between Chase Studios Ecosystem Apps"
+            className="btn btn-secondary"
+            style={{ fontSize: "0.78rem", gap: 5, minHeight: 32, padding: "0 8px" }}
+            onClick={onOpenAvatarStudio}
           >
-            <Grid size={13} className="purple-icon" />
-            <span>Chase OS Apps</span>
+            <Sparkles size={13} className="purple-icon" />
+            <span>Persona</span>
           </button>
-        )}
+
+          {onOpenChaseOs && (
+            <button
+              type="button"
+              className="btn btn-ghost"
+              style={{ fontSize: "0.78rem", gap: 5, minHeight: 32, padding: "0 8px", color: "var(--silver)" }}
+              onClick={onOpenChaseOs}
+              title="Switch between Chase Studios Ecosystem Apps"
+            >
+              <Grid size={13} className="purple-icon" />
+              <span>Apps</span>
+            </button>
+          )}
+        </div>
       </div>
 
       <p className="side-foot">
-        Chase Studios
-        <span>Every genre. No limits.</span>
-        <span>Alpha 0.1</span>
+        Chase Studios · <span>Alpha 0.1</span>
       </p>
     </aside>
   );
