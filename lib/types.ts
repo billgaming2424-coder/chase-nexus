@@ -13,12 +13,20 @@ export type Audience = "public" | "friends" | "followers";
 
 export type ReactionId = "like" | "celebrate" | "support";
 
+export type BadgeCategory =
+  | "chase-account"
+  | "official"
+  | "staff"
+  | "moderator"
+  | "chase-plus"
+  | "identity-verified";
+
 export interface Person {
   name: string;
   handle: string;
   example: boolean;
   verified?: boolean;
-  badgeType?: "chase-account" | "staff" | "official";
+  badgeType?: BadgeCategory;
 }
 
 export interface PollChoice {
@@ -34,7 +42,7 @@ export interface Comment {
   example: boolean;
   parentId?: string;
   verified?: boolean;
-  badgeType?: "chase-account" | "staff" | "official";
+  badgeType?: BadgeCategory;
 }
 
 export interface QuoteRef {

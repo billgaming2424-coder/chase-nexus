@@ -56,7 +56,10 @@ export function VideoScreen() {
               <span>{video.length}</span>
             </div>
             <h2>{video.title}</h2>
-            <p>{video.channel}</p>
+            <p className="author-name">
+              <span>{video.channel}</span>
+              <ChaseBadge type="official" />
+            </p>
           </article>
         ))}
       </div>
@@ -91,7 +94,10 @@ export function CommunitiesScreen() {
       <div className="stack">
         {COMMUNITIES.map((community) => (
           <article key={community.id} className="card info-card">
-            <h2>{community.name}</h2>
+            <div className="author-name">
+              <h2>{community.name}</h2>
+              <ChaseBadge type="official" />
+            </div>
             <p>{community.description}</p>
             <ul>
               {community.channels.map((channel) => (
