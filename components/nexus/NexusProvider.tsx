@@ -9,7 +9,15 @@ import {
   type ReactNode,
 } from "react";
 import { POSTS } from "@/lib/demo-data";
-import type { Audience, FeedId, Post, ReactionId, ThemeName } from "@/lib/types";
+import type {
+  Audience,
+  CustomSpaceWidgets,
+  FeedId,
+  Post,
+  ReactionId,
+  SpaceId,
+  ThemeName,
+} from "@/lib/types";
 
 const STORAGE_KEY = "chase-nexus-alpha";
 const STORAGE_VERSION = 1;
@@ -23,6 +31,17 @@ export interface NewPostInput {
   quote?: Post["quote"];
 }
 
+export const DEFAULT_CUSTOM_WIDGETS: CustomSpaceWidgets = {
+  stories: true,
+  composer: true,
+  feed: true,
+  videos: true,
+  communities: true,
+  trending: true,
+  friends: true,
+  chasePlus: true,
+};
+
 interface PersistedState {
   version: number;
   theme: ThemeName;
@@ -30,6 +49,8 @@ interface PersistedState {
   reducedMotion: boolean;
   displayName: string;
   posts: Post[];
+  activeSpace?: SpaceId;
+  customWidgets?: CustomSpaceWidgets;
 }
 
 interface NexusContextValue {
@@ -43,6 +64,10 @@ interface NexusContextValue {
   setAccent: (accent: string | null) => void;
   reducedMotion: boolean;
   setReducedMotion: (value: boolean) => void;
+  activeSpace: SpaceId;
+  setActiveSpace: (space: SpaceId) => void;
+  customWidgets: CustomSpaceWidgets;
+  setCustomWidget: (widget: keyof CustomSpaceWidgets, enabled: boolean) => void;
   quoteTarget: Post | null;
   setQuoteTarget: (post: Post | null) => void;
   addPost: (input: NewPostInput) => void;
@@ -57,6 +82,7 @@ interface NexusContextValue {
 const NexusContext = createContext<NexusContextValue | null>(null);
 
 const THEMES: ThemeName[] = ["chase-purple", "midnight", "light"];
+const SPACES: SpaceId[] = ["social", "creator", "community", "custom"];
 
 function sanitizeAccent(value: unknown): string | null {
   return typeof value === "string" && /^#[0-9a-fA-F]{6}$/.test(value) ? value : null;
@@ -125,6 +151,8 @@ function readPersisted(): PersistedState | null {
       reducedMotion: Boolean(parsed.reducedMotion),
       displayName: sanitizeName(parsed.displayName),
       posts,
+      activeSpace: parsed.activeSpace && SPACES.includes(parsed.activeSpace) ? parsed.activeSpace : "social",
+      customWidgets: parsed.customWidgets ?? DEFAULT_CUSTOM_WIDGETS,
     };
   } catch {
     return null;
@@ -138,6 +166,8 @@ export function NexusProvider({ children }: { children: ReactNode }) {
   const [theme, setTheme] = useState<ThemeName>("chase-purple");
   const [accent, setAccentState] = useState<string | null>(null);
   const [reducedMotion, setReducedMotion] = useState(false);
+  const [activeSpace, setActiveSpace] = useState<SpaceId>("social");
+  const [customWidgets, setCustomWidgets] = useState<CustomSpaceWidgets>(DEFAULT_CUSTOM_WIDGETS);
   const [quoteTarget, setQuoteTarget] = useState<Post | null>(null);
 
   useEffect(() => {
@@ -148,6 +178,8 @@ export function NexusProvider({ children }: { children: ReactNode }) {
       setTheme(saved.theme);
       setAccentState(saved.accent);
       setReducedMotion(saved.reducedMotion);
+      if (saved.activeSpace) setActiveSpace(saved.activeSpace);
+      if (saved.customWidgets) setCustomWidgets(saved.customWidgets);
     }
     setReady(true);
   }, []);
@@ -167,6 +199,8 @@ export function NexusProvider({ children }: { children: ReactNode }) {
       accent,
       reducedMotion,
       displayName,
+      activeSpace,
+      customWidgets,
       posts: posts.map((post) => ({
         ...post,
         imageUrl: post.imageUrl?.startsWith("blob:") ? undefined : post.imageUrl,
@@ -175,9 +209,9 @@ export function NexusProvider({ children }: { children: ReactNode }) {
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
     } catch {
-      // Private mode or a full disk should not break the preview.
+      // Storage fallback
     }
-  }, [ready, posts, theme, accent, reducedMotion, displayName]);
+  }, [ready, posts, theme, accent, reducedMotion, displayName, activeSpace, customWidgets]);
 
   const value = useMemo<NexusContextValue>(() => {
     const update = (id: string, recipe: (post: Post) => Post) => {
@@ -195,12 +229,17 @@ export function NexusProvider({ children }: { children: ReactNode }) {
       setAccent: (next: string | null) => setAccentState(sanitizeAccent(next)),
       reducedMotion,
       setReducedMotion,
+      activeSpace,
+      setActiveSpace,
+      customWidgets,
+      setCustomWidget: (widget: keyof CustomSpaceWidgets, enabled: boolean) =>
+        setCustomWidgets((prev) => ({ ...prev, [widget]: enabled })),
       quoteTarget,
       setQuoteTarget,
       addPost: (input: NewPostInput) => {
         const post: Post = {
           id: crypto.randomUUID(),
-          author: { name: displayName, handle: "@you", example: false },
+          author: { name: displayName, handle: "@you", example: false, verified: true, badgeType: "chase-account" },
           timeLabel: "Just now · this device",
           body: input.body.trim(),
           feeds: ["for-you", "following"],
@@ -255,6 +294,8 @@ export function NexusProvider({ children }: { children: ReactNode }) {
               body: text.slice(0, 300),
               example: false,
               parentId,
+              verified: true,
+              badgeType: "chase-account",
             },
           ],
         }));
@@ -285,7 +326,7 @@ export function NexusProvider({ children }: { children: ReactNode }) {
         });
       },
     };
-  }, [ready, posts, displayName, theme, accent, reducedMotion, quoteTarget]);
+  }, [ready, posts, displayName, theme, accent, reducedMotion, activeSpace, customWidgets, quoteTarget]);
 
   return <NexusContext.Provider value={value}>{children}</NexusContext.Provider>;
 }

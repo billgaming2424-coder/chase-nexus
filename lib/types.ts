@@ -1,5 +1,18 @@
 export type ThemeName = "chase-purple" | "midnight" | "light";
 
+export type SpaceId = "social" | "creator" | "community" | "custom";
+
+export interface CustomSpaceWidgets {
+  stories: boolean;
+  composer: boolean;
+  feed: boolean;
+  videos: boolean;
+  communities: boolean;
+  trending: boolean;
+  friends: boolean;
+  chasePlus: boolean;
+}
+
 export type FeedId =
   | "for-you"
   | "following"

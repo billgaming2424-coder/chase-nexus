@@ -1016,3 +1016,107 @@ html.reduce-motion, html.reduce-motion *, html.reduce-motion *::before, html.red
   font-weight: 700;
   margin-left: 8px;
 }
+
+/* ----------------------------------------------------
+   Nexus Spaces Styling
+   ---------------------------------------------------- */
+
+.space-header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 12px;
+}
+.spaces-bar {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding: 4px 0 10px;
+}
+.space-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: var(--surface-2);
+  color: var(--silver);
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.15s ease;
+}
+.space-btn:hover {
+  background: var(--surface);
+  color: var(--text);
+  border-color: var(--accent);
+}
+.space-btn.is-active {
+  background: var(--accent-soft);
+  color: var(--text);
+  border-color: var(--accent);
+  box-shadow: 0 0 12px rgba(168, 85, 247, 0.25);
+}
+.creator-space-banner, .community-space-banner, .custom-space-controls {
+  margin-top: 14px;
+}
+.creator-stats-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.creator-stats-row h3 {
+  margin: 0;
+  font-size: 1.1rem;
+}
+.small-btn {
+  min-height: 34px;
+  padding: 0 12px;
+  font-size: 0.8rem;
+}
+.creator-metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-top: 12px;
+}
+.metric-box {
+  padding: 10px 14px;
+  border-radius: 12px;
+  background: var(--surface-2);
+  border: 1px solid var(--line);
+  display: flex;
+  flex-direction: column;
+}
+.metric-box small {
+  color: var(--muted);
+}
+.metric-box strong {
+  font-size: 1.15rem;
+  margin-top: 2px;
+  color: var(--accent);
+}
+.community-pills-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+}
+.community-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: var(--surface-2);
+  border: 1px solid var(--line);
+  font-size: 0.82rem;
+}
+.widget-toggle-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
+}
