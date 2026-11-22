@@ -102,7 +102,7 @@ export function Composer() {
           <button
             type="button"
             className="avatar-composer-btn"
-            title="Edit your Bitmoji avatar"
+            title="Edit your Nexus Persona"
             onClick={() => setAvatarStudioOpen(true)}
             style={{ background: "none", border: "none", padding: 0, cursor: "pointer" }}
           >
@@ -120,7 +120,7 @@ export function Composer() {
           />
         </div>
 
-        {/* Attached Bitmoji Sticker Preview */}
+        {/* Attached Persona Sticker Preview */}
         {avatarSticker && (
           <div
             className="composer-sticker-preview"
@@ -146,7 +146,7 @@ export function Composer() {
             />
             <div>
               <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                <strong>Attached Bitmoji Sticker</strong>
+                <strong>Attached Persona Action Sticker</strong>
                 <button
                   type="button"
                   className="icon-btn"
@@ -268,7 +268,7 @@ export function Composer() {
             }}
           >
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
-              <span style={{ fontSize: "0.85rem", fontWeight: 700 }}>Choose a Bitmoji Pose Sticker:</span>
+              <span style={{ fontSize: "0.85rem", fontWeight: 700 }}>Choose a Persona Action Sticker:</span>
               <button
                 type="button"
                 className="icon-btn"
@@ -358,8 +358,8 @@ export function Composer() {
           <button
             type="button"
             className={`icon-btn ${stickerDrawerOpen ? "is-on" : ""}`}
-            title="Attach Bitmoji Sticker (24 Poses)"
-            aria-label="Attach Bitmoji Sticker"
+            title="Attach Persona Sticker (24 Action Frames)"
+            aria-label="Attach Persona Sticker"
             onClick={() => setStickerDrawerOpen((v) => !v)}
           >
             <Smile size={18} className="purple-icon" />
@@ -368,8 +368,8 @@ export function Composer() {
           <button
             type="button"
             className="icon-btn"
-            title="Bitmoji Avatar Studio"
-            aria-label="Customize Bitmoji Avatar"
+            title="Nexus Persona Studio"
+            aria-label="Customize Nexus Persona"
             onClick={() => setAvatarStudioOpen(true)}
           >
             <Sparkles size={18} className="purple-icon" />

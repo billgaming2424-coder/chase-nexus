@@ -294,7 +294,7 @@ export function ArcadeScreen() {
           }}
         >
           <Sparkles size={16} />
-          <span>Bitmoji Fashion Runway</span>
+          <span>Persona Fashion Runway</span>
         </button>
       </div>
 
@@ -549,14 +549,14 @@ export function ArcadeScreen() {
         </div>
       )}
 
-      {/* GAME 3: BITMOJI FASHION RUNWAY */}
+      {/* GAME 3: PERSONA FASHION RUNWAY */}
       {activeGame === "runway" && (
         <div className="card arcade-game-card">
           <div style={{ marginBottom: 16 }}>
             <span className="pill" style={{ background: "rgba(236, 72, 153, 0.2)", color: "#f472b6" }}>
               Community Style & Voting
             </span>
-            <h2 style={{ margin: "6px 0 0" }}>Bitmoji Fashion Runway Showcase</h2>
+            <h2 style={{ margin: "6px 0 0" }}>Persona Fashion Runway Showcase</h2>
             <p className="hint">Vote for your favorite creative creator outfits and earn 25 Gems per vote!</p>
           </div>
 

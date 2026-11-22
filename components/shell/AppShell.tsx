@@ -100,7 +100,7 @@ function AppShellContent({ children }: { children: ReactNode }) {
               <button
                 type="button"
                 className="mobile-avatar-trigger"
-                aria-label="Open Bitmoji Studio"
+                aria-label="Open Persona Studio"
                 onClick={() => setAvatarStudioOpen(true)}
                 style={{ background: "none", border: "none", padding: 0, cursor: "pointer", display: "flex", alignItems: "center" }}
               >
@@ -226,7 +226,7 @@ function AppShellContent({ children }: { children: ReactNode }) {
         onClose={() => setOnboardingModalOpen(false)}
       />
 
-      {/* Nexus Bitmoji Avatar Studio Modal */}
+      {/* Nexus Persona Studio Modal */}
       <NexusAvatarBuilder isOpen={avatarStudioOpen} onClose={() => setAvatarStudioOpen(false)} />
 
       {/* Chase Studios Universal Ecosystem App Switcher */}

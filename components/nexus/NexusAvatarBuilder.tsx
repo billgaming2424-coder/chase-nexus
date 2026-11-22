@@ -20,6 +20,7 @@ import {
   Users,
   Bookmark,
   Zap,
+  UserCheck,
 } from "lucide-react";
 import type { AvatarConfig, AvatarPreset } from "@/lib/types";
 import { DEFAULT_AVATAR } from "@/lib/types";
@@ -39,7 +40,7 @@ const SKIN_TONES = [
   { label: "Golden Caramel", value: "#c98251" },
   { label: "Espresso", value: "#8c5332" },
   { label: "Deep Obsidian", value: "#4a2a18" },
-  { label: "Cosmic Void", value: "#7c3aed" },
+  { label: "Cosmic Amethyst", value: "#7c3aed" },
   { label: "Neon Cyber", value: "#06b6d4" },
 ];
 
@@ -138,21 +139,29 @@ const AURAS: { id: NonNullable<AvatarConfig["aura"]>; label: string; desc: strin
   { id: "glitch-matrix", label: "Cyber Glitch Matrix", desc: "High-tech scanlines and digital neon data", icon: "👾" },
 ];
 
-const ACCESSORIES: { id: AvatarConfig["accessory"]; label: string }[] = [
-  { id: "none", label: "None" },
-  { id: "gamer-headset", label: "Chase Gamer Headset" },
-  { id: "cyber-visor", label: "Neon Visor Glasses" },
-  { id: "aviators", label: "Gold Aviator Shades" },
-  { id: "snapback", label: "Snapback Cap" },
-  { id: "beanie", label: "Warm Knit Beanie" },
-  { id: "crown", label: "Gold King Crown" },
-  { id: "cat-ears", label: "Cyber Cat Ears Headband" },
-  { id: "bandana", label: "Outlaw Bandana" },
-  { id: "earring", label: "Gold Earring" },
-  { id: "heart-shades", label: "Ruby Heart Sunglasses" },
-  { id: "vr-headset", label: "Holographic VR Goggles" },
-  { id: "halo", label: "Angelic Golden Halo" },
-  { id: "demon-horns", label: "Crimson Demon Horns" },
+const ACCESSORIES: {
+  id: AvatarConfig["accessory"];
+  label: string;
+  category: "all" | "headwear" | "eyewear" | "face" | "jewelry";
+  icon: string;
+}[] = [
+  { id: "none", label: "None", category: "all", icon: "🚫" },
+  { id: "gamer-headset", label: "Chase Pro Headset & Mic", category: "headwear", icon: "🎧" },
+  { id: "snapback", label: "Snapback Cap (Forward)", category: "headwear", icon: "🧢" },
+  { id: "snapback-back", label: "Snapback Cap (Backwards)", category: "headwear", icon: "🧢" },
+  { id: "beanie", label: "Knit Pom Beanie", category: "headwear", icon: "🧶" },
+  { id: "crown", label: "Gold King Crown", category: "headwear", icon: "👑" },
+  { id: "cat-ears", label: "Cyber Neko Headband", category: "headwear", icon: "🐱" },
+  { id: "halo", label: "Angelic Celestial Halo", category: "headwear", icon: "✨" },
+  { id: "demon-horns", label: "Crimson Demon Horns", category: "headwear", icon: "😈" },
+  { id: "cyber-visor", label: "Neon Cyber Visor", category: "eyewear", icon: "🕶️" },
+  { id: "aviators", label: "Gold Teardrop Aviators", category: "eyewear", icon: "🕶️" },
+  { id: "heart-shades", label: "Ruby Heart Sunglasses", category: "eyewear", icon: "❤️" },
+  { id: "vr-headset", label: "Holographic VR Goggles", category: "eyewear", icon: "🥽" },
+  { id: "bandana", label: "Outlaw Neck/Face Bandana", category: "face", icon: "🧣" },
+  { id: "oni-mask", label: "Cyber Oni Half-Mask", category: "face", icon: "👺" },
+  { id: "earring", label: "Paired Gold Earring Hoops", category: "jewelry", icon: "💍" },
+  { id: "paired-studs", label: "Paired Diamond Studs", category: "jewelry", icon: "💎" },
 ];
 
 const PROPS: { id: NonNullable<AvatarConfig["prop"]>; label: string; icon: string }[] = [
@@ -167,7 +176,7 @@ const PROPS: { id: NonNullable<AvatarConfig["prop"]>; label: string; icon: strin
 ];
 
 const MOOD_POSES: { id: NonNullable<AvatarConfig["pose"]>; label: string; icon: string }[] = [
-  { id: "portrait", label: "Default Avatar", icon: "✨" },
+  { id: "portrait", label: "Default Persona", icon: "✨" },
   { id: "fire", label: "On Fire Streak", icon: "🔥" },
   { id: "gg", label: "GG! Victory", icon: "🎮" },
   { id: "hype", label: "HYPE Celebration", icon: "⚡" },
@@ -193,6 +202,15 @@ const MOOD_POSES: { id: NonNullable<AvatarConfig["pose"]>; label: string; icon: 
   { id: "salute", label: "Respect Salute", icon: "🫡" },
 ];
 
+const DUO_POSES = [
+  { id: "co-op", label: "Co-Op Squad", icon: "🎮", desc: "Dual controllers & neon connection beam" },
+  { id: "squad", label: "Back-to-Back", icon: "🛡️", desc: "Confident squad arms crossed" },
+  { id: "high-five", label: "High Five!", icon: "⚡", desc: "Clapping hands with radiant energy spark" },
+  { id: "boss-raid", label: "Mythic Raid", icon: "⚔️", desc: "Crossed swords & void aura ready for battle" },
+  { id: "chill", label: "Boba & Chill", icon: "☕", desc: "Relaxing together with coffee & boba mugs" },
+  { id: "celebrate", label: "Victory Drop", icon: "🎉", desc: "Gem drop & confetti celebration" },
+];
+
 const BACKGROUNDS: { id: AvatarConfig["background"]; label: string; preview: string }[] = [
   { id: "purple-gradient", label: "Cosmic Purple", preview: "linear-gradient(135deg, #1b0a2a, #4a1d96)" },
   { id: "neon-cyan", label: "Neon Cyber", preview: "linear-gradient(135deg, #022c22, #06b6d4)" },
@@ -204,29 +222,18 @@ const BACKGROUNDS: { id: AvatarConfig["background"]; label: string; preview: str
   { id: "retro-sunset", label: "Retro Sunset", preview: "linear-gradient(180deg, #f43f5e, #0f172a)" },
 ];
 
-const PRESET_FRIENDS = [
+const DEFAULT_PARTNERS = [
   {
     name: "Avery Quinn",
     handle: "@avery",
     avatar: {
       ...DEFAULT_AVATAR,
-      hairStyle: "curls" as const,
+      skinTone: "#f3c5a8",
+      hairStyle: "braids" as const,
       hairColor: "#b91c1c",
       outfit: "cyber-jacket" as const,
-      accessory: "cat-ears" as const,
-      prop: "rgb-controller" as const,
-    },
-  },
-  {
-    name: "Bill Chase",
-    handle: "@billchase",
-    avatar: {
-      ...DEFAULT_AVATAR,
-      hairStyle: "fade" as const,
-      hairColor: "#18181b",
-      outfit: "varsity-hoodie" as const,
       accessory: "gamer-headset" as const,
-      prop: "trophy" as const,
+      prop: "rgb-controller" as const,
     },
   },
   {
@@ -235,20 +242,35 @@ const PRESET_FRIENDS = [
     avatar: {
       ...DEFAULT_AVATAR,
       skinTone: "#8c5332",
-      hairStyle: "braids" as const,
-      hairColor: "#a855f7",
+      hairStyle: "curls" as const,
+      hairColor: "#22d3ee",
       outfit: "mech-pilot" as const,
       accessory: "vr-headset" as const,
       prop: "laser-sword" as const,
     },
   },
+  {
+    name: "Bill Chase",
+    handle: "@billchase",
+    avatar: {
+      ...DEFAULT_AVATAR,
+      skinTone: "#f8cbb0",
+      hairStyle: "fade" as const,
+      hairColor: "#18181b",
+      outfit: "varsity-hoodie" as const,
+      accessory: "snapback" as const,
+      prop: "trophy" as const,
+    },
+  },
 ];
 
 export function NexusAvatarBuilder({ isOpen, onClose }: NexusAvatarBuilderProps) {
-  const { userProfile, setUserAvatar, userAvatar } = useNexus();
+  const { userProfile, setUserAvatar, userAvatar, friends } = useNexus();
   const [activeTab, setActiveTab] = useState<
-    "face" | "hair" | "eyes" | "outfit" | "accessories" | "props" | "auras" | "stickers" | "friendmoji" | "presets" | "bubble"
+    "face" | "hair" | "eyes" | "outfit" | "accessories" | "props" | "auras" | "duo" | "stickers" | "presets" | "bubble"
   >("face");
+
+  const [accessoryFilter, setAccessoryFilter] = useState<"all" | "headwear" | "eyewear" | "face" | "jewelry">("all");
 
   const [avatar, setAvatar] = useState<AvatarConfig>(() => {
     return userProfile?.avatar_config || userAvatar || DEFAULT_AVATAR;
@@ -257,7 +279,7 @@ export function NexusAvatarBuilder({ isOpen, onClose }: NexusAvatarBuilderProps)
   const [savedSuccess, setSavedSuccess] = useState(false);
   const [savedPresets, setSavedPresets] = useState<AvatarPreset[]>(() => {
     try {
-      const raw = localStorage.getItem("nexus-avatar-presets");
+      const raw = localStorage.getItem("nexus-persona-presets");
       if (raw) return JSON.parse(raw);
     } catch {}
     return [
@@ -269,9 +291,27 @@ export function NexusAvatarBuilder({ isOpen, onClose }: NexusAvatarBuilderProps)
 
   if (!isOpen) return null;
 
+  // Real friends first, then featured studio developers
+  const partnerOptions = [
+    ...friends.map((f) => ({
+      name: f.name,
+      handle: f.handle,
+      avatar: f.avatar || DEFAULT_AVATAR,
+      isRealFriend: true,
+    })),
+    ...DEFAULT_PARTNERS.map((p) => ({
+      name: p.name,
+      handle: p.handle,
+      avatar: p.avatar,
+      isRealFriend: false,
+    })),
+  ];
+
   const handleRandomize = () => {
+    sounds.playPop();
     const randomItem = <T,>(arr: T[]): T => arr[Math.floor(Math.random() * arr.length)];
-    setAvatar({
+    setAvatar((prev) => ({
+      ...prev,
       skinTone: randomItem(SKIN_TONES).value,
       hairStyle: randomItem(HAIR_STYLES).id,
       hairColor: randomItem(HAIR_COLORS).value,
@@ -284,9 +324,9 @@ export function NexusAvatarBuilder({ isOpen, onClose }: NexusAvatarBuilderProps)
       prop: randomItem(PROPS).id,
       background: randomItem(BACKGROUNDS).id,
       pose: randomItem(MOOD_POSES).id,
-      statusBubble: avatar.statusBubble || "Chilling on Chase Nexus ✨",
-      customCaption: avatar.customCaption || "",
-    });
+      statusBubble: prev.statusBubble || "Exploring Chase Nexus ✨",
+      customCaption: prev.customCaption || "",
+    }));
   };
 
   const handleSave = async () => {
@@ -313,7 +353,7 @@ export function NexusAvatarBuilder({ isOpen, onClose }: NexusAvatarBuilderProps)
     };
     setSavedPresets(updated);
     try {
-      localStorage.setItem("nexus-avatar-presets", JSON.stringify(updated));
+      localStorage.setItem("nexus-persona-presets", JSON.stringify(updated));
     } catch {}
   };
 
@@ -323,7 +363,6 @@ export function NexusAvatarBuilder({ isOpen, onClose }: NexusAvatarBuilderProps)
   };
 
   const handleDownloadSVG = () => {
-    // Generate downloadable SVG
     const svgEl = document.querySelector(".avatar-preview-stage svg");
     if (!svgEl) return;
     const svgData = new XMLSerializer().serializeToString(svgEl);
@@ -331,30 +370,52 @@ export function NexusAvatarBuilder({ isOpen, onClose }: NexusAvatarBuilderProps)
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = `nexus-bitmoji-${avatar.pose || "avatar"}.svg`;
+    a.download = `nexus-persona-${avatar.pose || "avatar"}.svg`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
   };
 
+  const filteredAccessories = ACCESSORIES.filter(
+    (a) => accessoryFilter === "all" || a.category === accessoryFilter || a.id === "none"
+  );
+
   return (
-    <div className="modal-backdrop" onClick={onClose}>
+    <div className="modal-backdrop" onClick={onClose} style={{ zIndex: 110 }}>
       <div
         className="dialog card avatar-studio-modal"
         role="dialog"
-        aria-label="Nexus Avatar Studio"
-        style={{ maxWidth: 660, maxHeight: "90vh", display: "flex", flexDirection: "column" }}
+        aria-label="Nexus Persona Studio"
+        style={{
+          maxWidth: 680,
+          width: "94vw",
+          maxHeight: "92vh",
+          display: "flex",
+          flexDirection: "column",
+          borderRadius: 24,
+          padding: 0,
+          overflow: "hidden",
+        }}
         onClick={(e) => e.stopPropagation()}
       >
-        <header className="dialog-head">
+        <header
+          className="dialog-head"
+          style={{
+            padding: "16px 22px",
+            background: "linear-gradient(180deg, rgba(20, 11, 34, 0.95) 0%, rgba(10, 6, 18, 0.9) 100%)",
+            borderBottom: "1px solid rgba(168, 85, 247, 0.2)",
+          }}
+        >
           <div className="author-name">
             <span className="logo-mark auth-mini-logo" aria-hidden="true">
               <Sparkles size={16} />
             </span>
             <div>
-              <h3>Nexus Bitmoji Studio Deluxe</h3>
-              <p className="hint">Snapchat-style avatars, props, meme stickers & Friendmojis</p>
+              <h3 style={{ margin: 0, fontSize: "1.15rem", fontWeight: 800 }}>Nexus Persona Studio</h3>
+              <p className="hint" style={{ margin: 0, fontSize: "0.78rem" }}>
+                Custom 2D Personas, Wardrobe Vault, Dynamic Duos & Holo-Stickers
+              </p>
             </div>
           </div>
           <button type="button" className="icon-btn" aria-label="Close" onClick={onClose}>
@@ -363,10 +424,67 @@ export function NexusAvatarBuilder({ isOpen, onClose }: NexusAvatarBuilderProps)
         </header>
 
         {/* Live Stage with 3D Card Glow */}
-        <div className="avatar-preview-stage" style={{ position: "relative", padding: "18px 0 10px" }}>
-          <div className="avatar-stage-glow" />
-          <NexusAvatar config={avatar} size={150} showStickerBadge showStatusBubble />
-          <div className="avatar-preview-actions" style={{ marginTop: 12, display: "flex", gap: 8, justifyContent: "center" }}>
+        <div
+          className="avatar-preview-stage"
+          style={{
+            position: "relative",
+            padding: "20px 0 14px",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "center",
+            background: "radial-gradient(circle at center, rgba(124, 58, 237, 0.15) 0%, rgba(10, 6, 18, 0.6) 70%)",
+            borderBottom: "1px solid rgba(168, 85, 247, 0.15)",
+          }}
+        >
+          {avatar.duoFriend && (
+            <div
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                gap: 8,
+                marginBottom: 10,
+                padding: "4px 12px",
+                background: "rgba(124, 58, 237, 0.2)",
+                border: "1px solid rgba(168, 85, 247, 0.4)",
+                borderRadius: 20,
+                fontSize: "0.78rem",
+                fontWeight: 700,
+                color: "#c084fc",
+              }}
+            >
+              <span>👥 Persona Duo Active: {avatar.duoFriend.name}</span>
+              <button
+                type="button"
+                style={{
+                  background: "none",
+                  border: "none",
+                  color: "#f87171",
+                  cursor: "pointer",
+                  fontSize: "0.75rem",
+                  padding: "0 2px",
+                  fontWeight: 800,
+                }}
+                onClick={() => setAvatar((prev) => ({ ...prev, duoFriend: undefined }))}
+                title="Switch back to Solo Persona"
+              >
+                ✕ Solo
+              </button>
+            </div>
+          )}
+
+          <NexusAvatar
+            config={avatar}
+            size={160}
+            showStickerBadge
+            showStatusBubble
+            forceDuo={Boolean(avatar.duoFriend)}
+          />
+
+          <div
+            className="avatar-preview-actions"
+            style={{ marginTop: 12, display: "flex", gap: 8, justifyContent: "center" }}
+          >
             <button
               type="button"
               className="btn btn-secondary btn-sm"
@@ -374,13 +492,13 @@ export function NexusAvatarBuilder({ isOpen, onClose }: NexusAvatarBuilderProps)
               title="Surprise me with a random combination"
             >
               <Shuffle size={14} />
-              <span>Randomize</span>
+              <span>Randomize Look</span>
             </button>
             <button
               type="button"
               className="btn btn-ghost btn-sm"
               onClick={handleDownloadSVG}
-              title="Download your Bitmoji as an SVG vector image"
+              title="Export high-resolution vector SVG"
             >
               <Download size={14} />
               <span>Export SVG</span>
@@ -389,7 +507,18 @@ export function NexusAvatarBuilder({ isOpen, onClose }: NexusAvatarBuilderProps)
         </div>
 
         {/* Category Navigation Tabs */}
-        <nav className="avatar-cat-tabs" aria-label="Avatar Categories" style={{ overflowX: "auto" }}>
+        <nav
+          className="avatar-cat-tabs"
+          aria-label="Avatar Categories"
+          style={{
+            overflowX: "auto",
+            display: "flex",
+            gap: 6,
+            padding: "8px 14px",
+            background: "rgba(10, 6, 18, 0.95)",
+            borderBottom: "1px solid rgba(168, 85, 247, 0.15)",
+          }}
+        >
           <button
             type="button"
             className={`cat-tab ${activeTab === "face" ? "is-active" : ""}`}
@@ -420,7 +549,7 @@ export function NexusAvatarBuilder({ isOpen, onClose }: NexusAvatarBuilderProps)
             onClick={() => setActiveTab("outfit")}
           >
             <Shirt size={13} />
-            <span>Fits (14)</span>
+            <span>Fits (20)</span>
           </button>
           <button
             type="button"
@@ -428,7 +557,7 @@ export function NexusAvatarBuilder({ isOpen, onClose }: NexusAvatarBuilderProps)
             onClick={() => setActiveTab("accessories")}
           >
             <Headphones size={13} />
-            <span>Hats & Gear</span>
+            <span>Gear & Hats</span>
           </button>
           <button
             type="button"
@@ -448,19 +577,19 @@ export function NexusAvatarBuilder({ isOpen, onClose }: NexusAvatarBuilderProps)
           </button>
           <button
             type="button"
+            className={`cat-tab ${activeTab === "duo" ? "is-active" : ""}`}
+            onClick={() => setActiveTab("duo")}
+          >
+            <Users size={13} />
+            <span>Persona Duo</span>
+          </button>
+          <button
+            type="button"
             className={`cat-tab ${activeTab === "stickers" ? "is-active" : ""}`}
             onClick={() => setActiveTab("stickers")}
           >
             <Flame size={13} />
-            <span>Stickers (24)</span>
-          </button>
-          <button
-            type="button"
-            className={`cat-tab ${activeTab === "friendmoji" ? "is-active" : ""}`}
-            onClick={() => setActiveTab("friendmoji")}
-          >
-            <Users size={13} />
-            <span>Friendmoji</span>
+            <span>Holo-Stickers</span>
           </button>
           <button
             type="button"
@@ -468,7 +597,7 @@ export function NexusAvatarBuilder({ isOpen, onClose }: NexusAvatarBuilderProps)
             onClick={() => setActiveTab("presets")}
           >
             <Bookmark size={13} />
-            <span>Closet</span>
+            <span>Vault</span>
           </button>
           <button
             type="button"
@@ -476,16 +605,16 @@ export function NexusAvatarBuilder({ isOpen, onClose }: NexusAvatarBuilderProps)
             onClick={() => setActiveTab("bubble")}
           >
             <MessageSquare size={13} />
-            <span>Speech & Theme</span>
+            <span>Status & Theme</span>
           </button>
         </nav>
 
         {/* Category Controls Body */}
-        <div className="avatar-controls-panel" style={{ flex: 1, overflowY: "auto", padding: "14px 18px" }}>
+        <div className="avatar-controls-panel" style={{ flex: 1, overflowY: "auto", padding: "16px 20px" }}>
           {/* 1. Face & Expression */}
           {activeTab === "face" && (
             <div className="builder-section">
-              <label className="builder-label">Skin Tone</label>
+              <label className="builder-label">Skin Tone Shade</label>
               <div className="swatch-grid">
                 {SKIN_TONES.map((t) => (
                   <button
@@ -494,13 +623,16 @@ export function NexusAvatarBuilder({ isOpen, onClose }: NexusAvatarBuilderProps)
                     className={`swatch-btn ${avatar.skinTone === t.value ? "is-active" : ""}`}
                     style={{ background: t.value }}
                     title={t.label}
-                    onClick={() => setAvatar((prev) => ({ ...prev, skinTone: t.value }))}
+                    onClick={() => {
+                      sounds.playPop();
+                      setAvatar((prev) => ({ ...prev, skinTone: t.value }));
+                    }}
                   />
                 ))}
               </div>
 
-              <label className="builder-label" style={{ marginTop: 14 }}>
-                Facial Expression
+              <label className="builder-label" style={{ marginTop: 16 }}>
+                Mouth & Emotion Expression
               </label>
               <div className="choice-chip-grid">
                 {MOUTHS.map((m) => (
@@ -508,15 +640,18 @@ export function NexusAvatarBuilder({ isOpen, onClose }: NexusAvatarBuilderProps)
                     key={m.id}
                     type="button"
                     className={`choice-chip ${avatar.mouth === m.id ? "is-active" : ""}`}
-                    onClick={() => setAvatar((prev) => ({ ...prev, mouth: m.id }))}
+                    onClick={() => {
+                      sounds.playPop();
+                      setAvatar((prev) => ({ ...prev, mouth: m.id }));
+                    }}
                   >
                     {m.label}
                   </button>
                 ))}
               </div>
 
-              <label className="builder-label" style={{ marginTop: 14 }}>
-                Facial Hair / Beard
+              <label className="builder-label" style={{ marginTop: 16 }}>
+                Facial Hair & Stubble
               </label>
               <div className="choice-chip-grid">
                 {FACIAL_HAIR.map((f) => (
@@ -524,7 +659,10 @@ export function NexusAvatarBuilder({ isOpen, onClose }: NexusAvatarBuilderProps)
                     key={f.id}
                     type="button"
                     className={`choice-chip ${avatar.facialHair === f.id ? "is-active" : ""}`}
-                    onClick={() => setAvatar((prev) => ({ ...prev, facialHair: f.id }))}
+                    onClick={() => {
+                      sounds.playPop();
+                      setAvatar((prev) => ({ ...prev, facialHair: f.id }));
+                    }}
                   >
                     {f.label}
                   </button>
@@ -533,42 +671,48 @@ export function NexusAvatarBuilder({ isOpen, onClose }: NexusAvatarBuilderProps)
             </div>
           )}
 
-          {/* 2. Hair & Colors (15 styles) */}
+          {/* 2. Hairstyles & Colors */}
           {activeTab === "hair" && (
             <div className="builder-section">
-              <label className="builder-label">Hair Style (15 Custom Cuts)</label>
+              <label className="builder-label">Hair Color Palette</label>
+              <div className="swatch-grid">
+                {HAIR_COLORS.map((h) => (
+                  <button
+                    key={h.value}
+                    type="button"
+                    className={`swatch-btn ${avatar.hairColor === h.value ? "is-active" : ""}`}
+                    style={{ background: h.value }}
+                    title={h.label}
+                    onClick={() => {
+                      sounds.playPop();
+                      setAvatar((prev) => ({ ...prev, hairColor: h.value }));
+                    }}
+                  />
+                ))}
+              </div>
+
+              <label className="builder-label" style={{ marginTop: 16 }}>
+                Hair Cut & Style (15 Distinct Cuts)
+              </label>
               <div className="choice-chip-grid">
                 {HAIR_STYLES.map((h) => (
                   <button
                     key={h.id}
                     type="button"
                     className={`choice-chip ${avatar.hairStyle === h.id ? "is-active" : ""}`}
-                    onClick={() => setAvatar((prev) => ({ ...prev, hairStyle: h.id }))}
+                    onClick={() => {
+                      sounds.playPop();
+                      setAvatar((prev) => ({ ...prev, hairStyle: h.id }));
+                    }}
                   >
                     {h.label}
                   </button>
                 ))}
               </div>
-
-              <label className="builder-label" style={{ marginTop: 14 }}>
-                Hair Color
-              </label>
-              <div className="swatch-grid">
-                {HAIR_COLORS.map((c) => (
-                  <button
-                    key={c.value}
-                    type="button"
-                    className={`swatch-btn ${avatar.hairColor === c.value ? "is-active" : ""}`}
-                    style={{ background: c.value }}
-                    title={c.label}
-                    onClick={() => setAvatar((prev) => ({ ...prev, hairColor: c.value }))}
-                  />
-                ))}
-              </div>
             </div>
           )}
 
-          {/* 3. Eyes & Colors */}
+          {/* 3. Eyes & Glow */}
           {activeTab === "eyes" && (
             <div className="builder-section">
               <label className="builder-label">Eye Shape</label>
@@ -578,14 +722,17 @@ export function NexusAvatarBuilder({ isOpen, onClose }: NexusAvatarBuilderProps)
                     key={e.id}
                     type="button"
                     className={`choice-chip ${avatar.eyeShape === e.id ? "is-active" : ""}`}
-                    onClick={() => setAvatar((prev) => ({ ...prev, eyeShape: e.id }))}
+                    onClick={() => {
+                      sounds.playPop();
+                      setAvatar((prev) => ({ ...prev, eyeShape: e.id }));
+                    }}
                   >
                     {e.label}
                   </button>
                 ))}
               </div>
 
-              <label className="builder-label" style={{ marginTop: 14 }}>
+              <label className="builder-label" style={{ marginTop: 16 }}>
                 Iris Glow / Eye Color
               </label>
               <div className="swatch-grid">
@@ -596,28 +743,34 @@ export function NexusAvatarBuilder({ isOpen, onClose }: NexusAvatarBuilderProps)
                     className={`swatch-btn ${avatar.eyeColor === c.value ? "is-active" : ""}`}
                     style={{ background: c.value }}
                     title={c.label}
-                    onClick={() => setAvatar((prev) => ({ ...prev, eyeColor: c.value }))}
+                    onClick={() => {
+                      sounds.playPop();
+                      setAvatar((prev) => ({ ...prev, eyeColor: c.value }));
+                    }}
                   />
                 ))}
               </div>
             </div>
           )}
 
-          {/* 4. Wardrobe (14 Outfits) */}
+          {/* 4. Wardrobe (20 Outfits) */}
           {activeTab === "outfit" && (
             <div className="builder-section">
-              <label className="builder-label">Chase Studios Outfits (14 Official Fits)</label>
-              <div className="outfit-card-stack">
+              <label className="builder-label">Chase Studios Fits (20 Universe Outfits)</label>
+              <div className="outfit-card-stack" style={{ display: "flex", flexDirection: "column", gap: 8 }}>
                 {OUTFITS.map((o) => (
                   <button
                     key={o.id}
                     type="button"
                     className={`outfit-select-row ${avatar.outfit === o.id ? "is-active" : ""}`}
-                    onClick={() => setAvatar((prev) => ({ ...prev, outfit: o.id }))}
+                    onClick={() => {
+                      sounds.playPop();
+                      setAvatar((prev) => ({ ...prev, outfit: o.id }));
+                    }}
                   >
                     <div>
                       <strong>{o.label}</strong>
-                      <p>{o.desc}</p>
+                      <p className="hint" style={{ margin: "2px 0 0" }}>{o.desc}</p>
                     </div>
                     {avatar.outfit === o.id && <Check size={16} className="purple-icon" />}
                   </button>
@@ -626,19 +779,48 @@ export function NexusAvatarBuilder({ isOpen, onClose }: NexusAvatarBuilderProps)
             </div>
           )}
 
-          {/* 5. Accessories & Hats (14 items) */}
+          {/* 5. Accessories, Hats & Gear (Properly Paired and Layered) */}
           {activeTab === "accessories" && (
             <div className="builder-section">
               <label className="builder-label">Gear, Hats & Eyewear</label>
+              <p className="hint" style={{ marginBottom: 10 }}>
+                Correctly layered and paired: hats tuck voluminous hair, bandanas cover the lower neck, and earrings are paired on both ears!
+              </p>
+
+              {/* Sub-category Filter Tabs */}
+              <div style={{ display: "flex", gap: 6, flexWrap: "wrap", marginBottom: 14 }}>
+                {[
+                  { id: "all" as const, label: "All Gear" },
+                  { id: "headwear" as const, label: "Hats & Headwear" },
+                  { id: "eyewear" as const, label: "Eyewear & Visors" },
+                  { id: "face" as const, label: "Face & Bandanas" },
+                  { id: "jewelry" as const, label: "Paired Earrings" },
+                ].map((tab) => (
+                  <button
+                    key={tab.id}
+                    type="button"
+                    className={`chip ${accessoryFilter === tab.id ? "is-active" : ""}`}
+                    style={{ fontSize: "0.75rem", padding: "4px 10px" }}
+                    onClick={() => setAccessoryFilter(tab.id)}
+                  >
+                    {tab.label}
+                  </button>
+                ))}
+              </div>
+
               <div className="choice-chip-grid">
-                {ACCESSORIES.map((a) => (
+                {filteredAccessories.map((a) => (
                   <button
                     key={a.id}
                     type="button"
                     className={`choice-chip ${avatar.accessory === a.id ? "is-active" : ""}`}
-                    onClick={() => setAvatar((prev) => ({ ...prev, accessory: a.id }))}
+                    onClick={() => {
+                      sounds.playPop();
+                      setAvatar((prev) => ({ ...prev, accessory: a.id }));
+                    }}
                   >
-                    {a.label}
+                    <span>{a.icon}</span>
+                    <span>{a.label}</span>
                   </button>
                 ))}
               </div>
@@ -658,7 +840,10 @@ export function NexusAvatarBuilder({ isOpen, onClose }: NexusAvatarBuilderProps)
                     key={p.id}
                     type="button"
                     className={`choice-chip ${avatar.prop === p.id ? "is-active" : ""}`}
-                    onClick={() => setAvatar((prev) => ({ ...prev, prop: p.id }))}
+                    onClick={() => {
+                      sounds.playPop();
+                      setAvatar((prev) => ({ ...prev, prop: p.id }));
+                    }}
                   >
                     <span>{p.icon}</span>
                     <span>{p.label}</span>
@@ -668,12 +853,12 @@ export function NexusAvatarBuilder({ isOpen, onClose }: NexusAvatarBuilderProps)
             </div>
           )}
 
-          {/* Dynamic Energy Auras (Season 1 Cyber-Cosmetics) */}
+          {/* Dynamic Energy Auras */}
           {activeTab === "auras" && (
             <div className="builder-section">
               <label className="builder-label">Dynamic Energy Auras (Season 1 Cyber-Cosmetics)</label>
               <p className="hint" style={{ marginBottom: 10 }}>
-                Equip a celestial cosmic aura, electric lightning shield, or digital glitch scanlines around your Bitmoji!
+                Equip a celestial cosmic aura, electric lightning shield, or digital glitch scanlines around your Persona!
               </p>
               <div className="choice-chip-grid">
                 {AURAS.map((a) => (
@@ -694,12 +879,114 @@ export function NexusAvatarBuilder({ isOpen, onClose }: NexusAvatarBuilderProps)
             </div>
           )}
 
-          {/* 7. Sticker Pack & Comic Memes (24 Poses + Custom Caption) */}
+          {/* 7. Persona Duo Studio (Revamped Pair System) */}
+          {activeTab === "duo" && (
+            <div className="builder-section">
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
+                <label className="builder-label" style={{ margin: 0 }}>
+                  Persona Duo™ Dynamic Pair System
+                </label>
+                {avatar.duoFriend && (
+                  <button
+                    type="button"
+                    className="btn btn-ghost btn-sm"
+                    style={{ fontSize: "0.72rem", color: "#f87171" }}
+                    onClick={() => setAvatar((prev) => ({ ...prev, duoFriend: undefined }))}
+                  >
+                    Reset to Solo Look
+                  </button>
+                )}
+              </div>
+              <p className="hint" style={{ marginBottom: 14 }}>
+                Pose side-by-side with your real friends, squad mates, or studio developers in dynamic co-op scenes!
+              </p>
+
+              {/* Duo Poses / Action Scenes */}
+              {avatar.duoFriend && (
+                <div style={{ marginBottom: 18, padding: "12px 14px", background: "rgba(124, 58, 237, 0.1)", borderRadius: 14, border: "1px solid rgba(168, 85, 247, 0.3)" }}>
+                  <label className="builder-label" style={{ fontSize: "0.82rem", color: "#c084fc", marginBottom: 8, display: "block" }}>
+                    Select Duo Interaction Scene:
+                  </label>
+                  <div className="choice-chip-grid" style={{ gridTemplateColumns: "repeat(auto-fill, minmax(130px, 1fr))" }}>
+                    {DUO_POSES.map((dp) => (
+                      <button
+                        key={dp.id}
+                        type="button"
+                        className={`choice-chip ${avatar.duoFriend?.duoPose === dp.id ? "is-active" : ""}`}
+                        style={{ fontSize: "0.78rem", padding: "6px 10px" }}
+                        onClick={() => {
+                          sounds.playCoin();
+                          setAvatar((prev) => ({
+                            ...prev,
+                            duoFriend: prev.duoFriend ? { ...prev.duoFriend, duoPose: dp.id } : undefined,
+                          }));
+                        }}
+                      >
+                        <span>{dp.icon}</span>
+                        <span>{dp.label}</span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Partner List */}
+              <label className="builder-label" style={{ fontSize: "0.85rem", marginBottom: 8, display: "block" }}>
+                Choose Partner to Pair With:
+              </label>
+              <div className="outfit-card-stack" style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+                {partnerOptions.map((f) => {
+                  const isSelected = avatar.duoFriend?.name === f.name;
+                  return (
+                    <button
+                      key={f.handle}
+                      type="button"
+                      className={`outfit-select-row ${isSelected ? "is-active" : ""}`}
+                      onClick={() => {
+                        sounds.playPop();
+                        if (isSelected) {
+                          setAvatar((prev) => ({ ...prev, duoFriend: undefined }));
+                        } else {
+                          setAvatar((prev) => ({
+                            ...prev,
+                            duoFriend: {
+                              name: f.name,
+                              avatar: f.avatar,
+                              duoPose: prev.duoFriend?.duoPose || "co-op",
+                            },
+                          }));
+                        }
+                      }}
+                    >
+                      <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                        <NexusAvatar config={f.avatar} size={38} />
+                        <div>
+                          <strong>{f.name}</strong>
+                          <p className="hint" style={{ margin: "2px 0 0", fontSize: "0.75rem" }}>
+                            {f.handle} · {f.isRealFriend ? "Connected Friend 🔥" : "Chase Studios Partner"}
+                          </p>
+                        </div>
+                      </div>
+                      {isSelected ? (
+                        <span className="pill" style={{ background: "rgba(168, 85, 247, 0.3)", color: "#c084fc", fontSize: "0.72rem" }}>
+                          Paired ✓
+                        </span>
+                      ) : (
+                        <span style={{ fontSize: "0.75rem", color: "var(--muted)" }}>+ Pair</span>
+                      )}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
+          {/* 8. Action Frames & Holo-Stickers */}
           {activeTab === "stickers" && (
             <div className="builder-section">
-              <label className="builder-label">Custom Comic Sticker Caption</label>
+              <label className="builder-label">Custom Action Frame Caption</label>
               <p className="hint" style={{ marginBottom: 6 }}>
-                Type any meme text to stamp across your Bitmoji sticker banner:
+                Type any text banner to stamp across your Persona action frame:
               </p>
               <input
                 type="text"
@@ -712,7 +999,7 @@ export function NexusAvatarBuilder({ isOpen, onClose }: NexusAvatarBuilderProps)
                   padding: "8px 12px",
                   background: "var(--surface)",
                   border: "1px solid var(--border)",
-                  borderRadius: 8,
+                  borderRadius: 10,
                   color: "var(--foreground)",
                   fontWeight: 700,
                   fontSize: "0.95rem",
@@ -720,14 +1007,17 @@ export function NexusAvatarBuilder({ isOpen, onClose }: NexusAvatarBuilderProps)
                 }}
               />
 
-              <label className="builder-label">Snapchat-Style Bitmoji Comic Poses (24 Pack)</label>
+              <label className="builder-label">Persona Action Frames (24 Expressions)</label>
               <div className="choice-chip-grid">
                 {MOOD_POSES.map((p) => (
                   <button
                     key={p.id}
                     type="button"
                     className={`choice-chip ${avatar.pose === p.id ? "is-active" : ""}`}
-                    onClick={() => setAvatar((prev) => ({ ...prev, pose: p.id }))}
+                    onClick={() => {
+                      sounds.playPop();
+                      setAvatar((prev) => ({ ...prev, pose: p.id }));
+                    }}
                   >
                     <span>{p.icon}</span>
                     <span>{p.label}</span>
@@ -737,49 +1027,10 @@ export function NexusAvatarBuilder({ isOpen, onClose }: NexusAvatarBuilderProps)
             </div>
           )}
 
-          {/* 8. Friendmoji Duo Studio */}
-          {activeTab === "friendmoji" && (
-            <div className="builder-section">
-              <label className="builder-label">Snapchat-Style Friendmoji Duo</label>
-              <p className="hint" style={{ marginBottom: 12 }}>
-                Pose side-by-side with your friends, squad mates, or studio developers!
-              </p>
-              <div className="outfit-card-stack">
-                {PRESET_FRIENDS.map((f) => (
-                  <button
-                    key={f.handle}
-                    type="button"
-                    className={`outfit-select-row ${avatar.duoFriend?.name === f.name ? "is-active" : ""}`}
-                    onClick={() => {
-                      if (avatar.duoFriend?.name === f.name) {
-                        setAvatar((prev) => ({ ...prev, duoFriend: undefined }));
-                      } else {
-                        setAvatar((prev) => ({
-                          ...prev,
-                          duoFriend: { name: f.name, avatar: f.avatar, duoPose: "co-op" },
-                          pose: "co-op",
-                        }));
-                      }
-                    }}
-                  >
-                    <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                      <NexusAvatar config={f.avatar} size={36} />
-                      <div>
-                        <strong>{f.name}</strong>
-                        <p>{f.handle} · Co-Op Squad Partner</p>
-                      </div>
-                    </div>
-                    {avatar.duoFriend?.name === f.name && <Check size={16} className="purple-icon" />}
-                  </button>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* 9. Closet Presets */}
+          {/* 9. Persona Vault Presets */}
           {activeTab === "presets" && (
             <div className="builder-section">
-              <label className="builder-label">Wardrobe Closet Presets</label>
+              <label className="builder-label">Persona Wardrobe Vault</label>
               <p className="hint" style={{ marginBottom: 12 }}>
                 Save your favorite looks into wardrobe slots and switch with one tap.
               </p>
@@ -794,13 +1045,16 @@ export function NexusAvatarBuilder({ isOpen, onClose }: NexusAvatarBuilderProps)
                       justifyContent: "space-between",
                       padding: "10px 14px",
                       background: "var(--surface)",
+                      borderRadius: 14,
                     }}
                   >
                     <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
                       <NexusAvatar config={preset.avatar} size={42} />
                       <div>
                         <strong>{preset.name}</strong>
-                        <p className="hint">{preset.avatar.outfit} · {preset.avatar.accessory}</p>
+                        <p className="hint" style={{ margin: "2px 0 0", fontSize: "0.75rem" }}>
+                          {preset.avatar.outfit} · {preset.avatar.accessory}
+                        </p>
                       </div>
                     </div>
                     <div style={{ display: "flex", gap: 6 }}>
@@ -817,7 +1071,7 @@ export function NexusAvatarBuilder({ isOpen, onClose }: NexusAvatarBuilderProps)
                         onClick={() => handleSaveToSlot(idx)}
                         title="Overwrite this slot with your current look"
                       >
-                        Overwrite
+                        Save
                       </button>
                     </div>
                   </div>
@@ -826,7 +1080,7 @@ export function NexusAvatarBuilder({ isOpen, onClose }: NexusAvatarBuilderProps)
             </div>
           )}
 
-          {/* 10. Speech Bubble & Backdrop */}
+          {/* 10. Status Bubble & Theme */}
           {activeTab === "bubble" && (
             <div className="builder-section">
               <label className="builder-label">Floating Status Speech Bubble</label>
@@ -842,21 +1096,24 @@ export function NexusAvatarBuilder({ isOpen, onClose }: NexusAvatarBuilderProps)
                   padding: "10px 14px",
                   background: "var(--surface)",
                   border: "1px solid var(--border)",
-                  borderRadius: 8,
+                  borderRadius: 10,
                   color: "var(--foreground)",
                   fontSize: "0.95rem",
                   marginBottom: 16,
                 }}
               />
 
-              <label className="builder-label">Avatar Background Gradient</label>
+              <label className="builder-label">Persona Backdrop Gradient</label>
               <div className="choice-chip-grid">
                 {BACKGROUNDS.map((b) => (
                   <button
                     key={b.id}
                     type="button"
                     className={`choice-chip ${avatar.background === b.id ? "is-active" : ""}`}
-                    onClick={() => setAvatar((prev) => ({ ...prev, background: b.id }))}
+                    onClick={() => {
+                      sounds.playPop();
+                      setAvatar((prev) => ({ ...prev, background: b.id }));
+                    }}
                     style={{ display: "inline-flex", alignItems: "center", gap: 8 }}
                   >
                     <span
@@ -877,10 +1134,20 @@ export function NexusAvatarBuilder({ isOpen, onClose }: NexusAvatarBuilderProps)
         </div>
 
         {/* Footer actions */}
-        <footer className="avatar-builder-foot" style={{ borderTop: "1px solid var(--border)", padding: "12px 18px" }}>
+        <footer
+          className="avatar-builder-foot"
+          style={{
+            borderTop: "1px solid var(--border)",
+            padding: "14px 22px",
+            background: "rgba(10, 6, 18, 0.95)",
+            display: "flex",
+            justifyContent: "flex-end",
+            gap: 10,
+          }}
+        >
           {savedSuccess ? (
-            <div className="auth-success-banner" style={{ width: "100%", textAlign: "center" }}>
-              ✓ Character Avatar Saved to Profile & Cloud!
+            <div className="auth-success-banner" style={{ width: "100%", textAlign: "center", fontWeight: 700 }}>
+              ✓ Nexus Persona Saved to Profile & Cloud!
             </div>
           ) : (
             <>
@@ -889,7 +1156,7 @@ export function NexusAvatarBuilder({ isOpen, onClose }: NexusAvatarBuilderProps)
               </button>
               <button type="button" className="btn btn-primary" onClick={handleSave}>
                 <Check size={16} />
-                <span>Save Bitmoji Avatar</span>
+                <span>Save Nexus Persona</span>
               </button>
             </>
           )}

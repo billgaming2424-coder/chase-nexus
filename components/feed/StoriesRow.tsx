@@ -71,11 +71,11 @@ export function StoriesRow() {
         <h2 id="stories-heading" className="section-label" style={{ margin: 0 }}>
           Nexus 24h Stories
         </h2>
-        <span className="pill" style={{ fontSize: "0.75rem" }}>Snapchat-Style</span>
+        <span className="pill" style={{ fontSize: "0.75rem" }}>24-Hour Drops</span>
       </div>
 
       <div className="stories">
-        {/* Your Story button with Bitmoji avatar */}
+        {/* Your Story button with Persona avatar */}
         <button
           type="button"
           className="story"
@@ -122,7 +122,7 @@ export function StoriesRow() {
       <dialog ref={dialogRef} className="dialog story-modal-dialog" aria-labelledby={titleId} onClose={close}>
         {active ? (
           <div className="dialog-card story-dialog-card">
-            {/* Snapchat-style Top Progress Bar */}
+            {/* Stories Top Progress Bar */}
             <div className="story-progress-bar-wrap" style={{ height: 3, background: "rgba(255,255,255,0.2)", borderRadius: 2, marginBottom: 12, overflow: "hidden" }}>
               <div
                 className="story-progress-fill"

@@ -296,13 +296,13 @@ export function AccountSetupWizard({ isOpen, onClose }: AccountSetupWizardProps)
             </div>
           )}
 
-          {/* STEP 2: BITMOJI AVATAR CUSTOMIZER */}
+          {/* STEP 2: PERSONA CUSTOMIZER */}
           {step === 2 && (
             <div>
               <div style={{ textAlign: "center", marginBottom: 16 }}>
-                <h2 style={{ margin: "0 0 6px", fontSize: "1.35rem" }}>Design Your Bitmoji</h2>
+                <h2 style={{ margin: "0 0 6px", fontSize: "1.35rem" }}>Design Your Nexus Persona</h2>
                 <p className="hint" style={{ margin: 0 }}>
-                  Customize your signature 2D avatar and animated cyber energy aura.
+                  Customize your signature 2D persona, wardrobe, and animated energy aura.
                 </p>
               </div>
 

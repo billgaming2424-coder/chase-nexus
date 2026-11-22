@@ -210,7 +210,7 @@ export function StudioScreen() {
 
             <div>
               <div style={{ display: "flex", justifyContent: "space-between", fontSize: "0.85rem", marginBottom: 4 }}>
-                <span>Bitmoji Gear & Marketplace Cut (18%)</span>
+                <span>Persona Gear & Marketplace Cut (18%)</span>
                 <strong>{earnings.marketplaceCut} 💎</strong>
               </div>
               <div style={{ height: 6, background: "rgba(255,255,255,0.08)", borderRadius: 99, overflow: "hidden" }}>

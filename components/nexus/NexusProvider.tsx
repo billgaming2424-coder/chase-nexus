@@ -366,7 +366,7 @@ export function NexusProvider({ children }: { children: ReactNode }) {
     } catch {}
   }, []);
 
-  // Nexus Bitmoji-style Custom Avatar State (initialized consistently to prevent hydration mismatch)
+  // Nexus Persona Custom Avatar State (initialized consistently to prevent hydration mismatch)
   const [userAvatar, setUserAvatarState] = useState<AvatarConfig>(DEFAULT_AVATAR);
 
   const setUserAvatar = useCallback(async (avatar: AvatarConfig) => {

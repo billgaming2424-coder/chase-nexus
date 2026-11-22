@@ -43,7 +43,7 @@ const BADGE_CONFIG: Record<
     label: "Chase+ Member",
     ariaLabel: "Chase+ Member · All-Access Ecosystem Subscriber",
     className: "badge-chase-plus",
-    description: "All-Access subscriber enjoying unlimited 4K video uploads, custom Bitmoji closet slots, and priority matchmaking.",
+    description: "All-Access subscriber enjoying unlimited 4K video uploads, custom Persona vault slots, and priority matchmaking.",
   },
   "identity-verified": {
     label: "Identity Verified",

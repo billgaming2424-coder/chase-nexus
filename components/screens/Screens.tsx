@@ -582,7 +582,7 @@ export function StoriesScreen() {
     <section className="page">
       <p className="eyebrow">Nexus Stories</p>
       <h1>Stories</h1>
-      <p>Snapchat-inspired temporary 24-hour Stories arrive in Alpha 0.8. You can preview photo creation locally below.</p>
+      <p>Exclusive temporary 24-hour Stories. Share clips, photos, and Persona updates with friends and followers.</p>
       <StoriesRow />
     </section>
   );
@@ -676,7 +676,7 @@ export function ProfileScreen() {
             <button
               type="button"
               className="icon-btn"
-              title="Open Bitmoji Studio"
+              title="Open Persona Studio"
               style={{
                 position: "absolute",
                 bottom: 0,
@@ -731,20 +731,20 @@ export function ProfileScreen() {
                 onClick={() => setAvatarBuilderOpen(true)}
               >
                 <Sparkles size={14} className="purple-icon" />
-                <span>Customize Bitmoji Avatar</span>
+                <span>Customize Nexus Persona</span>
               </button>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Bitmoji Sticker Sheet - Full Comic Sticker Pack */}
+      {/* Persona Holo-Sticker Sheet */}
       <div className="card sticker-sheet-card">
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 8 }}>
           <div>
-            <h2 style={{ fontSize: "1.15rem", margin: 0 }}>My Bitmoji Stickers & Expressions (20+ Pack)</h2>
+            <h2 style={{ fontSize: "1.15rem", margin: 0 }}>My Persona Holo-Stickers (20+ Pack)</h2>
             <p className="hint" style={{ margin: "2px 0 0" }}>
-              Snapchat-style comic expressions. Tap any sticker to set your active mood!
+              Action frames & expressions. Tap any sticker to set your active mood!
             </p>
           </div>
           <button
@@ -752,7 +752,7 @@ export function ProfileScreen() {
             className="btn btn-ghost btn-sm"
             onClick={() => setAvatarBuilderOpen(true)}
           >
-            Studio Deluxe
+            Persona Studio
           </button>
         </div>
 
@@ -971,7 +971,7 @@ export function MessagesScreen() {
         <p className="eyebrow">Nexus Messages & Streaks</p>
         <h1>Direct Messages & Streaks</h1>
         <p>
-          Private conversations with streak fire milestones, voice notes, and Bitmoji avatar chat.
+          Private conversations with streak fire milestones, voice notes, and Persona avatar chat.
         </p>
       </header>
 
@@ -1032,7 +1032,7 @@ export function MessagesScreen() {
                           </span>
                         ) : null}
                       </div>
-                      <small className="chat-last-msg">{lastMsg?.text || "Bitmoji sticker sent"}</small>
+                      <small className="chat-last-msg">{lastMsg?.text || "Persona sticker sent"}</small>
                     </div>
                   </button>
                 </li>
@@ -1095,7 +1095,7 @@ export function MessagesScreen() {
 
           <div className="chat-bubble-stream">
             <p className="hint center-hint">
-              Direct messaging with active streaks, voice notes, and Bitmoji sticker support.
+              Direct messaging with active streaks, voice notes, and Persona sticker support.
             </p>
             {activeChat.messages.map((msg) => (
               <div
@@ -1209,7 +1209,7 @@ export function MessagesScreen() {
             )}
           </div>
 
-          {/* Quick Bitmoji Sticker Tray */}
+          {/* Quick Persona Sticker Tray */}
           <div
             className="chat-quick-stickers"
             style={{
@@ -1223,7 +1223,7 @@ export function MessagesScreen() {
             }}
           >
             <span style={{ fontSize: "0.75rem", color: "var(--muted)", whiteSpace: "nowrap" }}>
-              Bitmoji Deluxe:
+              Persona Actions:
             </span>
             {[
               { pose: "fire", icon: "🔥 Fire" },
@@ -1313,7 +1313,7 @@ export function CallsScreen() {
         <div>
           <p className="eyebrow">Nexus HD Conference & Calls</p>
           <h1>Voice & Video Calling Suite</h1>
-          <p>Multi-participant spatial voice, WebRTC HD video, and dynamic Bitmoji avatar presence.</p>
+          <p>Multi-participant spatial voice, WebRTC HD video, and dynamic Persona avatar presence.</p>
         </div>
         <div style={{ display: "flex", gap: 8 }}>
           {["Alpha Dev Lounge", "Unimon Squad", "Creators Stage"].map((room) => (
@@ -1550,7 +1550,7 @@ export function CallsScreen() {
             <span style={{ fontSize: "0.78rem", color: "#c084fc" }}>Listening</span>
           </div>
 
-          {/* You (with Bitmoji Deluxe or Camera Feed) */}
+          {/* You (with Persona or Camera Feed) */}
           <div
             style={{
               background: "rgba(124, 58, 237, 0.08)",
@@ -1564,7 +1564,7 @@ export function CallsScreen() {
             }}
           >
             <span className="pill" style={{ position: "absolute", top: 10, right: 10, background: "rgba(124, 58, 237, 0.3)" }}>
-              {videoOn ? "Webcam HD" : "Bitmoji Virtual Avatar"}
+              {videoOn ? "Webcam HD" : "Persona Virtual Avatar"}
             </span>
             <div style={{ position: "relative", margin: "6px 0" }}>
               <NexusAvatar config={userAvatar} size={76} showStickerBadge />
@@ -1757,7 +1757,7 @@ export function NotificationsScreen() {
     {
       id: "n5",
       type: "mentions",
-      title: "Jordan Hale liked your latest Bitmoji sticker post",
+      title: "Jordan Hale liked your latest Persona sticker post",
       time: "8h ago",
       icon: "heart",
       detail: "Your Cyber Samurai post is trending in the #ChaseNexus community feed.",
@@ -2338,7 +2338,7 @@ export function SettingsScreen() {
 
 export function MarketplaceScreen() {
   const { walletBalance, addGems, tipCreator, userAvatar, setUserAvatar } = useNexus();
-  const [activeCategory, setActiveCategory] = useState<"all" | "bitmoji" | "passes" | "chase-plus" | "tips">("all");
+  const [activeCategory, setActiveCategory] = useState<"all" | "persona" | "passes" | "chase-plus" | "tips">("all");
   const [unlockedItems, setUnlockedItems] = useState<Record<string, boolean>>({});
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
@@ -2351,7 +2351,7 @@ export function MarketplaceScreen() {
     {
       id: "cyber-samurai",
       title: "Cyber Samurai Neon Armor",
-      category: "bitmoji",
+      category: "persona",
       rarity: "Legendary",
       price: 800,
       description: "Cybernetic battle suit with glowing neon purple kanji, laser katana prop, and high-tech visor.",
@@ -2387,7 +2387,7 @@ export function MarketplaceScreen() {
       rarity: "Legendary",
       price: 2500,
       description: "The ultimate Chase Studios subscription. Official Purple Checkmark, 4K 60fps video uploads, and day-one access to all titles.",
-      perks: ["Chase Account Verified Badge", "Unlimited 4K Video Uploads", "All Future Chase Studios Titles Included", "10 Bitmoji Closet Slots"],
+      perks: ["Chase Account Verified Badge", "Unlimited 4K Video Uploads", "All Future Chase Studios Titles Included", "10 Persona Vault Slots"],
     },
     {
       id: "mecha-kitty",
@@ -2401,10 +2401,10 @@ export function MarketplaceScreen() {
     {
       id: "golden-mic",
       title: "Golden Microphone & DJ Stage",
-      category: "bitmoji",
+      category: "persona",
       rarity: "Epic",
       price: 500,
-      description: "Deluxe 24K golden microphone handheld prop and animated audio visualizer stage for your Bitmoji.",
+      description: "Deluxe 24K golden microphone handheld prop and animated audio visualizer stage for your Persona.",
       perks: ["Unlocks Golden Mic Prop", "Cosmic Stars Background", "Hype Dance Pose"],
       equipConfig: {
         prop: "golden-mic",
@@ -2422,7 +2422,7 @@ export function MarketplaceScreen() {
           ...userAvatar,
           ...(item.equipConfig as any),
         });
-        showToast(`Equipped ${item.title} to your Bitmoji avatar!`);
+        showToast(`Equipped ${item.title} to your Persona!`);
       }
       return;
     }
@@ -2494,7 +2494,7 @@ export function MarketplaceScreen() {
         <div>
           <p className="eyebrow">Chase Studios Digital Store</p>
           <h1>Nexus Marketplace & Creator Economy</h1>
-          <p>Unlock official game season passes, exclusive Bitmoji skins, and tip your favorite creators.</p>
+          <p>Unlock official game season passes, exclusive Persona outfits, and tip your favorite creators.</p>
         </div>
 
         {/* User Gems Wallet Card */}
@@ -2538,7 +2538,7 @@ export function MarketplaceScreen() {
       <div style={{ display: "flex", gap: 8, margin: "16px 0 24px", flexWrap: "wrap" }}>
         {[
           { id: "all", label: "All Items", icon: ShoppingBag },
-          { id: "bitmoji", label: "Bitmoji Deluxe Gear", icon: Sparkles },
+          { id: "persona", label: "Persona Gear & Outfits", icon: Sparkles },
           { id: "passes", label: "Game Season Passes", icon: Zap },
           { id: "chase-plus", label: "Chase+ Subscriptions", icon: Star },
           { id: "tips", label: "Tip Creators", icon: Gift },

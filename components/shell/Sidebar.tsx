@@ -130,7 +130,7 @@ export function Sidebar({
           onClick={onOpenAvatarStudio}
         >
           <Sparkles size={14} className="purple-icon" />
-          <span>Bitmoji Studio</span>
+          <span>Persona Studio</span>
         </button>
 
         {onOpenChaseOs && (

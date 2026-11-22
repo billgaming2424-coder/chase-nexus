@@ -267,7 +267,7 @@ export function PostCard({ post, mode, onTag }: { post: Post; mode: FeedId; onTa
 
       <p className="post-body">{post.body}</p>
 
-      {/* Bitmoji Sticker Attachment */}
+      {/* Persona Holo-Sticker Attachment */}
       {post.avatarSticker && (
         <div className="post-sticker-attachment" style={{ margin: "12px 0", display: "inline-block" }}>
           <NexusAvatar

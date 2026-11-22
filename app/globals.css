@@ -1706,7 +1706,7 @@ html.reduce-motion, html.reduce-motion *, html.reduce-motion *::before, html.red
 }
 
 /* ----------------------------------------------------
-   Nexus Bitmoji Avatars & Studio Styling
+   Nexus Persona Avatars & Studio Styling
    ---------------------------------------------------- */
 
 .avatar-studio-modal {
@@ -2027,7 +2027,7 @@ html.reduce-motion, html.reduce-motion *, html.reduce-motion *::before, html.red
   }
 }
 
-/* Bitmoji 2.0 Deluxe Stage & Sticker Enhancements */
+/* Nexus Persona 2.0 Studio Stage & Holo-Sticker Enhancements */
 .avatar-preview-stage {
   display: flex;
   flex-direction: column;

@@ -298,7 +298,7 @@ export const POSTS: Post[] = [
     id: "post-chase-welcome",
     author: sample("Chase Studios", "@chasestudios", true, "official"),
     timeLabel: "2h ago",
-    body: "🌌 Welcome to Chase Nexus — the official creative & social universe of Chase Studios. Connect with creators, customize your Bitmoji with animated Season 1 auras, test your reflexes in the Arcade Realm, and drop into live Voice Stages. Every genre. No limits.",
+    body: "🌌 Welcome to Chase Nexus — the official creative & social universe of Chase Studios. Connect with creators, customize your Nexus Persona with animated Season 1 auras, test your reflexes in the Arcade Realm, and drop into live Voice Stages. Every genre. No limits.",
     feeds: ["for-you", "trending"],
     hashtags: ["ChaseNexus", "ChaseStudios", "EveryGenreNoLimits"],
     audience: "public",

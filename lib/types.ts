@@ -83,8 +83,10 @@ export interface AvatarConfig {
     | "gamer-headset"
     | "cyber-visor"
     | "snapback"
+    | "snapback-back"
     | "bandana"
     | "earring"
+    | "paired-studs"
     | "beanie"
     | "crown"
     | "cat-ears"
@@ -92,7 +94,8 @@ export interface AvatarConfig {
     | "heart-shades"
     | "vr-headset"
     | "halo"
-    | "demon-horns";
+    | "demon-horns"
+    | "oni-mask";
   prop?:
     | "none"
     | "rgb-controller"
@@ -148,7 +151,7 @@ export interface AvatarConfig {
   duoFriend?: {
     name: string;
     avatar: AvatarConfig;
-    duoPose?: string;
+    duoPose?: "co-op" | "squad" | "high-five" | "boss-raid" | "chill" | "celebrate" | string;
   };
 }
 
@@ -333,7 +336,7 @@ export interface AudioStage {
 export interface ArcadeGame {
   id: string;
   title: string;
-  category: "unimon" | "deadeye" | "bitmoji";
+  category: "unimon" | "deadeye" | "persona" | "bitmoji";
   description: string;
   rewardGems: number;
 }
