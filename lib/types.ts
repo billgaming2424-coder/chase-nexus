@@ -34,6 +34,32 @@ export type BadgeCategory =
   | "chase-plus"
   | "identity-verified";
 
+export interface AvatarConfig {
+  skinTone: string;
+  hairStyle: "buzz" | "fade" | "spikes" | "wavy" | "afro" | "braids" | "flowing" | "bun";
+  hairColor: string;
+  eyeShape: "almond" | "round" | "sharp" | "starry";
+  eyeColor: string;
+  mouth: "smile" | "smirk" | "laugh" | "neutral" | "battle";
+  outfit: "varsity-hoodie" | "cyber-jacket" | "survivor-duster" | "trainer-vest" | "nexus-tee" | "armor";
+  accessory: "none" | "gamer-headset" | "cyber-visor" | "snapback" | "bandana" | "earring";
+  background: "purple-gradient" | "neon-cyan" | "void-dark" | "gold-burst" | "fire-streak";
+  pose?: "portrait" | "fire" | "gg" | "hype" | "shield" | "verified";
+}
+
+export const DEFAULT_AVATAR: AvatarConfig = {
+  skinTone: "#f8cbb0",
+  hairStyle: "fade",
+  hairColor: "#1e1b2e",
+  eyeShape: "almond",
+  eyeColor: "#7c3aed",
+  mouth: "smile",
+  outfit: "varsity-hoodie",
+  accessory: "gamer-headset",
+  background: "purple-gradient",
+  pose: "portrait",
+};
+
 export interface UserProfile {
   id: string;
   email?: string;
@@ -41,6 +67,7 @@ export interface UserProfile {
   display_name?: string;
   bio?: string;
   avatar_url?: string;
+  avatar_config?: AvatarConfig;
   cover_url?: string;
   verified?: boolean;
   badge_type?: BadgeCategory;
@@ -53,6 +80,7 @@ export interface Person {
   example: boolean;
   verified?: boolean;
   badgeType?: BadgeCategory;
+  avatarConfig?: AvatarConfig;
 }
 
 export interface PollChoice {
@@ -69,6 +97,7 @@ export interface Comment {
   parentId?: string;
   verified?: boolean;
   badgeType?: BadgeCategory;
+  avatarConfig?: AvatarConfig;
 }
 
 export interface QuoteRef {
@@ -88,6 +117,7 @@ export interface Post {
   tone: 1 | 2 | 3 | 4;
   imageLabel?: string;
   imageUrl?: string;
+  avatarSticker?: string;
   videoLabel?: string;
   poll?: PollChoice[];
   pollVote?: string;

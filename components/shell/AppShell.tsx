@@ -16,13 +16,16 @@ import { NexusProvider, useNexus } from "@/components/nexus/NexusProvider";
 import { RightRail } from "@/components/rail/RightRail";
 import { Sidebar } from "@/components/shell/Sidebar";
 import { AuthModal } from "@/components/auth/AuthModal";
+import { NexusAvatar } from "@/components/nexus/NexusAvatar";
+import { NexusAvatarBuilder } from "@/components/nexus/NexusAvatarBuilder";
 
 function AppShellContent({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const showRail = pathname === "/";
   const [open, setOpen] = useState(false);
   const [authModalOpen, setAuthModalOpen] = useState(false);
-  const { currentUser, userProfile } = useNexus();
+  const [avatarStudioOpen, setAvatarStudioOpen] = useState(false);
+  const { currentUser, userProfile, userAvatar } = useNexus();
 
   useEffect(() => {
     setOpen(false);
@@ -38,6 +41,7 @@ function AppShellContent({ children }: { children: ReactNode }) {
           open={open}
           onNavigate={() => setOpen(false)}
           onOpenAuth={() => setAuthModalOpen(true)}
+          onOpenAvatarStudio={() => setAvatarStudioOpen(true)}
         />
         {open ? (
           <button
@@ -53,20 +57,31 @@ function AppShellContent({ children }: { children: ReactNode }) {
               <Menu size={20} />
             </button>
             <span className="mobile-brand">Chase Nexus</span>
-            <button
-              type="button"
-              className="mobile-auth-trigger"
-              aria-label="Chase Studios Account"
-              onClick={() => setAuthModalOpen(true)}
-            >
-              {currentUser ? (
-                <span className="avatar avatar-xs">
-                  {(userProfile?.display_name || currentUser.email || "C").slice(0, 1).toUpperCase()}
-                </span>
-              ) : (
-                <ShieldCheck size={20} className="purple-icon" />
-              )}
-            </button>
+            <div style={{ marginLeft: "auto", display: "flex", alignItems: "center", gap: 8 }}>
+              <button
+                type="button"
+                className="mobile-avatar-trigger"
+                aria-label="Open Bitmoji Studio"
+                onClick={() => setAvatarStudioOpen(true)}
+                style={{ background: "none", border: "none", padding: 0, cursor: "pointer" }}
+              >
+                <NexusAvatar config={userAvatar} size={28} showStickerBadge />
+              </button>
+              <button
+                type="button"
+                className="mobile-auth-trigger"
+                aria-label="Chase Studios Account"
+                onClick={() => setAuthModalOpen(true)}
+              >
+                {currentUser ? (
+                  <span className="badge-chase-account chase-badge" style={{ width: 18, height: 18 }}>
+                    ✓
+                  </span>
+                ) : (
+                  <ShieldCheck size={20} className="purple-icon" />
+                )}
+              </button>
+            </div>
           </header>
 
           <div className="banner cloud-banner">
@@ -140,6 +155,9 @@ function AppShellContent({ children }: { children: ReactNode }) {
 
       {/* Universal Chase Studios Account Modal */}
       <AuthModal isOpen={authModalOpen} onClose={() => setAuthModalOpen(false)} />
+
+      {/* Nexus Bitmoji Avatar Studio Modal */}
+      <NexusAvatarBuilder isOpen={avatarStudioOpen} onClose={() => setAvatarStudioOpen(false)} />
     </>
   );
 }

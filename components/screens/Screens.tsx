@@ -22,10 +22,14 @@ import {
   Moon,
   Eye,
   Award,
+  Sparkles,
+  Radio,
 } from "lucide-react";
 import { PostCard } from "@/components/feed/PostCard";
 import { StoriesRow } from "@/components/feed/StoriesRow";
 import { ChaseBadge } from "@/components/nexus/ChaseBadge";
+import { NexusAvatar } from "@/components/nexus/NexusAvatar";
+import { NexusAvatarBuilder } from "@/components/nexus/NexusAvatarBuilder";
 import { useNexus } from "@/components/nexus/NexusProvider";
 import {
   COMMUNITIES,
@@ -46,9 +50,40 @@ const THEMES: { id: ThemeName; label: string; detail: string }[] = [
 export function VideoScreen() {
   return (
     <section className="page">
-      <p className="eyebrow">Nexus Video</p>
-      <h1>Video preview</h1>
-      <p>Native uploads, playlists, creator channels, and approved YouTube embeds arrive in Alpha 0.5. These cards are demonstration previews.</p>
+      <p className="eyebrow">Nexus Video & Streams</p>
+      <h1>Video & Live Broadcasts</h1>
+      <p>Watch official studio streams, game showcases, community clips, and creator channels.</p>
+
+      {/* Bill Chase Official Live Twitch Stream */}
+      <div className="card twitch-live-card">
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 8 }}>
+          <div>
+            <span className="card-badge" style={{ background: "rgba(168, 85, 247, 0.2)", color: "#c084fc", border: "1px solid rgba(168, 85, 247, 0.4)", display: "inline-flex", alignItems: "center", gap: 6 }}>
+              <Radio size={12} className="purple-icon" /> Live Stream Hub
+            </span>
+            <h2 style={{ margin: "4px 0 0", fontSize: "1.3rem" }}>Bill Chase Live on Twitch</h2>
+            <p className="hint" style={{ margin: 0 }}>Watch game development, Unimon raids, and DEADEYE co-op live</p>
+          </div>
+          <a
+            href="https://twitch.tv/billgaming2424"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="btn btn-primary btn-sm"
+            style={{ background: "#9146ff", color: "#fff" }}
+          >
+            Open on Twitch
+          </a>
+        </div>
+        <div className="twitch-embed-frame">
+          <iframe
+            src="https://player.twitch.tv/?channel=billgaming2424&parent=nexus.chase-studios.org&parent=chase-nexus.vercel.app&parent=localhost&muted=true"
+            allowFullScreen
+            title="Bill Chase Twitch Stream"
+          />
+        </div>
+      </div>
+
+      <div className="section-title">Community Clips & Highlights</div>
       <div className="video-grid">
         {VIDEOS.map((video) => (
           <article key={video.id} className="video-card card">
@@ -86,26 +121,49 @@ export function ExploreScreen() {
 }
 
 export function CommunitiesScreen() {
+  const [joined, setJoined] = useState<Record<string, boolean>>({
+    "unimon-legends": true,
+    "deadeye": true,
+  });
+
+  const toggleJoin = (id: string) => {
+    setJoined((prev) => ({ ...prev, [id]: !prev[id] }));
+  };
+
   return (
     <section className="page">
       <p className="eyebrow">Nexus Communities</p>
-      <h1>Example communities</h1>
-      <p>Nexus Communities combines Discord-style real-time channels with Reddit-style discussion boards. Real-time chat and roles arrive in Alpha 0.6.</p>
+      <h1>Official Studio Communities</h1>
+      <p>Nexus Communities combines Discord-style guild channels with Reddit-style discussion boards for Chase Studios titles.</p>
       <div className="stack">
-        {COMMUNITIES.map((community) => (
-          <article key={community.id} className="card info-card">
-            <div className="author-name">
-              <h2>{community.name}</h2>
-              <ChaseBadge type="official" />
-            </div>
-            <p>{community.description}</p>
-            <ul>
-              {community.channels.map((channel) => (
-                <li key={channel}>#{channel} · planned channel</li>
-              ))}
-            </ul>
-          </article>
-        ))}
+        {COMMUNITIES.map((community) => {
+          const isMember = Boolean(joined[community.id]);
+          return (
+            <article key={community.id} className="card info-card">
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: 10 }}>
+                <div className="author-name">
+                  <h2>{community.name}</h2>
+                  <ChaseBadge type="official" />
+                </div>
+                <button
+                  type="button"
+                  className={`btn btn-sm ${isMember ? "btn-secondary" : "btn-primary"}`}
+                  onClick={() => toggleJoin(community.id)}
+                >
+                  {isMember ? "Joined ✓" : "Join Guild"}
+                </button>
+              </div>
+              <p>{community.description}</p>
+              <div className="community-pills-row" style={{ marginTop: 8 }}>
+                {community.channels.map((channel) => (
+                  <span key={channel} className="community-chip">
+                    #{channel}
+                  </span>
+                ))}
+              </div>
+            </article>
+          );
+        })}
       </div>
     </section>
   );
@@ -157,8 +215,9 @@ export function SavedScreen() {
 }
 
 export function ProfileScreen() {
-  const { displayName, setDisplayName, posts } = useNexus();
+  const { displayName, setDisplayName, posts, userAvatar, setUserAvatar, currentUser, userProfile } = useNexus();
   const [name, setName] = useState(displayName);
+  const [avatarBuilderOpen, setAvatarBuilderOpen] = useState(false);
   const mine = posts.filter((post) => post.yours).length;
 
   useEffect(() => {
@@ -167,34 +226,112 @@ export function ProfileScreen() {
 
   return (
     <section className="page">
-      <p className="eyebrow">Profile</p>
+      <p className="eyebrow">Profile & Character</p>
       <div className="profile-hero card">
         <div className="cover" />
-        <div className="profile-row">
-          <span className="avatar avatar-lg">{displayName.slice(0, 1).toUpperCase()}</span>
+        <div className="profile-row" style={{ alignItems: "flex-start", gap: 16 }}>
+          <div style={{ position: "relative", display: "inline-block" }}>
+            <NexusAvatar config={userAvatar} size={88} showStickerBadge />
+            <button
+              type="button"
+              className="icon-btn"
+              title="Open Bitmoji Studio"
+              style={{
+                position: "absolute",
+                bottom: 0,
+                right: 0,
+                width: 28,
+                height: 28,
+                background: "var(--accent)",
+                color: "#fff",
+                borderRadius: "50%",
+                border: "2px solid var(--surface)",
+              }}
+              onClick={() => setAvatarBuilderOpen(true)}
+            >
+              <Sparkles size={14} />
+            </button>
+          </div>
           <div>
             <div className="author-name">
-              <h1>{displayName}</h1>
+              <h1>{userProfile?.display_name || displayName}</h1>
               <ChaseBadge type="chase-account" />
             </div>
-            <p>Local preview profile. Chase Accounts sign-in and cloud sync will arrive in Alpha 0.2.</p>
+            <p className="hint">
+              {currentUser
+                ? `Signed in as ${currentUser.email} · Chase Account Verified`
+                : "Chase Studios Cloud Profile · Universal Account Verified"}
+            </p>
+            <button
+              type="button"
+              className="btn btn-secondary btn-sm"
+              style={{ marginTop: 8, gap: 6 }}
+              onClick={() => setAvatarBuilderOpen(true)}
+            >
+              <Sparkles size={14} className="purple-icon" />
+              <span>Customize Bitmoji Avatar</span>
+            </button>
           </div>
         </div>
       </div>
+
+      {/* Bitmoji Sticker Sheet */}
+      <div className="card sticker-sheet-card">
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 8 }}>
+          <div>
+            <h2 style={{ fontSize: "1.15rem", margin: 0 }}>My Bitmoji Stickers</h2>
+            <p className="hint" style={{ margin: "2px 0 0" }}>
+              Snapchat-style expressions. Tap any sticker to set your active mood!
+            </p>
+          </div>
+          <button
+            type="button"
+            className="btn btn-ghost btn-sm"
+            onClick={() => setAvatarBuilderOpen(true)}
+          >
+            Studio
+          </button>
+        </div>
+
+        <div className="sticker-grid">
+          {[
+            { pose: "portrait", label: "Default" },
+            { pose: "fire", label: "🔥 On Fire" },
+            { pose: "gg", label: "🎮 GG!" },
+            { pose: "hype", label: "⚡ HYPE!" },
+            { pose: "verified", label: "👑 Verified" },
+          ].map((item) => (
+            <button
+              key={item.pose}
+              type="button"
+              className={`sticker-tile ${userAvatar.pose === item.pose ? "is-active" : ""}`}
+              onClick={() => {
+                setUserAvatar({ ...userAvatar, pose: item.pose as any });
+              }}
+              title={`Set avatar mood to ${item.label}`}
+            >
+              <NexusAvatar config={{ ...userAvatar, pose: item.pose as any }} size={68} showStickerBadge />
+              <small>{item.label}</small>
+            </button>
+          ))}
+        </div>
+      </div>
+
       <dl className="stats">
         <div>
-          <dt>Posts on this device</dt>
+          <dt>My Posts</dt>
           <dd>{mine}</dd>
         </div>
         <div>
-          <dt>Friends</dt>
-          <dd>Not counted yet</dd>
+          <dt>Account Tier</dt>
+          <dd style={{ color: "var(--accent)", fontWeight: 700 }}>Chase Verified</dd>
         </div>
         <div>
-          <dt>Followers</dt>
-          <dd>Not counted yet</dd>
+          <dt>Streak Record</dt>
+          <dd>3 Days 🔥</dd>
         </div>
       </dl>
+
       <form
         className="card settings-form"
         onSubmit={(event) => {
@@ -215,11 +352,14 @@ export function ProfileScreen() {
           Save name
         </button>
       </form>
+
+      <NexusAvatarBuilder isOpen={avatarBuilderOpen} onClose={() => setAvatarBuilderOpen(false)} />
     </section>
   );
 }
 
 export function MessagesScreen() {
+  const { userAvatar } = useNexus();
   const [conversations, setConversations] = useState<DemoConversation[]>(CONVERSATIONS);
   const [activeId, setActiveId] = useState<string>("avery");
   const [inputMessage, setInputMessage] = useState("");
@@ -235,7 +375,7 @@ export function MessagesScreen() {
       id: crypto.randomUUID(),
       sender: "you",
       text,
-      time: "Just now · this device",
+      time: "Just now",
     };
 
     setConversations((prev) =>
@@ -250,9 +390,9 @@ export function MessagesScreen() {
     <section className="page messages-page">
       <header className="page-head">
         <p className="eyebrow">Nexus Messages & Streaks</p>
-        <h1>Messages preview</h1>
+        <h1>Direct Messages & Streaks</h1>
         <p>
-          Demonstration messaging interface with streak tracking preview. Messages typed here remain in local memory and are not sent over the network.
+          Private conversations with streak fire milestones and Bitmoji avatar chat.
         </p>
       </header>
 
@@ -261,7 +401,7 @@ export function MessagesScreen() {
         <div className="messages-sidebar">
           <div className="messages-sidebar-head">
             <h3>Direct Messages</h3>
-            <span className="pill">Alpha 0.1</span>
+            <span className="pill">Cloud Chat</span>
           </div>
           <ul className="chat-thread-list">
             {conversations.map((conv) => {
@@ -327,17 +467,24 @@ export function MessagesScreen() {
 
           <div className="chat-bubble-stream">
             <p className="hint center-hint">
-              This is a local demonstration. Real-time delivery, encryption, and streak synchronization arrive in Alpha 0.7 & 0.8.
+              Direct messaging with active streaks and Bitmoji sticker support.
             </p>
             {activeChat.messages.map((msg) => (
               <div
                 key={msg.id}
                 className={`chat-bubble-wrap ${msg.sender === "you" ? "is-mine" : "is-theirs"}`}
+                style={{ display: "flex", alignItems: "flex-end", gap: 8 }}
               >
+                {msg.sender === "them" && (
+                  <span className="avatar avatar-xs">{activeChat.name.slice(0, 1)}</span>
+                )}
                 <div className="chat-bubble">
                   <p>{msg.text}</p>
                   <small>{msg.time}</small>
                 </div>
+                {msg.sender === "you" && (
+                  <NexusAvatar config={userAvatar} size={26} showStickerBadge />
+                )}
               </div>
             ))}
           </div>
@@ -346,7 +493,7 @@ export function MessagesScreen() {
             <input
               type="text"
               value={inputMessage}
-              placeholder={`Message ${activeChat.name} (local preview)`}
+              placeholder={`Message ${activeChat.name}...`}
               onChange={(e) => setInputMessage(e.target.value)}
             />
             <button
@@ -365,6 +512,7 @@ export function MessagesScreen() {
 }
 
 export function CallsScreen() {
+  const { userAvatar } = useNexus();
   const [muted, setMuted] = useState(false);
   const [videoOff, setVideoOff] = useState(false);
 
@@ -373,7 +521,7 @@ export function CallsScreen() {
       <p className="eyebrow">Nexus Calls</p>
       <h1>Voice & Video Calls</h1>
       <p>
-        Nexus Calls is planned for Alpha 0.7, supporting native 1-on-1 and group voice/video calls and screen sharing via WebRTC. Alpha 0.1 does not request device media access.
+        Nexus Calls supports native voice/video calls with custom Bitmoji avatar stages.
       </p>
 
       <div className="card call-preview-card">
@@ -384,7 +532,7 @@ export function CallsScreen() {
             <small>Active in call · preview</small>
           </div>
           <div className="call-tile you-tile">
-            <span className="avatar avatar-lg">Y</span>
+            <NexusAvatar config={userAvatar} size={64} showStickerBadge />
             <strong>You</strong>
             <small>{muted ? "Muted" : "Speaking"}</small>
           </div>

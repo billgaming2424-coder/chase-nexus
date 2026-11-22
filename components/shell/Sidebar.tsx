@@ -13,6 +13,7 @@ import {
   MessagesSquare,
   Phone,
   Settings,
+  Sparkles,
   UserRound,
   Users,
   Video,
@@ -21,6 +22,7 @@ import {
 import { NAV_ITEMS, type NavItem } from "@/lib/navigation";
 import { useNexus } from "@/components/nexus/NexusProvider";
 import { ChaseBadge } from "@/components/nexus/ChaseBadge";
+import { NexusAvatar } from "@/components/nexus/NexusAvatar";
 
 const ICONS: Record<NavItem["icon"], LucideIcon> = {
   home: Home,
@@ -41,13 +43,15 @@ export function Sidebar({
   open,
   onNavigate,
   onOpenAuth,
+  onOpenAvatarStudio,
 }: {
   open: boolean;
   onNavigate: () => void;
   onOpenAuth: () => void;
+  onOpenAvatarStudio: () => void;
 }) {
   const pathname = usePathname();
-  const { currentUser, userProfile } = useNexus();
+  const { currentUser, userProfile, userAvatar } = useNexus();
 
   return (
     <aside className={open ? "sidebar is-open" : "sidebar"} aria-label="Primary">
@@ -88,9 +92,7 @@ export function Sidebar({
             onClick={onOpenAuth}
             title="Manage Chase Studios Account"
           >
-            <span className="avatar avatar-sm">
-              {(userProfile?.display_name || currentUser.email || "C").slice(0, 1).toUpperCase()}
-            </span>
+            <NexusAvatar config={userAvatar} size={36} showStickerBadge />
             <div className="sidebar-user-info">
               <span className="sidebar-user-name">
                 {userProfile?.display_name || currentUser.email?.split("@")[0] || "Chase Member"}
@@ -109,6 +111,16 @@ export function Sidebar({
             <span>Chase Account</span>
           </button>
         )}
+
+        <button
+          type="button"
+          className="btn btn-secondary full-width"
+          style={{ marginTop: 8, fontSize: "0.82rem", gap: 6, minHeight: 34 }}
+          onClick={onOpenAvatarStudio}
+        >
+          <Sparkles size={14} className="purple-icon" />
+          <span>Bitmoji Studio</span>
+        </button>
       </div>
 
       <p className="side-foot">

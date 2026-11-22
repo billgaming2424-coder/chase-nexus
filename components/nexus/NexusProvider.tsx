@@ -14,6 +14,7 @@ import { supabase } from "@/lib/supabase";
 import { POSTS } from "@/lib/demo-data";
 import type {
   Audience,
+  AvatarConfig,
   CustomSpaceWidgets,
   FeedId,
   Post,
@@ -22,6 +23,7 @@ import type {
   ThemeName,
   UserProfile,
 } from "@/lib/types";
+import { DEFAULT_AVATAR } from "@/lib/types";
 
 const STORAGE_KEY = "chase-nexus-alpha";
 const STORAGE_VERSION = 1;
@@ -31,6 +33,7 @@ export interface NewPostInput {
   audience: Audience;
   imageUrl?: string;
   imageLabel?: string;
+  avatarSticker?: string;
   poll?: { id: string; label: string }[];
   quote?: Post["quote"];
 }
@@ -55,6 +58,7 @@ interface PersistedState {
   posts: Post[];
   activeSpace?: SpaceId;
   customWidgets?: CustomSpaceWidgets;
+  userAvatar?: AvatarConfig;
 }
 
 export interface NexusContextValue {
@@ -65,6 +69,8 @@ export interface NexusContextValue {
   currentUser: User | null;
   userProfile: UserProfile | null;
   isAuthLoading: boolean;
+  userAvatar: AvatarConfig;
+  setUserAvatar: (avatar: AvatarConfig) => void;
   signIn: (email: string, password: string) => Promise<{ data: unknown; error: AuthError | null }>;
   signUp: (email: string, password: string, displayName?: string) => Promise<{ data: unknown; error: AuthError | null }>;
   signOut: () => Promise<{ error: AuthError | null }>;
@@ -180,6 +186,7 @@ function readPersisted(): PersistedState | null {
       posts,
       activeSpace: parsed.activeSpace && SPACES.includes(parsed.activeSpace) ? parsed.activeSpace : "social",
       customWidgets: parsed.customWidgets ?? DEFAULT_CUSTOM_WIDGETS,
+      userAvatar: parsed.userAvatar,
     };
   } catch {
     return null;
@@ -201,6 +208,23 @@ export function NexusProvider({ children }: { children: ReactNode }) {
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
   const [isAuthLoading, setIsAuthLoading] = useState(true);
+
+  // Nexus Bitmoji-style Custom Avatar State
+  const [userAvatar, setUserAvatarState] = useState<AvatarConfig>(() => {
+    try {
+      const raw = localStorage.getItem("nexus-custom-avatar");
+      if (raw) return JSON.parse(raw);
+    } catch {}
+    return DEFAULT_AVATAR;
+  });
+
+  const setUserAvatar = useCallback((avatar: AvatarConfig) => {
+    setUserAvatarState(avatar);
+    try {
+      localStorage.setItem("nexus-custom-avatar", JSON.stringify(avatar));
+      window.dispatchEvent(new Event("nexus-avatar-updated"));
+    } catch {}
+  }, []);
 
   const fetchProfile = useCallback(async (userId: string) => {
     try {
@@ -270,6 +294,70 @@ export function NexusProvider({ children }: { children: ReactNode }) {
     }
   }, [currentUser]);
 
+  // Real-time live feed updates listener via Supabase
+  useEffect(() => {
+    const channel = supabase
+      .channel("nexus-live-feed")
+      .on(
+        "postgres_changes",
+        { event: "INSERT", schema: "public", table: "nexus_posts" },
+        (payload) => {
+          const row = payload.new as any;
+          if (!row) return;
+          const livePost: Post = {
+            id: row.id,
+            author: {
+              name: row.author_name || "Chase Member",
+              handle: row.author_handle || "@member",
+              example: false,
+              verified: true,
+              badgeType: "chase-account",
+            },
+            timeLabel: "Just now · Live",
+            body: row.body,
+            feeds: Array.isArray(row.feeds) ? row.feeds : ["for-you", "following"],
+            hashtags: Array.isArray(row.hashtags) ? row.hashtags : [],
+            audience: (row.audience as Audience) || "public",
+            tone: 1,
+            imageUrl: row.image_url || undefined,
+            imageLabel: row.image_label || undefined,
+            poll: row.poll_data || undefined,
+            quote: row.quote_data || undefined,
+            reactions: { like: 0, celebrate: 0, support: 0 },
+            comments: [],
+            reposts: 0,
+            reposted: false,
+            saved: false,
+            discussionScore: 0,
+            discussionVote: 0,
+            yours: currentUser ? row.user_id === currentUser.id : false,
+          };
+
+          setPosts((prev) => {
+            if (prev.some((p) => p.id === livePost.id)) return prev;
+            return [livePost, ...prev];
+          });
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [currentUser]);
+
+  // Sync avatar updates across tabs
+  useEffect(() => {
+    const handleAvatarUpdate = () => {
+      try {
+        const raw = localStorage.getItem("nexus-custom-avatar");
+        if (raw) setUserAvatarState(JSON.parse(raw));
+      } catch {}
+    };
+    window.addEventListener("nexus-avatar-updated", handleAvatarUpdate);
+    return () => window.removeEventListener("nexus-avatar-updated", handleAvatarUpdate);
+  }, []);
+
   // Initialize from LocalStorage and Supabase Session
   useEffect(() => {
     const saved = readPersisted();
@@ -281,6 +369,7 @@ export function NexusProvider({ children }: { children: ReactNode }) {
       setReducedMotion(saved.reducedMotion);
       if (saved.activeSpace) setActiveSpace(saved.activeSpace);
       if (saved.customWidgets) setCustomWidgets(saved.customWidgets);
+      if (saved.userAvatar) setUserAvatarState(saved.userAvatar);
     }
     setReady(true);
 
@@ -342,6 +431,7 @@ export function NexusProvider({ children }: { children: ReactNode }) {
       displayName,
       activeSpace,
       customWidgets,
+      userAvatar,
       posts: posts.map((post) => ({
         ...post,
         imageUrl: post.imageUrl?.startsWith("blob:") ? undefined : post.imageUrl,
@@ -352,7 +442,7 @@ export function NexusProvider({ children }: { children: ReactNode }) {
     } catch {
       // Storage fallback
     }
-  }, [ready, posts, theme, accent, reducedMotion, displayName, activeSpace, customWidgets]);
+  }, [ready, posts, theme, accent, reducedMotion, displayName, activeSpace, customWidgets, userAvatar]);
 
   const value = useMemo<NexusContextValue>(() => {
     const update = (id: string, recipe: (post: Post) => Post) => {
@@ -367,6 +457,8 @@ export function NexusProvider({ children }: { children: ReactNode }) {
       currentUser,
       userProfile,
       isAuthLoading,
+      userAvatar,
+      setUserAvatar,
       signIn: async (email: string, password: string) => {
         setIsAuthLoading(true);
         try {
@@ -462,6 +554,7 @@ export function NexusProvider({ children }: { children: ReactNode }) {
             example: false,
             verified: true,
             badgeType: "chase-account",
+            avatarConfig: userAvatar,
           },
           timeLabel: "Just now · Chase Cloud",
           body: input.body.trim(),
@@ -471,6 +564,7 @@ export function NexusProvider({ children }: { children: ReactNode }) {
           tone: 1,
           imageUrl: input.imageUrl,
           imageLabel: input.imageLabel,
+          avatarSticker: input.avatarSticker,
           poll: input.poll?.map((choice) => ({ ...choice, votes: 0 })),
           quote: input.quote,
           reactions: { like: 0, celebrate: 0, support: 0 },
@@ -546,6 +640,7 @@ export function NexusProvider({ children }: { children: ReactNode }) {
               parentId,
               verified: true,
               badgeType: "chase-account",
+              avatarConfig: userAvatar,
             },
           ],
         }));
@@ -583,6 +678,8 @@ export function NexusProvider({ children }: { children: ReactNode }) {
     currentUser,
     userProfile,
     isAuthLoading,
+    userAvatar,
+    setUserAvatar,
     fetchProfile,
     loadCloudPosts,
     theme,

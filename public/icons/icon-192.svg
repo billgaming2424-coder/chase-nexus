@@ -1,0 +1,102 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%">
+  <defs>
+    <!-- Background Gradient -->
+    <radialGradient id="bgGlow" cx="50%" cy="40%" r="65%">
+      <stop offset="0%" stop-color="#210f3c" />
+      <stop offset="50%" stop-color="#100720" />
+      <stop offset="100%" stop-color="#05020a" />
+    </radialGradient>
+
+    <!-- Metallic Rim Gradient -->
+    <linearGradient id="rimGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#c084fc" />
+      <stop offset="30%" stop-color="#7c3aed" />
+      <stop offset="70%" stop-color="#3b0764" />
+      <stop offset="100%" stop-color="#22d3ee" />
+    </linearGradient>
+
+    <!-- Neon Cyan to Purple Diagonal Slash -->
+    <linearGradient id="energySlash" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#38bdf8" />
+      <stop offset="40%" stop-color="#22d3ee" />
+      <stop offset="75%" stop-color="#a855f7" />
+      <stop offset="100%" stop-color="#c084fc" />
+    </linearGradient>
+
+    <!-- Obsidian Pillar Gradient -->
+    <linearGradient id="obsidianPillar" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#334155" />
+      <stop offset="50%" stop-color="#1e293b" />
+      <stop offset="100%" stop-color="#0f172a" />
+    </linearGradient>
+
+    <!-- Purple Crystal Pillar Gradient -->
+    <linearGradient id="crystalPillar" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#a855f7" />
+      <stop offset="50%" stop-color="#7e22ce" />
+      <stop offset="100%" stop-color="#581c87" />
+    </linearGradient>
+
+    <!-- Inner Core Glow Filter -->
+    <filter id="coreGlow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="16" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+
+    <filter id="sparkleGlow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="6" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+  </defs>
+
+  <!-- Squircle Base with Metallic Rim -->
+  <rect x="16" y="16" width="480" height="480" rx="112" fill="url(#bgGlow)" stroke="url(#rimGrad)" stroke-width="12" />
+
+  <!-- Ambient Energy Halo -->
+  <circle cx="256" cy="256" r="140" fill="#a855f7" opacity="0.18" filter="url(#coreGlow)" />
+  <circle cx="256" cy="256" r="80" fill="#22d3ee" opacity="0.22" filter="url(#coreGlow)" />
+
+  <!-- The Nexus "N" Emblem Group -->
+  <g id="nexus-emblem" transform="translate(0, 0)">
+    <!-- Back Shadow -->
+    <path d="M128 116 L196 116 L196 396 L128 396 Z" fill="#030108" opacity="0.6" />
+    <path d="M316 116 L384 116 L384 396 L316 396 Z" fill="#030108" opacity="0.6" />
+    <path d="M180 116 L340 396 L290 396 L130 116 Z" fill="#030108" opacity="0.6" />
+
+    <!-- Left Pillar (Obsidian Shield) -->
+    <path d="M140 128 L204 128 L204 384 L140 384 Z" fill="url(#obsidianPillar)" stroke="#475569" stroke-width="2" />
+    <!-- Left Pillar Bevel Highlight -->
+    <path d="M142 130 L154 130 L154 382 L142 382 Z" fill="#94a3b8" opacity="0.4" />
+
+    <!-- Right Pillar (Purple Crystal Blade) -->
+    <path d="M308 128 L372 128 L372 384 L308 384 Z" fill="url(#crystalPillar)" stroke="#c084fc" stroke-width="2" />
+    <!-- Right Pillar Inner Facet -->
+    <path d="M358 130 L370 130 L370 382 L358 382 Z" fill="#e9d5ff" opacity="0.5" />
+
+    <!-- Diagonal Power Slash (Luminous Neon Gradient) -->
+    <path d="M188 128 L332 384 L276 384 L132 128 Z" fill="url(#energySlash)" filter="url(#coreGlow)" />
+    <path d="M188 128 L332 384 L276 384 L132 128 Z" fill="url(#energySlash)" />
+
+    <!-- Core Energy Streak (Intense White-Cyan Core) -->
+    <path d="M182 140 L310 372" stroke="#ffffff" stroke-width="5" stroke-linecap="round" opacity="0.85" />
+    <path d="M182 140 L310 372" stroke="#22d3ee" stroke-width="12" stroke-linecap="round" opacity="0.4" filter="url(#coreGlow)" />
+
+    <!-- Nexus Connection Nodes -->
+    <circle cx="166" cy="140" r="10" fill="#22d3ee" />
+    <circle cx="166" cy="140" r="4" fill="#ffffff" />
+
+    <circle cx="346" cy="372" r="10" fill="#c084fc" />
+    <circle cx="346" cy="372" r="4" fill="#ffffff" />
+  </g>
+
+  <!-- Cosmic Star Accent (Top-Right Sparkle) -->
+  <g transform="translate(376, 96)" filter="url(#sparkleGlow)">
+    <path d="M0 -24 Q0 0 24 0 Q0 0 0 24 Q0 0 -24 0 Q0 0 0 -24 Z" fill="#22d3ee" />
+    <circle cx="0" cy="0" r="6" fill="#ffffff" />
+  </g>
+
+  <!-- Subtle Micro Sparkle (Bottom-Left) -->
+  <g transform="translate(104, 400)">
+    <circle cx="0" cy="0" r="4" fill="#c084fc" opacity="0.8" />
+  </g>
+</svg>

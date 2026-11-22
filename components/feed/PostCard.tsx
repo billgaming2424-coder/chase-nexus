@@ -4,7 +4,8 @@ import { useState } from "react";
 import { Bookmark, MessageCircle, Repeat2 } from "lucide-react";
 import { useNexus } from "@/components/nexus/NexusProvider";
 import { ChaseBadge } from "@/components/nexus/ChaseBadge";
-import { REACTIONS, type Comment, type FeedId, type Post } from "@/lib/types";
+import { NexusAvatar } from "@/components/nexus/NexusAvatar";
+import { REACTIONS, DEFAULT_AVATAR, type Comment, type FeedId, type Post } from "@/lib/types";
 
 function CommentThread({
   comments,
@@ -24,12 +25,17 @@ function CommentThread({
       {items.map((comment) => (
         <li key={comment.id}>
           <article>
-            <header className="comment-head">
+            <header className="comment-head" style={{ display: "flex", alignItems: "center", gap: 8 }}>
+              {comment.avatarConfig ? (
+                <NexusAvatar config={comment.avatarConfig} size={26} />
+              ) : (
+                <span className="avatar avatar-xs">{comment.author.slice(0, 1)}</span>
+              )}
               <span className="author-name">
                 <strong>{comment.author}</strong>
                 {comment.verified ? <ChaseBadge type={comment.badgeType} /> : null}
               </span>
-              {comment.example ? <span className="pill">Sample</span> : <span className="pill">This device</span>}
+              {comment.example ? <span className="pill">Sample</span> : <span className="pill">Cloud</span>}
             </header>
             <p>{comment.body}</p>
             {depth < 2 ? (
@@ -57,9 +63,13 @@ export function PostCard({ post, mode, onTag }: { post: Post; mode: FeedId; onTa
   return (
     <article className="post card">
       <header className="post-head">
-        <span className="avatar" aria-hidden="true">
-          {post.author.name.slice(0, 1)}
-        </span>
+        {post.author.avatarConfig ? (
+          <NexusAvatar config={post.author.avatarConfig} size={42} showStickerBadge />
+        ) : (
+          <span className="avatar" aria-hidden="true">
+            {post.author.name.slice(0, 1)}
+          </span>
+        )}
         <div>
           <span className="author-name">
             <strong>{post.author.name}</strong>
@@ -69,9 +79,25 @@ export function PostCard({ post, mode, onTag }: { post: Post; mode: FeedId; onTa
             {post.author.handle} · {post.timeLabel} · {post.audience}
           </p>
         </div>
-        <span className="pill">{post.yours ? "This device" : "Sample"}</span>
+        <span className="pill">{post.yours ? "This device" : "Cloud"}</span>
       </header>
+
       <p className="post-body">{post.body}</p>
+
+      {/* Bitmoji Sticker Attachment */}
+      {post.avatarSticker && (
+        <div className="post-sticker-attachment" style={{ margin: "10px 0", display: "inline-block" }}>
+          <NexusAvatar
+            config={{
+              ...(post.author.avatarConfig || DEFAULT_AVATAR),
+              pose: post.avatarSticker as any,
+            }}
+            size={84}
+            showStickerBadge
+          />
+        </div>
+      )}
+
       {post.hashtags.length > 0 ? (
         <p className="tags">
           {post.hashtags.map((tag) => (
@@ -81,139 +107,194 @@ export function PostCard({ post, mode, onTag }: { post: Post; mode: FeedId; onTa
           ))}
         </p>
       ) : null}
+
       {post.imageUrl || post.imageLabel ? (
         <div className="media" data-tone={post.tone}>
-          {post.imageUrl ? <img src={post.imageUrl} alt={post.imageLabel ?? "Post image"} /> : <span>{post.imageLabel}</span>}
+          {post.imageUrl ? (
+            <img src={post.imageUrl} alt={post.imageLabel ?? "Post image preview"} />
+          ) : (
+            <span>{post.imageLabel}</span>
+          )}
         </div>
       ) : null}
+
       {post.videoLabel ? (
-        <div className="media media-video" data-tone={post.tone}>
-          <button type="button" onClick={() => setVideoOn((value) => !value)}>
-            {videoOn ? "Preview playing — no video file is hosted" : post.videoLabel}
-          </button>
+        <div className="media" data-tone={post.tone}>
+          {videoOn ? (
+            <div className="media-playing">
+              <span>Playing {post.videoLabel}</span>
+              <button type="button" className="btn btn-ghost" onClick={() => setVideoOn(false)}>
+                Pause video
+              </button>
+            </div>
+          ) : (
+            <button type="button" className="btn btn-primary" onClick={() => setVideoOn(true)}>
+              Play sample video ({post.videoLabel})
+            </button>
+          )}
         </div>
       ) : null}
+
+      {post.quote ? (
+        <div className="quote">
+          <div>
+            <strong>{post.quote.author}</strong>
+            <span>{post.quote.handle}</span>
+            <p>{post.quote.body}</p>
+          </div>
+        </div>
+      ) : null}
+
       {post.poll ? (
-        <fieldset className="poll">
-          <legend>Sample poll · votes stay in this browser</legend>
+        <div className="poll">
           {post.poll.map((choice) => (
-            <label key={choice.id}>
-              <input
-                type="radio"
-                name={`poll-${post.id}`}
-                checked={post.pollVote === choice.id}
-                onChange={() => votePoll(post.id, choice.id)}
-              />
+            <button
+              key={choice.id}
+              type="button"
+              className={post.pollVote === choice.id ? "is-voted" : ""}
+              onClick={() => votePoll(post.id, choice.id)}
+            >
               <span>{choice.label}</span>
               <span>{choice.votes}</span>
-            </label>
+            </button>
           ))}
-        </fieldset>
+        </div>
       ) : null}
-      {post.quote ? (
-        <blockquote className="quote">
-          <span className="author-name">
-            <strong>{post.quote.author}</strong>
-            <ChaseBadge type={post.quote.author === "Chase Studios" ? "official" : "chase-account"} />
-          </span>
-          <span>{post.quote.handle}</span>
-          <p>{post.quote.body}</p>
-        </blockquote>
-      ) : null}
+
       {mode === "discussions" ? (
-        <div className="votes" aria-label="Sample score">
-          <button
-            type="button"
-            aria-label="Upvote"
-            aria-pressed={post.discussionVote === 1}
-            onClick={() => voteDiscussion(post.id, 1)}
-          >
-            Up
-          </button>
-          <span>{post.discussionScore}</span>
-          <button
-            type="button"
-            aria-label="Downvote"
-            aria-pressed={post.discussionVote === -1}
-            onClick={() => voteDiscussion(post.id, -1)}
-          >
-            Down
+        <div className="discussion-bar">
+          <div className="vote-group">
+            <button
+              type="button"
+              className={post.discussionVote === 1 ? "is-up" : ""}
+              aria-label="Upvote discussion"
+              onClick={() => voteDiscussion(post.id, 1)}
+            >
+              ▲
+            </button>
+            <span aria-label="Score">{post.discussionScore}</span>
+            <button
+              type="button"
+              className={post.discussionVote === -1 ? "is-down" : ""}
+              aria-label="Downvote discussion"
+              onClick={() => voteDiscussion(post.id, -1)}
+            >
+              ▼
+            </button>
+          </div>
+          <button type="button" className="text-btn" onClick={() => setCommentsOpen((value) => !value)}>
+            {post.comments.length} replies
           </button>
         </div>
-      ) : null}
-      <div className="actions">
-        <div className="reaction-wrap">
+      ) : (
+        <footer className="post-actions">
+          <div className="reaction-zone">
+            <button
+              type="button"
+              className={post.reaction ? "action is-on" : "action"}
+              aria-label="Open reactions"
+              onClick={() => setReactionsOpen((value) => !value)}
+            >
+              {post.reaction ? `${post.reaction} (${total})` : `React (${total})`}
+            </button>
+            {reactionsOpen ? (
+              <div className="reaction-tray" role="menu">
+                {REACTIONS.map((item) => (
+                  <button
+                    key={item.id}
+                    type="button"
+                    role="menuitem"
+                    className={post.reaction === item.id ? "is-selected" : ""}
+                    onClick={() => {
+                      reactToPost(post.id, item.id);
+                      setReactionsOpen(false);
+                    }}
+                  >
+                    <span aria-hidden="true">{item.glyph}</span>
+                    <span>{item.label}</span>
+                  </button>
+                ))}
+              </div>
+            ) : null}
+          </div>
           <button
             type="button"
-            aria-expanded={reactionsOpen}
-            onClick={() => setReactionsOpen((value) => !value)}
+            className={post.reposted ? "action is-on" : "action"}
+            aria-pressed={post.reposted}
+            onClick={() => toggleRepost(post.id)}
           >
-            {post.reaction ? REACTIONS.find((item) => item.id === post.reaction)?.label : "React"} · {total}
+            <Repeat2 size={16} />
+            <span>{post.reposts}</span>
           </button>
-          {reactionsOpen ? (
-            <div className="reaction-menu" role="group" aria-label="Reactions">
-              {REACTIONS.map((item) => (
-                <button
-                  key={item.id}
-                  type="button"
-                  aria-pressed={post.reaction === item.id}
-                  onClick={() => {
-                    reactToPost(post.id, item.id);
-                    setReactionsOpen(false);
-                  }}
-                >
-                  <span aria-hidden="true">{item.glyph}</span> {item.label}
-                </button>
-              ))}
-            </div>
-          ) : null}
-        </div>
-        <button type="button" onClick={() => setCommentsOpen((value) => !value)}>
-          <MessageCircle size={16} aria-hidden="true" /> {post.comments.length}
-        </button>
-        <button type="button" aria-pressed={post.reposted} onClick={() => toggleRepost(post.id)}>
-          <Repeat2 size={16} aria-hidden="true" /> {post.reposts}
-        </button>
-        <button type="button" onClick={() => setQuoteTarget(post)}>
-          Quote
-        </button>
-        <button type="button" aria-pressed={post.saved} onClick={() => toggleSave(post.id)}>
-          <Bookmark size={16} aria-hidden="true" /> {post.saved ? "Saved" : "Save"}
-        </button>
-      </div>
+          <button
+            type="button"
+            className="action"
+            onClick={() => {
+              setQuoteTarget(post);
+              window.scrollTo({ top: 0, behavior: "smooth" });
+            }}
+          >
+            Quote
+          </button>
+          <button
+            type="button"
+            className="action"
+            aria-expanded={commentsOpen}
+            onClick={() => setCommentsOpen((value) => !value)}
+          >
+            <MessageCircle size={16} />
+            <span>{post.comments.length}</span>
+          </button>
+          <button
+            type="button"
+            className={post.saved ? "action is-on" : "action"}
+            aria-pressed={post.saved}
+            onClick={() => toggleSave(post.id)}
+          >
+            <Bookmark size={16} />
+            <span>{post.saved ? "Saved" : "Save"}</span>
+          </button>
+        </footer>
+      )}
+
       {commentsOpen ? (
-        <div className="comments">
+        <section className="comments">
           <CommentThread
             comments={post.comments}
             depth={0}
             onReply={(comment) => {
               setReplyTo(comment);
-              setDraft(`@${comment.author} `);
             }}
           />
           <form
+            className="comment-form"
             onSubmit={(event) => {
               event.preventDefault();
+              if (!draft.trim()) return;
               addComment(post.id, draft, replyTo?.id);
               setDraft("");
               setReplyTo(null);
             }}
           >
-            <label className="sr-only" htmlFor={`comment-${post.id}`}>
-              {replyTo ? `Reply to ${replyTo.author}` : "Add a comment"}
-            </label>
+            {replyTo ? (
+              <div className="reply-banner">
+                <span>Replying to {replyTo.author}</span>
+                <button type="button" className="text-btn" onClick={() => setReplyTo(null)}>
+                  Cancel
+                </button>
+              </div>
+            ) : null}
             <input
-              id={`comment-${post.id}`}
               value={draft}
               maxLength={300}
-              placeholder={replyTo ? `Reply to ${replyTo.author}` : "Add a comment on this device"}
+              placeholder={replyTo ? "Write your reply" : "Write a comment"}
               onChange={(event) => setDraft(event.target.value)}
             />
-            <button className="btn btn-primary" type="submit" disabled={!draft.trim()}>
-              Reply
+            <button className="btn btn-primary" type="submit">
+              Send
             </button>
           </form>
-        </div>
+        </section>
       ) : null}
     </article>
   );

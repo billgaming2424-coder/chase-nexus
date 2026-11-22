@@ -1419,3 +1419,270 @@ html.reduce-motion, html.reduce-motion *, html.reduce-motion *::before, html.red
   opacity: 0.9;
 }
 
+/* ----------------------------------------------------
+   Nexus Bitmoji Avatars & Studio Styling
+   ---------------------------------------------------- */
+
+.avatar-studio-modal {
+  width: 100%;
+  max-width: 520px;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: var(--bg-2);
+  border: 1px solid var(--line);
+  border-radius: 24px;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7), 0 0 30px rgba(168, 85, 247, 0.2);
+}
+
+.avatar-preview-stage {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 24px 16px;
+  background: radial-gradient(circle at center, rgba(168, 85, 247, 0.2), transparent 70%);
+  border-bottom: 1px solid var(--line);
+}
+
+.avatar-stage-glow {
+  position: absolute;
+  width: 160px;
+  height: 160px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(168, 85, 247, 0.35) 0%, transparent 70%);
+  filter: blur(20px);
+  pointer-events: none;
+}
+
+.avatar-preview-actions {
+  margin-top: 14px;
+}
+
+.avatar-cat-tabs {
+  display: flex;
+  overflow-x: auto;
+  gap: 6px;
+  padding: 10px 14px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--line);
+  scrollbar-width: none;
+}
+
+.avatar-cat-tabs::-webkit-scrollbar {
+  display: none;
+}
+
+.cat-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--silver);
+  border: 1px solid transparent;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.15s ease;
+}
+
+.cat-tab:hover {
+  color: var(--text);
+  background: var(--surface-2);
+}
+
+.cat-tab.is-active {
+  background: var(--accent-soft);
+  color: var(--text);
+  border-color: var(--accent);
+}
+
+.avatar-controls-panel {
+  padding: 16px;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.builder-section {
+  display: flex;
+  flex-direction: column;
+}
+
+.builder-label {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--silver);
+  margin-bottom: 8px;
+  display: block;
+}
+
+.swatch-grid {
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  gap: 8px;
+}
+
+.swatch-btn {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: 2px solid var(--line);
+  cursor: pointer;
+  transition: transform 0.15s ease, border-color 0.15s ease;
+}
+
+.swatch-btn:hover {
+  transform: scale(1.15);
+  border-color: #ffffff;
+}
+
+.swatch-btn.is-active {
+  transform: scale(1.15);
+  border-color: #ffffff;
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.75);
+}
+
+.choice-chip-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.choice-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border-radius: 12px;
+  background: var(--surface-2);
+  border: 1px solid var(--line);
+  color: var(--silver);
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.choice-chip:hover {
+  background: var(--surface);
+  color: var(--text);
+  border-color: var(--accent);
+}
+
+.choice-chip.is-active {
+  background: var(--accent-soft);
+  color: var(--text);
+  border-color: var(--accent);
+  box-shadow: 0 0 10px rgba(168, 85, 247, 0.25);
+}
+
+.outfit-card-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.outfit-select-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 14px;
+  border-radius: 12px;
+  background: var(--surface-2);
+  border: 1px solid var(--line);
+  color: var(--text);
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.outfit-select-row p {
+  margin: 2px 0 0;
+  font-size: 0.78rem;
+  color: var(--muted);
+}
+
+.outfit-select-row:hover {
+  background: var(--surface);
+  border-color: var(--accent);
+}
+
+.outfit-select-row.is-active {
+  background: var(--accent-soft);
+  border-color: var(--accent);
+}
+
+.avatar-builder-foot {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  padding: 14px 16px;
+  border-top: 1px solid var(--line);
+  background: var(--surface);
+}
+
+/* Sticker Sheets on Profile */
+.sticker-sheet-card {
+  margin-top: 16px;
+}
+
+.sticker-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.sticker-tile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 12px 8px;
+  border-radius: 16px;
+  background: var(--surface-2);
+  border: 1px solid var(--line);
+  cursor: pointer;
+  transition: transform 0.15s ease, border-color 0.15s ease;
+}
+
+.sticker-tile:hover {
+  transform: translateY(-3px);
+  border-color: var(--accent);
+  background: var(--surface);
+}
+
+.sticker-tile small {
+  margin-top: 8px;
+  font-weight: 700;
+  font-size: 0.75rem;
+  color: var(--silver);
+}
+
+/* Twitch Live Stream Styling */
+.twitch-live-card {
+  margin-bottom: 24px;
+  border-color: rgba(145, 71, 255, 0.4);
+  background: radial-gradient(circle at top right, rgba(145, 71, 255, 0.15), var(--card-bg));
+}
+
+.twitch-embed-frame {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  overflow: hidden;
+  margin-top: 12px;
+}
+
+.twitch-embed-frame iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+
+
