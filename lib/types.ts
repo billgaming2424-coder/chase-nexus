@@ -34,6 +34,19 @@ export type BadgeCategory =
   | "chase-plus"
   | "identity-verified";
 
+export interface UserProfile {
+  id: string;
+  email?: string;
+  username?: string;
+  display_name?: string;
+  bio?: string;
+  avatar_url?: string;
+  cover_url?: string;
+  verified?: boolean;
+  badge_type?: BadgeCategory;
+  created_at?: string;
+}
+
 export interface Person {
   name: string;
   handle: string;

@@ -2,12 +2,15 @@
 
 import {
   createContext,
+  useCallback,
   useContext,
   useEffect,
   useMemo,
   useState,
   type ReactNode,
 } from "react";
+import type { User, AuthError } from "@supabase/supabase-js";
+import { supabase } from "@/lib/supabase";
 import { POSTS } from "@/lib/demo-data";
 import type {
   Audience,
@@ -17,6 +20,7 @@ import type {
   ReactionId,
   SpaceId,
   ThemeName,
+  UserProfile,
 } from "@/lib/types";
 
 const STORAGE_KEY = "chase-nexus-alpha";
@@ -53,11 +57,18 @@ interface PersistedState {
   customWidgets?: CustomSpaceWidgets;
 }
 
-interface NexusContextValue {
+export interface NexusContextValue {
   ready: boolean;
   posts: Post[];
   displayName: string;
   setDisplayName: (name: string) => void;
+  currentUser: User | null;
+  userProfile: UserProfile | null;
+  isAuthLoading: boolean;
+  signIn: (email: string, password: string) => Promise<{ data: unknown; error: AuthError | null }>;
+  signUp: (email: string, password: string, displayName?: string) => Promise<{ data: unknown; error: AuthError | null }>;
+  signOut: () => Promise<{ error: AuthError | null }>;
+  refreshPosts: () => Promise<void>;
   theme: ThemeName;
   setTheme: (theme: ThemeName) => void;
   accent: string | null;
@@ -70,7 +81,7 @@ interface NexusContextValue {
   setCustomWidget: (widget: keyof CustomSpaceWidgets, enabled: boolean) => void;
   quoteTarget: Post | null;
   setQuoteTarget: (post: Post | null) => void;
-  addPost: (input: NewPostInput) => void;
+  addPost: (input: NewPostInput) => Promise<void> | void;
   reactToPost: (id: string, reaction: ReactionId) => void;
   toggleRepost: (id: string) => void;
   toggleSave: (id: string) => void;
@@ -104,6 +115,22 @@ function isFeedId(value: string): value is FeedId {
     "discussions",
     "videos",
   ].includes(value);
+}
+
+function formatPostTime(dateString: string): string {
+  try {
+    const diffMs = Date.now() - new Date(dateString).getTime();
+    const diffSec = Math.floor(diffMs / 1000);
+    if (diffSec < 60) return "Just now";
+    const diffMin = Math.floor(diffSec / 60);
+    if (diffMin < 60) return `${diffMin}m ago`;
+    const diffHours = Math.floor(diffMin / 60);
+    if (diffHours < 24) return `${diffHours}h ago`;
+    const diffDays = Math.floor(diffHours / 24);
+    return `${diffDays}d ago`;
+  } catch {
+    return "Recently";
+  }
 }
 
 function normalizePost(value: unknown): Post | null {
@@ -170,6 +197,80 @@ export function NexusProvider({ children }: { children: ReactNode }) {
   const [customWidgets, setCustomWidgets] = useState<CustomSpaceWidgets>(DEFAULT_CUSTOM_WIDGETS);
   const [quoteTarget, setQuoteTarget] = useState<Post | null>(null);
 
+  // Live Supabase Authentication & Profile State
+  const [currentUser, setCurrentUser] = useState<User | null>(null);
+  const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
+  const [isAuthLoading, setIsAuthLoading] = useState(true);
+
+  const fetchProfile = useCallback(async (userId: string) => {
+    try {
+      const { data, error } = await supabase
+        .from("nexus_profiles")
+        .select("*")
+        .eq("id", userId)
+        .maybeSingle();
+
+      if (data && !error) {
+        setUserProfile(data);
+        if (data.display_name) {
+          setDisplayNameState(data.display_name);
+        }
+      }
+    } catch {
+      // Table may not be initialized yet in database
+    }
+  }, []);
+
+  const loadCloudPosts = useCallback(async () => {
+    try {
+      const { data, error } = await supabase
+        .from("nexus_posts")
+        .select("*")
+        .order("created_at", { ascending: false })
+        .limit(50);
+
+      if (data && !error && data.length > 0) {
+        const cloudPosts: Post[] = data.map((row) => ({
+          id: row.id,
+          author: {
+            name: row.author_name || "Chase Member",
+            handle: row.author_handle || "@member",
+            example: false,
+            verified: true,
+            badgeType: "chase-account",
+          },
+          timeLabel: formatPostTime(row.created_at),
+          body: row.body,
+          feeds: Array.isArray(row.feeds) ? row.feeds : ["for-you", "following"],
+          hashtags: Array.isArray(row.hashtags) ? row.hashtags : [],
+          audience: (row.audience as Audience) || "public",
+          tone: 1,
+          imageUrl: row.image_url || undefined,
+          imageLabel: row.image_label || undefined,
+          poll: row.poll_data || undefined,
+          quote: row.quote_data || undefined,
+          reactions: { like: 0, celebrate: 0, support: 0 },
+          comments: [],
+          reposts: 0,
+          reposted: false,
+          saved: false,
+          discussionScore: 0,
+          discussionVote: 0,
+          yours: currentUser ? row.user_id === currentUser.id : false,
+        }));
+
+        setPosts((prev) => {
+          const cloudIds = new Set(cloudPosts.map((p) => p.id));
+          const filteredPrev = prev.filter((p) => !cloudIds.has(p.id));
+          return [...cloudPosts, ...filteredPrev];
+        });
+      }
+    } catch {
+      // Offline or database table not yet initialized
+    }
+  }, [currentUser]);
+
+  // Initialize from LocalStorage and Supabase Session
   useEffect(() => {
     const saved = readPersisted();
     if (saved) {
@@ -182,7 +283,47 @@ export function NexusProvider({ children }: { children: ReactNode }) {
       if (saved.customWidgets) setCustomWidgets(saved.customWidgets);
     }
     setReady(true);
-  }, []);
+
+    let mounted = true;
+
+    // Check existing Supabase session
+    supabase.auth
+      .getSession()
+      .then(({ data: { session } }) => {
+        if (!mounted) return;
+        const user = session?.user ?? null;
+        setCurrentUser(user);
+        if (user) {
+          fetchProfile(user.id);
+        }
+      })
+      .finally(() => {
+        if (mounted) setIsAuthLoading(false);
+      });
+
+    // Subscribe to auth state changes
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (!mounted) return;
+      const user = session?.user ?? null;
+      setCurrentUser(user);
+      if (user) {
+        fetchProfile(user.id);
+      } else {
+        setUserProfile(null);
+      }
+      setIsAuthLoading(false);
+    });
+
+    // Load any existing posts from Supabase cloud
+    loadCloudPosts();
+
+    return () => {
+      mounted = false;
+      subscription.unsubscribe();
+    };
+  }, [fetchProfile, loadCloudPosts]);
 
   useEffect(() => {
     document.documentElement.dataset.theme = theme;
@@ -223,6 +364,72 @@ export function NexusProvider({ children }: { children: ReactNode }) {
       posts,
       displayName,
       setDisplayName: (name: string) => setDisplayNameState(sanitizeName(name)),
+      currentUser,
+      userProfile,
+      isAuthLoading,
+      signIn: async (email: string, password: string) => {
+        setIsAuthLoading(true);
+        try {
+          const res = await supabase.auth.signInWithPassword({ email, password });
+          if (res.data?.user) {
+            setCurrentUser(res.data.user);
+            await fetchProfile(res.data.user.id);
+            await loadCloudPosts();
+          }
+          return res;
+        } finally {
+          setIsAuthLoading(false);
+        }
+      },
+      signUp: async (email: string, password: string, name?: string) => {
+        setIsAuthLoading(true);
+        try {
+          const res = await supabase.auth.signUp({
+            email,
+            password,
+            options: {
+              data: {
+                display_name: name || "Chase Member",
+                full_name: name || "Chase Member",
+              },
+            },
+          });
+          if (res.data?.user) {
+            setCurrentUser(res.data.user);
+            try {
+              await supabase.from("nexus_profiles").upsert({
+                id: res.data.user.id,
+                email: res.data.user.email,
+                display_name: name || "Chase Member",
+                username: res.data.user.email?.split("@")[0] || "member",
+                verified: true,
+                badge_type: "chase-account",
+              });
+            } catch {
+              // Table might be pending schema migration
+            }
+            await fetchProfile(res.data.user.id);
+            await loadCloudPosts();
+          }
+          return res;
+        } finally {
+          setIsAuthLoading(false);
+        }
+      },
+      signOut: async () => {
+        setIsAuthLoading(true);
+        try {
+          const res = await supabase.auth.signOut();
+          setCurrentUser(null);
+          setUserProfile(null);
+          return res;
+        } finally {
+          setIsAuthLoading(false);
+        }
+      },
+      refreshPosts: async () => {
+        await loadCloudPosts();
+      },
       theme,
       setTheme,
       accent,
@@ -236,11 +443,27 @@ export function NexusProvider({ children }: { children: ReactNode }) {
         setCustomWidgets((prev) => ({ ...prev, [widget]: enabled })),
       quoteTarget,
       setQuoteTarget,
-      addPost: (input: NewPostInput) => {
+      addPost: async (input: NewPostInput) => {
+        const authorName =
+          userProfile?.display_name ||
+          (displayName !== "You" ? displayName : "Chase Member");
+        const authorHandle = userProfile?.username
+          ? `@${userProfile.username}`
+          : currentUser?.email
+          ? `@${currentUser.email.split("@")[0]}`
+          : "@you";
+
+        const newPostId = crypto.randomUUID();
         const post: Post = {
-          id: crypto.randomUUID(),
-          author: { name: displayName, handle: "@you", example: false, verified: true, badgeType: "chase-account" },
-          timeLabel: "Just now · this device",
+          id: newPostId,
+          author: {
+            name: authorName,
+            handle: authorHandle,
+            example: false,
+            verified: true,
+            badgeType: "chase-account",
+          },
+          timeLabel: "Just now · Chase Cloud",
           body: input.body.trim(),
           feeds: ["for-you", "following"],
           hashtags: Array.from(input.body.matchAll(/#([A-Za-z0-9_]+)/g), (match) => match[1]),
@@ -259,8 +482,32 @@ export function NexusProvider({ children }: { children: ReactNode }) {
           discussionVote: 0,
           yours: true,
         };
+
+        // Instant optimistic addition
         setPosts((current) => [post, ...current]);
         setQuoteTarget(null);
+
+        // If authenticated, persist to live Supabase backend
+        if (currentUser) {
+          try {
+            await supabase.from("nexus_posts").insert({
+              id: newPostId,
+              user_id: currentUser.id,
+              author_name: authorName,
+              author_handle: authorHandle,
+              body: input.body.trim(),
+              audience: input.audience,
+              feeds: ["for-you", "following"],
+              hashtags: Array.from(input.body.matchAll(/#([A-Za-z0-9_]+)/g), (match) => match[1]),
+              image_url: input.imageUrl || null,
+              image_label: input.imageLabel || null,
+              poll_data: input.poll ? JSON.parse(JSON.stringify(input.poll)) : null,
+              quote_data: input.quote ? JSON.parse(JSON.stringify(input.quote)) : null,
+            });
+          } catch (err) {
+            console.warn("Could not persist to Supabase:", err);
+          }
+        }
       },
       reactToPost: (id, reaction) => {
         update(id, (post) => {
@@ -284,13 +531,16 @@ export function NexusProvider({ children }: { children: ReactNode }) {
       addComment: (postId, body, parentId) => {
         const text = body.trim();
         if (!text) return;
+        const authorName =
+          userProfile?.display_name ||
+          (displayName !== "You" ? displayName : "Chase Member");
         update(postId, (post) => ({
           ...post,
           comments: [
             ...post.comments,
             {
               id: crypto.randomUUID(),
-              author: displayName,
+              author: authorName,
               body: text.slice(0, 300),
               example: false,
               parentId,
@@ -326,7 +576,22 @@ export function NexusProvider({ children }: { children: ReactNode }) {
         });
       },
     };
-  }, [ready, posts, displayName, theme, accent, reducedMotion, activeSpace, customWidgets, quoteTarget]);
+  }, [
+    ready,
+    posts,
+    displayName,
+    currentUser,
+    userProfile,
+    isAuthLoading,
+    fetchProfile,
+    loadCloudPosts,
+    theme,
+    accent,
+    reducedMotion,
+    activeSpace,
+    customWidgets,
+    quoteTarget,
+  ]);
 
   return <NexusContext.Provider value={value}>{children}</NexusContext.Provider>;
 }

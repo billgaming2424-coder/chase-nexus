@@ -3,29 +3,49 @@
 import { useEffect, useState, type ReactNode } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Compass, Home, Menu, MessageCircle, UserRound, Video } from "lucide-react";
-import { NexusProvider } from "@/components/nexus/NexusProvider";
+import {
+  Compass,
+  Home,
+  Menu,
+  MessageCircle,
+  ShieldCheck,
+  UserRound,
+  Video,
+} from "lucide-react";
+import { NexusProvider, useNexus } from "@/components/nexus/NexusProvider";
 import { RightRail } from "@/components/rail/RightRail";
 import { Sidebar } from "@/components/shell/Sidebar";
+import { AuthModal } from "@/components/auth/AuthModal";
 
-export function AppShell({ children }: { children: ReactNode }) {
+function AppShellContent({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const showRail = pathname === "/";
   const [open, setOpen] = useState(false);
+  const [authModalOpen, setAuthModalOpen] = useState(false);
+  const { currentUser, userProfile } = useNexus();
 
   useEffect(() => {
     setOpen(false);
   }, [pathname]);
 
   return (
-    <NexusProvider>
+    <>
       <a className="skip" href="#main">
         Skip to content
       </a>
       <div className={showRail ? "shell shell-rail" : "shell"}>
-        <Sidebar open={open} onNavigate={() => setOpen(false)} />
+        <Sidebar
+          open={open}
+          onNavigate={() => setOpen(false)}
+          onOpenAuth={() => setAuthModalOpen(true)}
+        />
         {open ? (
-          <button className="scrim" type="button" aria-label="Close menu" onClick={() => setOpen(false)} />
+          <button
+            className="scrim"
+            type="button"
+            aria-label="Close menu"
+            onClick={() => setOpen(false)}
+          />
         ) : null}
         <div className="workspace">
           <header className="mobile-bar">
@@ -33,10 +53,42 @@ export function AppShell({ children }: { children: ReactNode }) {
               <Menu size={20} />
             </button>
             <span className="mobile-brand">Chase Nexus</span>
+            <button
+              type="button"
+              className="mobile-auth-trigger"
+              aria-label="Chase Studios Account"
+              onClick={() => setAuthModalOpen(true)}
+            >
+              {currentUser ? (
+                <span className="avatar avatar-xs">
+                  {(userProfile?.display_name || currentUser.email || "C").slice(0, 1).toUpperCase()}
+                </span>
+              ) : (
+                <ShieldCheck size={20} className="purple-icon" />
+              )}
+            </button>
           </header>
-          <p className="banner">
-            Alpha 0.1 preview. Posts, appearance, and saves stay in this browser. Nothing here is published to other people.
-          </p>
+
+          <div className="banner cloud-banner">
+            <div className="banner-content">
+              <span className="status-dot live" aria-hidden="true" />
+              <span>
+                {currentUser
+                  ? `Signed in as ${userProfile?.display_name || currentUser.email} · Chase Studios Cloud active`
+                  : "Chase Studios Cloud live. Sign in with your Chase Account to save posts and verify your profile."}
+              </span>
+            </div>
+            {!currentUser ? (
+              <button
+                type="button"
+                className="banner-action-btn"
+                onClick={() => setAuthModalOpen(true)}
+              >
+                Sign In
+              </button>
+            ) : null}
+          </div>
+
           <main id="main">{children}</main>
         </div>
         {showRail ? <RightRail /> : null}
@@ -85,6 +137,17 @@ export function AppShell({ children }: { children: ReactNode }) {
           <span>Profile</span>
         </Link>
       </nav>
+
+      {/* Universal Chase Studios Account Modal */}
+      <AuthModal isOpen={authModalOpen} onClose={() => setAuthModalOpen(false)} />
+    </>
+  );
+}
+
+export function AppShell({ children }: { children: ReactNode }) {
+  return (
+    <NexusProvider>
+      <AppShellContent>{children}</AppShellContent>
     </NexusProvider>
   );
 }

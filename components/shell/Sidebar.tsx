@@ -8,6 +8,7 @@ import {
   Bookmark,
   Compass,
   Home,
+  LogIn,
   MessageCircle,
   MessagesSquare,
   Phone,
@@ -18,6 +19,8 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import { NAV_ITEMS, type NavItem } from "@/lib/navigation";
+import { useNexus } from "@/components/nexus/NexusProvider";
+import { ChaseBadge } from "@/components/nexus/ChaseBadge";
 
 const ICONS: Record<NavItem["icon"], LucideIcon> = {
   home: Home,
@@ -34,8 +37,17 @@ const ICONS: Record<NavItem["icon"], LucideIcon> = {
   settings: Settings,
 };
 
-export function Sidebar({ open, onNavigate }: { open: boolean; onNavigate: () => void }) {
+export function Sidebar({
+  open,
+  onNavigate,
+  onOpenAuth,
+}: {
+  open: boolean;
+  onNavigate: () => void;
+  onOpenAuth: () => void;
+}) {
   const pathname = usePathname();
+  const { currentUser, userProfile } = useNexus();
 
   return (
     <aside className={open ? "sidebar is-open" : "sidebar"} aria-label="Primary">
@@ -48,6 +60,7 @@ export function Sidebar({ open, onNavigate }: { open: boolean; onNavigate: () =>
           <span className="logo-tag">Connect. Create. Discover.</span>
         </span>
       </Link>
+
       <nav className="nav">
         {NAV_ITEMS.map((item) => {
           const Icon = ICONS[item.icon];
@@ -66,6 +79,38 @@ export function Sidebar({ open, onNavigate }: { open: boolean; onNavigate: () =>
           );
         })}
       </nav>
+
+      <div className="sidebar-auth-section">
+        {currentUser ? (
+          <button
+            type="button"
+            className="sidebar-user-card"
+            onClick={onOpenAuth}
+            title="Manage Chase Studios Account"
+          >
+            <span className="avatar avatar-sm">
+              {(userProfile?.display_name || currentUser.email || "C").slice(0, 1).toUpperCase()}
+            </span>
+            <div className="sidebar-user-info">
+              <span className="sidebar-user-name">
+                {userProfile?.display_name || currentUser.email?.split("@")[0] || "Chase Member"}
+                <ChaseBadge type="chase-account" />
+              </span>
+              <span className="sidebar-user-status">Chase Verified</span>
+            </div>
+          </button>
+        ) : (
+          <button
+            type="button"
+            className="btn btn-outline sidebar-signin-btn"
+            onClick={onOpenAuth}
+          >
+            <LogIn size={16} />
+            <span>Chase Account</span>
+          </button>
+        )}
+      </div>
+
       <p className="side-foot">
         Chase Studios
         <span>Every genre. No limits.</span>
