@@ -1,0 +1,135 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%">
+  <defs>
+    <!-- Deep Cosmic Obsidian Void Background -->
+    <radialGradient id="emblemBg" cx="50%" cy="40%" r="75%">
+      <stop offset="0%" stop-color="#241042" />
+      <stop offset="35%" stop-color="#140926" />
+      <stop offset="70%" stop-color="#0a0414" />
+      <stop offset="100%" stop-color="#040108" />
+    </radialGradient>
+
+    <!-- Metallic Amethyst & Cyan Rim -->
+    <linearGradient id="rimGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#c084fc" />
+      <stop offset="25%" stop-color="#a855f7" />
+      <stop offset="50%" stop-color="#7c3aed" />
+      <stop offset="75%" stop-color="#06b6d4" />
+      <stop offset="100%" stop-color="#22d3ee" />
+    </linearGradient>
+
+    <!-- Inner Shield Gradient -->
+    <linearGradient id="shieldGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#1a0f30" />
+      <stop offset="50%" stop-color="#0e071c" />
+      <stop offset="100%" stop-color="#05020a" />
+    </linearGradient>
+
+    <!-- Obsidian Carbon Left Pillar -->
+    <linearGradient id="obsidianPillar" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#475569" />
+      <stop offset="45%" stop-color="#1e293b" />
+      <stop offset="100%" stop-color="#0f172a" />
+    </linearGradient>
+
+    <!-- Purple Crystal Right Pillar -->
+    <linearGradient id="crystalPillar" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#d8b4fe" />
+      <stop offset="40%" stop-color="#a855f7" />
+      <stop offset="75%" stop-color="#7c3aed" />
+      <stop offset="100%" stop-color="#4c1d95" />
+    </linearGradient>
+
+    <!-- Luminous Energy Slash -->
+    <linearGradient id="energySlash" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#38bdf8" />
+      <stop offset="35%" stop-color="#22d3ee" />
+      <stop offset="70%" stop-color="#a855f7" />
+      <stop offset="100%" stop-color="#c084fc" />
+    </linearGradient>
+
+    <!-- Core Plasma Glow Filter -->
+    <filter id="coreGlow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="14" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+
+    <filter id="ambientNebula" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="30" />
+    </filter>
+
+    <filter id="sparkleGlow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="5" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+  </defs>
+
+  <!-- 1. Full-Bleed Canvas Background (Essential for iOS squircle & Android adaptive masks) -->
+  <rect width="512" height="512" fill="url(#emblemBg)" />
+
+  <!-- 2. Ambient Cosmic Nebula Glows -->
+  <circle cx="256" cy="240" r="150" fill="#7c3aed" opacity="0.28" filter="url(#ambientNebula)" />
+  <circle cx="280" cy="280" r="100" fill="#06b6d4" opacity="0.22" filter="url(#ambientNebula)" />
+
+  <!-- 3. Inner Decorative Squircle Frame (Safe zone boundary) -->
+  <rect x="28" y="28" width="456" height="456" rx="100" fill="none" stroke="url(#rimGrad)" stroke-width="4" opacity="0.55" />
+  <rect x="36" y="36" width="440" height="440" rx="92" fill="none" stroke="#a855f7" stroke-width="1.5" opacity="0.25" stroke-dasharray="12 8" />
+
+  <!-- 4. Chase Studios Crest Shield (Central Emblem Base) -->
+  <g transform="translate(0, 4)">
+    <!-- Shield Shadow -->
+    <polygon points="256,76 396,144 362,324 256,396 150,324 116,144" fill="#020005" opacity="0.75" filter="url(#coreGlow)" />
+    <!-- Shield Carapace -->
+    <polygon points="256,76 396,144 362,324 256,396 150,324 116,144" fill="url(#shieldGrad)" stroke="url(#rimGrad)" stroke-width="5" stroke-linejoin="round" />
+    <!-- Inner Shield Inset Facet -->
+    <polygon points="256,92 376,150 348,308 256,372 164,308 136,150" fill="none" stroke="#a855f7" stroke-width="2" opacity="0.35" />
+
+    <!-- 5. Iconic Nexus 'N' Energy Glyph -->
+    <g id="nexus-glyph">
+      <!-- Shadow beneath pillars -->
+      <path d="M152 144 L212 144 L212 356 L152 356 Z" fill="#020005" opacity="0.8" />
+      <path d="M300 144 L360 144 L360 356 L300 356 Z" fill="#020005" opacity="0.8" />
+      <path d="M198 144 L326 356 L276 356 L148 144 Z" fill="#020005" opacity="0.8" />
+
+      <!-- Left Pillar (Obsidian Combat Armor) -->
+      <path d="M160 148 L216 148 L216 352 L160 352 Z" fill="url(#obsidianPillar)" stroke="#334155" stroke-width="2" />
+      <path d="M162 150 L174 150 L174 350 L162 350 Z" fill="#94a3b8" opacity="0.45" />
+
+      <!-- Right Pillar (Radiant Purple Crystal Blade) -->
+      <path d="M296 148 L352 148 L352 352 L296 352 Z" fill="url(#crystalPillar)" stroke="#c084fc" stroke-width="2" />
+      <path d="M338 150 L350 150 L350 350 L338 350 Z" fill="#f5d0fe" opacity="0.6" />
+
+      <!-- Diagonal Hyper-Speed Power Slash -->
+      <path d="M204 148 L328 352 L274 352 L150 148 Z" fill="url(#energySlash)" filter="url(#coreGlow)" />
+      <path d="M204 148 L328 352 L274 352 L150 148 Z" fill="url(#energySlash)" />
+
+      <!-- Intense Core Energy Laser Streak -->
+      <path d="M194 158 L308 342" stroke="#ffffff" stroke-width="5" stroke-linecap="round" opacity="0.95" />
+      <path d="M194 158 L308 342" stroke="#22d3ee" stroke-width="12" stroke-linecap="round" opacity="0.5" filter="url(#coreGlow)" />
+
+      <!-- Energy Terminal Nodes -->
+      <circle cx="180" cy="158" r="9" fill="#22d3ee" />
+      <circle cx="180" cy="158" r="4" fill="#ffffff" />
+      <circle cx="322" cy="342" r="9" fill="#c084fc" />
+      <circle cx="322" cy="342" r="4" fill="#ffffff" />
+    </g>
+
+    <!-- Chase Shield Keystone Top Crest -->
+    <polygon points="256,66 264,80 248,80" fill="#c084fc" />
+    <circle cx="256" cy="86" r="6" fill="#22d3ee" stroke="#ffffff" stroke-width="1.5" />
+  </g>
+
+  <!-- 6. Celestial 4-Point Starburst Accents -->
+  <g transform="translate(390, 102)" filter="url(#sparkleGlow)">
+    <path d="M0 -22 Q0 0 22 0 Q0 0 0 22 Q0 0 -22 0 Q0 0 0 -22 Z" fill="#22d3ee" />
+    <circle cx="0" cy="0" r="5" fill="#ffffff" />
+  </g>
+
+  <g transform="translate(114, 396)" filter="url(#sparkleGlow)">
+    <path d="M0 -14 Q0 0 14 0 Q0 0 0 14 Q0 0 -14 0 Q0 0 0 -14 Z" fill="#c084fc" />
+    <circle cx="0" cy="0" r="3" fill="#ffffff" />
+  </g>
+
+  <!-- 7. Discreet Studio Wordmark Label at Base -->
+  <text x="256" y="442" text-anchor="middle" fill="#ffffff" font-family="'Segoe UI', Roboto, sans-serif" font-weight="900" font-size="20" letter-spacing="7" opacity="0.95">CHASE NEXUS</text>
+  <text x="256" y="462" text-anchor="middle" fill="#a855f7" font-family="'Segoe UI', Roboto, sans-serif" font-weight="800" font-size="9" letter-spacing="4" opacity="0.8">CHASE STUDIOS</text>
+</svg>
