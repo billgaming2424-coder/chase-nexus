@@ -12,6 +12,8 @@ import {
   Shirt,
   Headphones,
   Flame,
+  MessageSquare,
+  Layers,
   X,
 } from "lucide-react";
 import type { AvatarConfig } from "@/lib/types";
@@ -44,6 +46,8 @@ const HAIR_STYLES: { id: AvatarConfig["hairStyle"]; label: string }[] = [
   { id: "braids", label: "Braided Locs" },
   { id: "flowing", label: "Long Flowing" },
   { id: "bun", label: "Top Bun" },
+  { id: "side-part", label: "Side Part" },
+  { id: "dreads", label: "Cyber Dreads" },
 ];
 
 const HAIR_COLORS = [
@@ -80,6 +84,15 @@ const MOUTHS: { id: AvatarConfig["mouth"]; label: string }[] = [
   { id: "laugh", label: "Joyful Laugh" },
   { id: "neutral", label: "Chill Neutral" },
   { id: "battle", label: "Battle Grin" },
+  { id: "wink", label: "Playful Wink" },
+];
+
+const FACIAL_HAIR: { id: NonNullable<AvatarConfig["facialHair"]>; label: string }[] = [
+  { id: "none", label: "Clean Shaven" },
+  { id: "stubble", label: "5 O'Clock Stubble" },
+  { id: "mustache", label: "Classic Mustache" },
+  { id: "goatee", label: "Sharp Goatee" },
+  { id: "beard", label: "Full Beard" },
 ];
 
 const OUTFITS: { id: AvatarConfig["outfit"]; label: string; desc: string }[] = [
@@ -89,13 +102,20 @@ const OUTFITS: { id: AvatarConfig["outfit"]; label: string; desc: string }[] = [
   { id: "trainer-vest", label: "Aetheria Vest", desc: "Unimon Legends companion explorer gear" },
   { id: "nexus-tee", label: "Nexus Streetwear", desc: "Holographic graphic tee" },
   { id: "armor", label: "Steam RPG Armor", desc: "Obsidian knight battle plate" },
+  { id: "space-suit", label: "Deep Space Suit", desc: "Void exploration astronaut suit with gold visor" },
+  { id: "retro-arcade", label: "Retro Arcade Bomber", desc: "Pixel 80s gamer windbreaker jacket" },
+  { id: "purple-tux", label: "Chase Gala Tuxedo", desc: "VIP formal purple velvet suit & bow tie" },
 ];
 
 const ACCESSORIES: { id: AvatarConfig["accessory"]; label: string }[] = [
   { id: "none", label: "None" },
   { id: "gamer-headset", label: "Chase Gamer Headset" },
   { id: "cyber-visor", label: "Neon Visor Glasses" },
+  { id: "aviators", label: "Gold Aviator Shades" },
   { id: "snapback", label: "Snapback Cap" },
+  { id: "beanie", label: "Warm Knit Beanie" },
+  { id: "crown", label: "Gold King Crown" },
+  { id: "cat-ears", label: "Cyber Cat Ears Headband" },
   { id: "bandana", label: "Outlaw Bandana" },
   { id: "earring", label: "Gold Earring" },
 ];
@@ -103,19 +123,45 @@ const ACCESSORIES: { id: AvatarConfig["accessory"]; label: string }[] = [
 const MOOD_POSES: { id: NonNullable<AvatarConfig["pose"]>; label: string; icon: string }[] = [
   { id: "portrait", label: "Default Avatar", icon: "✨" },
   { id: "fire", label: "On Fire Streak", icon: "🔥" },
-  { id: "gg", label: "GG! Gamer Victory", icon: "🎮" },
+  { id: "gg", label: "GG! Victory", icon: "🎮" },
   { id: "hype", label: "HYPE Celebration", icon: "⚡" },
-  { id: "verified", label: "Chase Verified Badge", icon: "👑" },
+  { id: "shield", label: "Security Shield", icon: "🛡️" },
+  { id: "verified", label: "Chase Verified", icon: "👑" },
+  { id: "chill", label: "Chill Vibes", icon: "☕" },
+  { id: "afk", label: "AFK Away", icon: "💤" },
+  { id: "raid", label: "Raid Boss", icon: "⚔️" },
+  { id: "love", label: "Lots of Love", icon: "❤️" },
+  { id: "rocket", label: "To The Moon", icon: "🚀" },
+  { id: "levelup", label: "Level Up!", icon: "⭐" },
+];
+
+const BACKGROUNDS: { id: AvatarConfig["background"]; label: string; preview: string }[] = [
+  { id: "purple-gradient", label: "Cosmic Purple", preview: "linear-gradient(135deg, #1b0a2a, #4a1d96)" },
+  { id: "neon-cyan", label: "Neon Cyber", preview: "linear-gradient(135deg, #022c22, #06b6d4)" },
+  { id: "void-dark", label: "Deep Obsidian", preview: "linear-gradient(135deg, #09090b, #18181b)" },
+  { id: "gold-burst", label: "Champion Gold", preview: "linear-gradient(135deg, #451a03, #d97706)" },
+  { id: "fire-streak", label: "Fire Streak", preview: "linear-gradient(135deg, #450a0a, #ef4444)" },
+  { id: "cosmic-stars", label: "Starlight Void", preview: "radial-gradient(circle, #3b0764, #030712)" },
+];
+
+const PRESET_BUBBLES = [
+  "Chilling on Chase Nexus ✨",
+  "Grinding games 🎮",
+  "Streaming live on Twitch 🔴",
+  "Coding the future 💻",
+  "Chase Verified 👑",
+  "AFK taking a break 💤",
+  "Unimon Raids tonight ⚔️",
 ];
 
 export function NexusAvatarBuilder({ isOpen, onClose }: NexusAvatarBuilderProps) {
-  const { userProfile, currentUser } = useNexus();
+  const { userProfile, setUserAvatar, userAvatar } = useNexus();
   const [activeTab, setActiveTab] = useState<
-    "skin" | "hair" | "eyes" | "outfit" | "accessories" | "mood"
-  >("skin");
+    "face" | "hair" | "eyes" | "outfit" | "accessories" | "stickers" | "bubble" | "backdrop"
+  >("face");
 
   const [avatar, setAvatar] = useState<AvatarConfig>(() => {
-    return userProfile?.avatar_config || DEFAULT_AVATAR;
+    return userProfile?.avatar_config || userAvatar || DEFAULT_AVATAR;
   });
 
   const [savedSuccess, setSavedSuccess] = useState(false);
@@ -131,24 +177,23 @@ export function NexusAvatarBuilder({ isOpen, onClose }: NexusAvatarBuilderProps)
       eyeShape: randomItem(EYE_SHAPES).id,
       eyeColor: randomItem(EYE_COLORS).value,
       mouth: randomItem(MOUTHS).id,
+      facialHair: randomItem(FACIAL_HAIR).id,
       outfit: randomItem(OUTFITS).id,
       accessory: randomItem(ACCESSORIES).id,
-      background: randomItem(["purple-gradient", "neon-cyan", "void-dark", "gold-burst", "fire-streak"]),
+      background: randomItem(BACKGROUNDS).id,
       pose: randomItem(MOOD_POSES).id,
+      statusBubble: randomItem(PRESET_BUBBLES),
     });
   };
 
   const handleSave = async () => {
     try {
-      localStorage.setItem("nexus-custom-avatar", JSON.stringify(avatar));
-      // Dispatch storage event so other components immediately update
-      window.dispatchEvent(new Event("nexus-avatar-updated"));
-
+      setUserAvatar(avatar);
       setSavedSuccess(true);
       setTimeout(() => {
         setSavedSuccess(false);
         onClose();
-      }, 900);
+      }, 700);
     } catch {
       onClose();
     }
@@ -168,8 +213,8 @@ export function NexusAvatarBuilder({ isOpen, onClose }: NexusAvatarBuilderProps)
               <Sparkles size={16} />
             </span>
             <div>
-              <h3>Nexus Avatar Studio</h3>
-              <p className="hint">Bitmoji & Snapchat-style Chase Studios character</p>
+              <h3>Nexus Avatar Studio 2.0</h3>
+              <p className="hint">Custom Snapchat/Bitmoji-style Chase Studios character</p>
             </div>
           </div>
           <button type="button" className="icon-btn" aria-label="Close" onClick={onClose}>
@@ -198,10 +243,10 @@ export function NexusAvatarBuilder({ isOpen, onClose }: NexusAvatarBuilderProps)
         <nav className="avatar-cat-tabs" aria-label="Avatar Categories">
           <button
             type="button"
-            className={`cat-tab ${activeTab === "skin" ? "is-active" : ""}`}
-            onClick={() => setActiveTab("skin")}
+            className={`cat-tab ${activeTab === "face" ? "is-active" : ""}`}
+            onClick={() => setActiveTab("face")}
           >
-            <Palette size={15} />
+            <Palette size={14} />
             <span>Face</span>
           </button>
           <button
@@ -209,7 +254,7 @@ export function NexusAvatarBuilder({ isOpen, onClose }: NexusAvatarBuilderProps)
             className={`cat-tab ${activeTab === "hair" ? "is-active" : ""}`}
             onClick={() => setActiveTab("hair")}
           >
-            <Scissors size={15} />
+            <Scissors size={14} />
             <span>Hair</span>
           </button>
           <button
@@ -217,7 +262,7 @@ export function NexusAvatarBuilder({ isOpen, onClose }: NexusAvatarBuilderProps)
             className={`cat-tab ${activeTab === "eyes" ? "is-active" : ""}`}
             onClick={() => setActiveTab("eyes")}
           >
-            <Eye size={15} />
+            <Eye size={14} />
             <span>Eyes</span>
           </button>
           <button
@@ -225,7 +270,7 @@ export function NexusAvatarBuilder({ isOpen, onClose }: NexusAvatarBuilderProps)
             className={`cat-tab ${activeTab === "outfit" ? "is-active" : ""}`}
             onClick={() => setActiveTab("outfit")}
           >
-            <Shirt size={15} />
+            <Shirt size={14} />
             <span>Wardrobe</span>
           </button>
           <button
@@ -233,23 +278,39 @@ export function NexusAvatarBuilder({ isOpen, onClose }: NexusAvatarBuilderProps)
             className={`cat-tab ${activeTab === "accessories" ? "is-active" : ""}`}
             onClick={() => setActiveTab("accessories")}
           >
-            <Headphones size={15} />
+            <Headphones size={14} />
             <span>Gear</span>
           </button>
           <button
             type="button"
-            className={`cat-tab ${activeTab === "mood" ? "is-active" : ""}`}
-            onClick={() => setActiveTab("mood")}
+            className={`cat-tab ${activeTab === "stickers" ? "is-active" : ""}`}
+            onClick={() => setActiveTab("stickers")}
           >
-            <Flame size={15} />
+            <Flame size={14} />
             <span>Stickers</span>
+          </button>
+          <button
+            type="button"
+            className={`cat-tab ${activeTab === "bubble" ? "is-active" : ""}`}
+            onClick={() => setActiveTab("bubble")}
+          >
+            <MessageSquare size={14} />
+            <span>Bubble</span>
+          </button>
+          <button
+            type="button"
+            className={`cat-tab ${activeTab === "backdrop" ? "is-active" : ""}`}
+            onClick={() => setActiveTab("backdrop")}
+          >
+            <Layers size={14} />
+            <span>Backdrop</span>
           </button>
         </nav>
 
         {/* Category Panel Content */}
         <div className="avatar-controls-panel">
-          {/* 1. Skin & Expression */}
-          {activeTab === "skin" && (
+          {/* 1. Face, Skin & Expression */}
+          {activeTab === "face" && (
             <div className="builder-section">
               <label className="builder-label">Skin Tone</label>
               <div className="swatch-grid">
@@ -280,13 +341,29 @@ export function NexusAvatarBuilder({ isOpen, onClose }: NexusAvatarBuilderProps)
                   </button>
                 ))}
               </div>
+
+              <label className="builder-label" style={{ marginTop: 14 }}>
+                Facial Hair / Beard Style
+              </label>
+              <div className="choice-chip-grid">
+                {FACIAL_HAIR.map((f) => (
+                  <button
+                    key={f.id}
+                    type="button"
+                    className={`choice-chip ${avatar.facialHair === f.id ? "is-active" : ""}`}
+                    onClick={() => setAvatar((prev) => ({ ...prev, facialHair: f.id }))}
+                  >
+                    {f.label}
+                  </button>
+                ))}
+              </div>
             </div>
           )}
 
-          {/* 2. Hair & Hair Color */}
+          {/* 2. Hair Style & Color */}
           {activeTab === "hair" && (
             <div className="builder-section">
-              <label className="builder-label">Hair Style</label>
+              <label className="builder-label">Hair Style (10 Custom Cuts)</label>
               <div className="choice-chip-grid">
                 {HAIR_STYLES.map((h) => (
                   <button
@@ -353,10 +430,10 @@ export function NexusAvatarBuilder({ isOpen, onClose }: NexusAvatarBuilderProps)
             </div>
           )}
 
-          {/* 4. Outfits */}
+          {/* 4. Wardrobe */}
           {activeTab === "outfit" && (
             <div className="builder-section">
-              <label className="builder-label">Chase Studios Wardrobe</label>
+              <label className="builder-label">Chase Studios Outfits (9 Iconic Fits)</label>
               <div className="outfit-card-stack">
                 {OUTFITS.map((o) => (
                   <button
@@ -376,10 +453,10 @@ export function NexusAvatarBuilder({ isOpen, onClose }: NexusAvatarBuilderProps)
             </div>
           )}
 
-          {/* 5. Accessories */}
+          {/* 5. Gear & Hats */}
           {activeTab === "accessories" && (
             <div className="builder-section">
-              <label className="builder-label">Gear & Accessories</label>
+              <label className="builder-label">Gear, Hats & Eyewear</label>
               <div className="choice-chip-grid">
                 {ACCESSORIES.map((a) => (
                   <button
@@ -395,10 +472,10 @@ export function NexusAvatarBuilder({ isOpen, onClose }: NexusAvatarBuilderProps)
             </div>
           )}
 
-          {/* 6. Mood & Sticker Overlays */}
-          {activeTab === "mood" && (
+          {/* 6. Snapchat-Style Mood Stickers (12 pack) */}
+          {activeTab === "stickers" && (
             <div className="builder-section">
-              <label className="builder-label">Snapchat-Style Bitmoji Sticker Pose</label>
+              <label className="builder-label">Snapchat-Style Bitmoji Pose Stickers (12 Pack)</label>
               <div className="choice-chip-grid">
                 {MOOD_POSES.map((p) => (
                   <button
@@ -414,13 +491,83 @@ export function NexusAvatarBuilder({ isOpen, onClose }: NexusAvatarBuilderProps)
               </div>
             </div>
           )}
+
+          {/* 7. Status Speech Bubble */}
+          {activeTab === "bubble" && (
+            <div className="builder-section">
+              <label className="builder-label">Floating Status Speech Bubble</label>
+              <p className="hint" style={{ marginBottom: 8 }}>
+                Your avatar displays this message in your profile, posts, and chat headers.
+              </p>
+              <input
+                type="text"
+                className="bubble-input"
+                value={avatar.statusBubble || ""}
+                placeholder="What's your character saying? (e.g. Chilling on Chase Nexus ✨)"
+                maxLength={45}
+                onChange={(e) => setAvatar((prev) => ({ ...prev, statusBubble: e.target.value }))}
+                style={{
+                  width: "100%",
+                  padding: "10px 14px",
+                  background: "var(--surface)",
+                  border: "1px solid var(--border)",
+                  borderRadius: 8,
+                  color: "var(--foreground)",
+                  fontSize: "0.95rem",
+                  marginBottom: 12,
+                }}
+              />
+              <label className="builder-label">Quick Suggestions</label>
+              <div className="choice-chip-grid">
+                {PRESET_BUBBLES.map((preset) => (
+                  <button
+                    key={preset}
+                    type="button"
+                    className={`choice-chip ${avatar.statusBubble === preset ? "is-active" : ""}`}
+                    onClick={() => setAvatar((prev) => ({ ...prev, statusBubble: preset }))}
+                  >
+                    {preset}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* 8. Backdrop Theme */}
+          {activeTab === "backdrop" && (
+            <div className="builder-section">
+              <label className="builder-label">Avatar Background Gradient</label>
+              <div className="choice-chip-grid">
+                {BACKGROUNDS.map((b) => (
+                  <button
+                    key={b.id}
+                    type="button"
+                    className={`choice-chip ${avatar.background === b.id ? "is-active" : ""}`}
+                    onClick={() => setAvatar((prev) => ({ ...prev, background: b.id }))}
+                    style={{ display: "inline-flex", alignItems: "center", gap: 8 }}
+                  >
+                    <span
+                      style={{
+                        width: 14,
+                        height: 14,
+                        borderRadius: "50%",
+                        background: b.preview,
+                        display: "inline-block",
+                      }}
+                    />
+                    <span>{b.label}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Footer actions */}
         <footer className="avatar-builder-foot">
           {savedSuccess ? (
             <div className="auth-success-banner" style={{ width: "100%", textAlign: "center" }}>
-              ✓ Avatar Saved to Profile & Ecosystem!
+              ✓ Character Avatar Saved to Profile & Cloud!
             </div>
           ) : (
             <>
@@ -429,7 +576,7 @@ export function NexusAvatarBuilder({ isOpen, onClose }: NexusAvatarBuilderProps)
               </button>
               <button type="button" className="btn btn-primary" onClick={handleSave}>
                 <Check size={16} />
-                <span>Save Avatar</span>
+                <span>Save Bitmoji Avatar</span>
               </button>
             </>
           )}

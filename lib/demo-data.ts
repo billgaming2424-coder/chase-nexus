@@ -145,6 +145,7 @@ export interface DemoMessage {
   sender: "them" | "you";
   text: string;
   time: string;
+  stickerPose?: string;
 }
 
 export interface DemoConversation {

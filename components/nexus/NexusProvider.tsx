@@ -218,13 +218,23 @@ export function NexusProvider({ children }: { children: ReactNode }) {
     return DEFAULT_AVATAR;
   });
 
-  const setUserAvatar = useCallback((avatar: AvatarConfig) => {
+  const setUserAvatar = useCallback(async (avatar: AvatarConfig) => {
     setUserAvatarState(avatar);
     try {
       localStorage.setItem("nexus-custom-avatar", JSON.stringify(avatar));
       window.dispatchEvent(new Event("nexus-avatar-updated"));
+
+      if (currentUser?.id) {
+        await supabase
+          .from("nexus_profiles")
+          .update({
+            avatar_url: JSON.stringify(avatar),
+            updated_at: new Date().toISOString(),
+          })
+          .eq("id", currentUser.id);
+      }
     } catch {}
-  }, []);
+  }, [currentUser]);
 
   const fetchProfile = useCallback(async (userId: string) => {
     try {
@@ -238,6 +248,13 @@ export function NexusProvider({ children }: { children: ReactNode }) {
         setUserProfile(data);
         if (data.display_name) {
           setDisplayNameState(data.display_name);
+        }
+        if (data.avatar_url && data.avatar_url.startsWith("{")) {
+          try {
+            const parsed = JSON.parse(data.avatar_url);
+            setUserAvatarState(parsed);
+            localStorage.setItem("nexus-custom-avatar", data.avatar_url);
+          } catch {}
         }
       }
     } catch {

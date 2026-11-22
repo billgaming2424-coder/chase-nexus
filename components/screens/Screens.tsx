@@ -24,6 +24,11 @@ import {
   Award,
   Sparkles,
   Radio,
+  Search,
+  Bookmark,
+  Hash,
+  Users,
+  X,
 } from "lucide-react";
 import { PostCard } from "@/components/feed/PostCard";
 import { StoriesRow } from "@/components/feed/StoriesRow";
@@ -34,6 +39,7 @@ import { useNexus } from "@/components/nexus/NexusProvider";
 import {
   COMMUNITIES,
   CONVERSATIONS,
+  SUGGESTED,
   TRENDING,
   VIDEOS,
   type DemoConversation,
@@ -103,19 +109,173 @@ export function VideoScreen() {
 }
 
 export function ExploreScreen() {
+  const [search, setSearch] = useState("");
+  const [filter, setFilter] = useState<"all" | "tags" | "creators" | "guilds">("all");
+  const [followed, setFollowed] = useState<Record<string, boolean>>({});
+
+  const needle = search.trim().toLowerCase();
+  const filteredTags = TRENDING.filter(
+    (t) => !needle || t.label.toLowerCase().includes(needle) || t.tag.toLowerCase().includes(needle)
+  );
+  const filteredCreators = SUGGESTED.filter(
+    (c) => !needle || c.name.toLowerCase().includes(needle) || c.handle.toLowerCase().includes(needle)
+  );
+  const filteredGuilds = COMMUNITIES.filter(
+    (g) => !needle || g.name.toLowerCase().includes(needle) || g.description.toLowerCase().includes(needle)
+  );
+
+  const toggleFollow = (handle: string) => {
+    setFollowed((prev) => ({ ...prev, [handle]: !prev[handle] }));
+  };
+
   return (
     <section className="page">
-      <p className="eyebrow">Explore</p>
-      <h1>Discover the preview</h1>
-      <p>Topics below filter the sample home feed. Trending topics are demonstration presets in Alpha 0.1.</p>
-      <div className="link-grid">
-        {TRENDING.map((topic) => (
-          <Link key={topic.tag} className="card link-card" href={`/?tag=${topic.tag}`}>
-            <strong>{topic.label}</strong>
-            <span>{topic.detail}</span>
-          </Link>
+      <p className="eyebrow">Nexus Discovery & Explore</p>
+      <h1>Explore Nexus</h1>
+      <p>
+        Discover trending game discussions, community creators, guilds, and live streams across Chase Studios.
+      </p>
+
+      {/* Live Search Bar */}
+      <div
+        className="card explore-search-bar"
+        style={{
+          display: "flex",
+          alignItems: "center",
+          gap: 10,
+          padding: "10px 14px",
+          marginBottom: 16,
+          background: "var(--surface)",
+        }}
+      >
+        <Search size={18} className="silver-icon" />
+        <input
+          type="text"
+          value={search}
+          placeholder="Search tags, creators, games, guilds..."
+          onChange={(e) => setSearch(e.target.value)}
+          style={{
+            background: "transparent",
+            border: "none",
+            color: "var(--foreground)",
+            width: "100%",
+            fontSize: "0.95rem",
+            outline: "none",
+          }}
+        />
+        {search && (
+          <button
+            type="button"
+            className="icon-btn"
+            onClick={() => setSearch("")}
+            style={{ width: 24, height: 24 }}
+          >
+            <X size={14} />
+          </button>
+        )}
+      </div>
+
+      {/* Filter Tabs */}
+      <div className="pill-tabs" style={{ display: "flex", gap: 8, marginBottom: 20, flexWrap: "wrap" }}>
+        {(["all", "tags", "creators", "guilds"] as const).map((tab) => (
+          <button
+            key={tab}
+            type="button"
+            className={`choice-chip ${filter === tab ? "is-active" : ""}`}
+            onClick={() => setFilter(tab)}
+          >
+            {tab === "all"
+              ? "🔥 All Trends"
+              : tab === "tags"
+              ? "# Trending Tags"
+              : tab === "creators"
+              ? "✨ Creators"
+              : "🛡️ Communities"}
+          </button>
         ))}
       </div>
+
+      {/* Trending Topics & Hashtags */}
+      {(filter === "all" || filter === "tags") && (
+        <div style={{ marginBottom: 28 }}>
+          <div className="section-title" style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 12 }}>
+            <Hash size={16} className="purple-icon" /> Trending Topics & Game Tags
+          </div>
+          <div className="link-grid">
+            {filteredTags.map((topic) => (
+              <Link key={topic.tag} className="card link-card" href={`/?tag=${topic.tag}`}>
+                <strong>{topic.label}</strong>
+                <span>{topic.detail}</span>
+              </Link>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Suggested Creators */}
+      {(filter === "all" || filter === "creators") && (
+        <div style={{ marginBottom: 28 }}>
+          <div className="section-title" style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 12 }}>
+            <Users size={16} className="purple-icon" /> Suggested Creators & Developers
+          </div>
+          <div
+            className="creator-grid"
+            style={{
+              display: "grid",
+              gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))",
+              gap: 12,
+            }}
+          >
+            {filteredCreators.map((creator) => (
+              <div
+                key={creator.handle}
+                className="card"
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  gap: 10,
+                  padding: 14,
+                }}
+              >
+                <div>
+                  <div className="author-name">
+                    <strong>{creator.name}</strong>
+                    {creator.verified && <ChaseBadge type={creator.badgeType} />}
+                  </div>
+                  <small className="hint">
+                    {creator.handle} · {creator.note}
+                  </small>
+                </div>
+                <button
+                  type="button"
+                  className={`btn btn-sm ${followed[creator.handle] ? "btn-secondary" : "btn-primary"}`}
+                  onClick={() => toggleFollow(creator.handle)}
+                >
+                  {followed[creator.handle] ? "Following" : "+ Follow"}
+                </button>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Featured Guilds */}
+      {(filter === "all" || filter === "guilds") && (
+        <div style={{ marginBottom: 28 }}>
+          <div className="section-title" style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 12 }}>
+            <Shield size={16} className="purple-icon" /> Featured Communities & Guilds
+          </div>
+          <div className="link-grid">
+            {filteredGuilds.map((g) => (
+              <Link key={g.id} className="card link-card" href="/communities">
+                <strong>{g.name}</strong>
+                <span>{g.description}</span>
+              </Link>
+            ))}
+          </div>
+        </div>
+      )}
     </section>
   );
 }
@@ -195,17 +355,63 @@ export function StoriesScreen() {
 
 export function SavedScreen() {
   const { posts } = useNexus();
+  const [filter, setFilter] = useState<"all" | "media" | "discussions">("all");
   const saved = posts.filter((post) => post.saved);
+
+  const filteredSaved = saved.filter((post) => {
+    if (filter === "media") return Boolean(post.imageUrl || post.imageLabel || post.videoLabel);
+    if (filter === "discussions") return post.feeds.includes("discussions");
+    return true;
+  });
+
   return (
     <section className="page">
-      <p className="eyebrow">Bookmarks</p>
-      <h1>Bookmarks</h1>
-      <p>Posts saved from your feed are stored locally on this device.</p>
-      {saved.length === 0 ? (
-        <p className="empty card">Bookmark a post from your feed and it will appear here.</p>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 8 }}>
+        <div>
+          <p className="eyebrow">Bookmarks & Saved</p>
+          <h1>Saved Posts</h1>
+        </div>
+        <span className="pill">{saved.length} Bookmarked</span>
+      </div>
+      <p>Posts bookmarked from your feed are saved to your account and device.</p>
+
+      {/* Filter Tabs */}
+      <div className="pill-tabs" style={{ display: "flex", gap: 8, margin: "14px 0 20px" }}>
+        <button
+          type="button"
+          className={`choice-chip ${filter === "all" ? "is-active" : ""}`}
+          onClick={() => setFilter("all")}
+        >
+          All ({saved.length})
+        </button>
+        <button
+          type="button"
+          className={`choice-chip ${filter === "media" ? "is-active" : ""}`}
+          onClick={() => setFilter("media")}
+        >
+          Media & Images
+        </button>
+        <button
+          type="button"
+          className={`choice-chip ${filter === "discussions" ? "is-active" : ""}`}
+          onClick={() => setFilter("discussions")}
+        >
+          Discussions
+        </button>
+      </div>
+
+      {filteredSaved.length === 0 ? (
+        <div className="empty card" style={{ textAlign: "center", padding: "36px 16px" }}>
+          <Bookmark size={36} className="purple-icon" style={{ margin: "0 auto 12px", opacity: 0.6 }} />
+          <h3>No saved posts found</h3>
+          <p className="hint">Tap the bookmark icon on any post in your feed to save it here.</p>
+          <Link href="/" className="btn btn-primary btn-sm" style={{ marginTop: 14, display: "inline-flex" }}>
+            Explore Home Feed
+          </Link>
+        </div>
       ) : (
         <div className="post-list">
-          {saved.map((post) => (
+          {filteredSaved.map((post) => (
             <PostCard key={post.id} post={post} mode="for-you" onTag={() => undefined} />
           ))}
         </div>
@@ -262,26 +468,48 @@ export function ProfileScreen() {
                 ? `Signed in as ${currentUser.email} · Chase Account Verified`
                 : "Chase Studios Cloud Profile · Universal Account Verified"}
             </p>
-            <button
-              type="button"
-              className="btn btn-secondary btn-sm"
-              style={{ marginTop: 8, gap: 6 }}
-              onClick={() => setAvatarBuilderOpen(true)}
-            >
-              <Sparkles size={14} className="purple-icon" />
-              <span>Customize Bitmoji Avatar</span>
-            </button>
+            {userAvatar.statusBubble && (
+              <div
+                className="status-bubble-pill"
+                style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: 6,
+                  padding: "4px 12px",
+                  background: "rgba(168, 85, 247, 0.15)",
+                  border: "1px solid rgba(168, 85, 247, 0.4)",
+                  borderRadius: "20px",
+                  fontSize: "0.85rem",
+                  color: "#e9d5ff",
+                  marginTop: 6,
+                }}
+              >
+                <span>💭</span>
+                <span>{userAvatar.statusBubble}</span>
+              </div>
+            )}
+            <div style={{ marginTop: 8 }}>
+              <button
+                type="button"
+                className="btn btn-secondary btn-sm"
+                style={{ gap: 6 }}
+                onClick={() => setAvatarBuilderOpen(true)}
+              >
+                <Sparkles size={14} className="purple-icon" />
+                <span>Customize Bitmoji Avatar</span>
+              </button>
+            </div>
           </div>
         </div>
       </div>
 
-      {/* Bitmoji Sticker Sheet */}
+      {/* Bitmoji Sticker Sheet - 12 Mood Poses */}
       <div className="card sticker-sheet-card">
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 8 }}>
           <div>
-            <h2 style={{ fontSize: "1.15rem", margin: 0 }}>My Bitmoji Stickers</h2>
+            <h2 style={{ fontSize: "1.15rem", margin: 0 }}>My Bitmoji Stickers (12 Pack)</h2>
             <p className="hint" style={{ margin: "2px 0 0" }}>
-              Snapchat-style expressions. Tap any sticker to set your active mood!
+              Snapchat-style comic expressions. Tap any sticker to set your active mood!
             </p>
           </div>
           <button
@@ -299,7 +527,14 @@ export function ProfileScreen() {
             { pose: "fire", label: "🔥 On Fire" },
             { pose: "gg", label: "🎮 GG!" },
             { pose: "hype", label: "⚡ HYPE!" },
+            { pose: "shield", label: "🛡️ Shield" },
             { pose: "verified", label: "👑 Verified" },
+            { pose: "chill", label: "☕ Chill" },
+            { pose: "afk", label: "💤 AFK" },
+            { pose: "raid", label: "⚔️ Raid" },
+            { pose: "love", label: "❤️ Love" },
+            { pose: "rocket", label: "🚀 Moon" },
+            { pose: "levelup", label: "⭐ Level Up" },
           ].map((item) => (
             <button
               key={item.pose}
@@ -310,7 +545,7 @@ export function ProfileScreen() {
               }}
               title={`Set avatar mood to ${item.label}`}
             >
-              <NexusAvatar config={{ ...userAvatar, pose: item.pose as any }} size={68} showStickerBadge />
+              <NexusAvatar config={{ ...userAvatar, pose: item.pose as any }} size={64} showStickerBadge />
               <small>{item.label}</small>
             </button>
           ))}
@@ -384,6 +619,22 @@ export function MessagesScreen() {
       )
     );
     setInputMessage("");
+  };
+
+  const handleSendSticker = (pose: string) => {
+    const newMsg: DemoMessage = {
+      id: crypto.randomUUID(),
+      sender: "you",
+      text: "",
+      stickerPose: pose,
+      time: "Just now",
+    };
+
+    setConversations((prev) =>
+      prev.map((conv) =>
+        conv.id === activeId ? { ...conv, messages: [...conv.messages, newMsg] } : conv
+      )
+    );
   };
 
   return (
@@ -478,14 +729,79 @@ export function MessagesScreen() {
                 {msg.sender === "them" && (
                   <span className="avatar avatar-xs">{activeChat.name.slice(0, 1)}</span>
                 )}
-                <div className="chat-bubble">
-                  <p>{msg.text}</p>
-                  <small>{msg.time}</small>
-                </div>
+                {msg.stickerPose ? (
+                  <div
+                    className="chat-bubble"
+                    style={{
+                      background: "rgba(124, 58, 237, 0.12)",
+                      border: "1px solid rgba(124, 58, 237, 0.35)",
+                      padding: "8px 12px",
+                      display: "flex",
+                      flexDirection: "column",
+                      alignItems: "center",
+                    }}
+                  >
+                    <NexusAvatar
+                      config={{
+                        ...userAvatar,
+                        pose: msg.stickerPose as any,
+                      }}
+                      size={76}
+                      showStickerBadge
+                    />
+                    <small style={{ marginTop: 4, opacity: 0.7 }}>{msg.time}</small>
+                  </div>
+                ) : (
+                  <div className="chat-bubble">
+                    <p>{msg.text}</p>
+                    <small>{msg.time}</small>
+                  </div>
+                )}
                 {msg.sender === "you" && (
                   <NexusAvatar config={userAvatar} size={26} showStickerBadge />
                 )}
               </div>
+            ))}
+          </div>
+
+          <div
+            className="chat-quick-stickers"
+            style={{
+              padding: "8px 12px",
+              borderTop: "1px solid var(--border)",
+              display: "flex",
+              alignItems: "center",
+              gap: 8,
+              overflowX: "auto",
+              background: "rgba(0,0,0,0.15)",
+            }}
+          >
+            <span style={{ fontSize: "0.75rem", color: "var(--muted)", whiteSpace: "nowrap" }}>
+              Send Bitmoji:
+            </span>
+            {[
+              { pose: "fire", icon: "🔥 Fire" },
+              { pose: "gg", icon: "🎮 GG!" },
+              { pose: "hype", icon: "⚡ Hype" },
+              { pose: "shield", icon: "🛡️ Shield" },
+              { pose: "verified", icon: "👑 Verified" },
+              { pose: "chill", icon: "☕ Chill" },
+              { pose: "afk", icon: "💤 AFK" },
+              { pose: "raid", icon: "⚔️ Raid" },
+              { pose: "love", icon: "❤️ Love" },
+              { pose: "rocket", icon: "🚀 Moon" },
+              { pose: "levelup", icon: "⭐ Level Up" },
+            ].map((st) => (
+              <button
+                key={st.pose}
+                type="button"
+                className="choice-chip"
+                style={{ fontSize: "0.78rem", padding: "3px 8px", whiteSpace: "nowrap" }}
+                onClick={() => handleSendSticker(st.pose)}
+                title={`Send ${st.icon} sticker`}
+              >
+                {st.icon}
+              </button>
             ))}
           </div>
 

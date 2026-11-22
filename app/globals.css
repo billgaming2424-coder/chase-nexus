@@ -1685,4 +1685,61 @@ html.reduce-motion, html.reduce-motion *, html.reduce-motion *::before, html.red
   border: none;
 }
 
+/* Story and Chat Overhaul Animations & Components */
+@keyframes flyUp {
+  0% {
+    opacity: 1;
+    transform: translateY(0) scale(0.8);
+  }
+  50% {
+    opacity: 1;
+    transform: translateY(-40px) scale(1.3);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-90px) scale(1.6);
+  }
+}
+
+.story-dialog-card {
+  max-width: 440px;
+  width: 90vw;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  padding: 16px;
+}
+
+.chat-quick-stickers::-webkit-scrollbar {
+  height: 4px;
+}
+.chat-quick-stickers::-webkit-scrollbar-thumb {
+  background: var(--line);
+  border-radius: 4px;
+}
+
+.chat-quick-stickers button {
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.chat-quick-stickers button:hover {
+  border-color: var(--accent);
+  background: var(--surface-2);
+  transform: translateY(-1px);
+}
+
+.status-bubble-pill {
+  animation: pulseBubble 3s ease-in-out infinite alternate;
+}
+
+@keyframes pulseBubble {
+  0% {
+    box-shadow: 0 0 0 rgba(168, 85, 247, 0);
+  }
+  100% {
+    box-shadow: 0 0 10px rgba(168, 85, 247, 0.4);
+  }
+}
+
+
 

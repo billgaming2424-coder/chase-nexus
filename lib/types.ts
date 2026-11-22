@@ -36,15 +36,17 @@ export type BadgeCategory =
 
 export interface AvatarConfig {
   skinTone: string;
-  hairStyle: "buzz" | "fade" | "spikes" | "wavy" | "afro" | "braids" | "flowing" | "bun";
+  hairStyle: "buzz" | "fade" | "spikes" | "wavy" | "afro" | "braids" | "flowing" | "bun" | "side-part" | "dreads";
   hairColor: string;
   eyeShape: "almond" | "round" | "sharp" | "starry";
   eyeColor: string;
-  mouth: "smile" | "smirk" | "laugh" | "neutral" | "battle";
-  outfit: "varsity-hoodie" | "cyber-jacket" | "survivor-duster" | "trainer-vest" | "nexus-tee" | "armor";
-  accessory: "none" | "gamer-headset" | "cyber-visor" | "snapback" | "bandana" | "earring";
-  background: "purple-gradient" | "neon-cyan" | "void-dark" | "gold-burst" | "fire-streak";
-  pose?: "portrait" | "fire" | "gg" | "hype" | "shield" | "verified";
+  mouth: "smile" | "smirk" | "laugh" | "neutral" | "battle" | "wink";
+  facialHair?: "none" | "stubble" | "beard" | "mustache" | "goatee";
+  outfit: "varsity-hoodie" | "cyber-jacket" | "survivor-duster" | "trainer-vest" | "nexus-tee" | "armor" | "space-suit" | "retro-arcade" | "purple-tux";
+  accessory: "none" | "gamer-headset" | "cyber-visor" | "snapback" | "bandana" | "earring" | "beanie" | "crown" | "cat-ears" | "aviators";
+  background: "purple-gradient" | "neon-cyan" | "void-dark" | "gold-burst" | "fire-streak" | "cosmic-stars";
+  pose?: "portrait" | "fire" | "gg" | "hype" | "shield" | "verified" | "chill" | "afk" | "raid" | "love" | "rocket" | "levelup";
+  statusBubble?: string;
 }
 
 export const DEFAULT_AVATAR: AvatarConfig = {
@@ -54,10 +56,12 @@ export const DEFAULT_AVATAR: AvatarConfig = {
   eyeShape: "almond",
   eyeColor: "#7c3aed",
   mouth: "smile",
+  facialHair: "none",
   outfit: "varsity-hoodie",
   accessory: "gamer-headset",
   background: "purple-gradient",
   pose: "portrait",
+  statusBubble: "Chilling on Chase Nexus ✨",
 };
 
 export interface UserProfile {
