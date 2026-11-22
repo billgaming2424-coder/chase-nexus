@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { Flame, Sparkles, X, ChevronRight, Gamepad2, Gift, ShieldCheck } from "lucide-react";
+import { Flame, Sparkles, X, ChevronRight, Gamepad2, Gift, ShieldCheck, Coins } from "lucide-react";
 import { useNexus } from "@/components/nexus/NexusProvider";
 import { ChaseBadge } from "@/components/nexus/ChaseBadge";
 import {
@@ -22,7 +22,7 @@ const THEME_SHORTCUTS: { id: ThemeName; label: string }[] = [
 ];
 
 export function RightRail() {
-  const { theme, setTheme } = useNexus();
+  const { theme, setTheme, walletBalance, tipCreator } = useNexus();
   const [account, setAccount] = useState<string | null>(null);
   const [showChasePlusModal, setShowChasePlusModal] = useState(false);
 
@@ -61,6 +61,52 @@ export function RightRail() {
             </li>
           ))}
         </ul>
+      </section>
+
+      {/* Creator Tip Jar (Concept Mockup Match) */}
+      <section
+        className="rail-card tip-jar-card"
+        style={{
+          background: "radial-gradient(circle at top, rgba(124, 58, 237, 0.25) 0%, rgba(14, 10, 24, 0.8) 70%)",
+          border: "1px solid rgba(168, 85, 247, 0.35)",
+          boxShadow: "0 8px 25px rgba(0, 0, 0, 0.5), 0 0 15px rgba(124, 58, 237, 0.15)",
+          textAlign: "center",
+        }}
+      >
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
+          <h2 style={{ fontSize: "1.05rem", margin: 0 }}>Creator Tip Jar</h2>
+          <span className="pill" style={{ fontSize: "0.72rem" }}>
+            {walletBalance.toLocaleString()} 💎
+          </span>
+        </div>
+        <div style={{ padding: "10px 0 6px", display: "flex", justifyContent: "center", alignItems: "center", gap: 10 }}>
+          <span style={{ fontSize: "1.5rem", filter: "drop-shadow(0 0 8px #a855f7)", animation: "pulseBubble 2s infinite alternate" }}>💎</span>
+          <span style={{ fontSize: "2.1rem", filter: "drop-shadow(0 0 14px #c084fc)", animation: "pulseBubble 1.8s infinite alternate 0.2s" }}>💎</span>
+          <span style={{ fontSize: "1.5rem", filter: "drop-shadow(0 0 8px #a855f7)", animation: "pulseBubble 2.2s infinite alternate 0.4s" }}>💎</span>
+        </div>
+        <p className="hint" style={{ fontSize: "0.78rem", margin: "0 0 10px" }}>
+          Support studio developers and community creators directly with Nexus Gems.
+        </p>
+        <div style={{ display: "flex", gap: 6 }}>
+          {[100, 250, 500].map((amt) => (
+            <button
+              key={amt}
+              type="button"
+              className="btn btn-primary btn-sm"
+              style={{ flex: 1, fontSize: "0.75rem", padding: "6px 2px", borderRadius: 10 }}
+              onClick={() => {
+                if (walletBalance < amt) {
+                  alert("Insufficient gems! Top up in the Marketplace.");
+                  return;
+                }
+                tipCreator("Chase Studios Creators", amt);
+                alert(`Tipped ${amt} Gems to creators! Thank you for supporting Chase Studios! 🎉`);
+              }}
+            >
+              +{amt} 💎
+            </button>
+          ))}
+        </div>
       </section>
 
       {/* 3. Chase+ Membership Preview Card */}
@@ -132,24 +178,63 @@ export function RightRail() {
         </ul>
       </section>
 
-      {/* 6. Online Friends & Streaks */}
-      <section className="rail-card">
+      {/* 6. Active Friends & Online Presence (Mockup Match) */}
+      <section className="rail-card active-friends-card">
         <div className="card-head-row">
-          <h2>Online friends</h2>
+          <h2>Active Friends</h2>
           <Link href="/messages" className="text-link small-link">
-            Messages
+            See all
           </Link>
         </div>
-        <p className="hint">Sample contacts. Presence and streaks are local demonstration previews.</p>
-        <ul className="friend-streak-list">
+        <ul className="friend-streak-list" style={{ marginTop: 10 }}>
           {FRIEND_EXAMPLES.map((friend) => (
-            <li key={friend.name} className="friend-streak-item">
-              <span className="author-name">
-                <span>{friend.name}</span>
-                {friend.verified ? <ChaseBadge /> : null}
-              </span>
+            <li
+              key={friend.name}
+              className="friend-streak-item"
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                padding: "6px 0",
+              }}
+            >
+              <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                <span
+                  className="avatar avatar-sm"
+                  style={{
+                    background: "rgba(124, 58, 237, 0.25)",
+                    border: "1px solid rgba(168, 85, 247, 0.35)",
+                    width: 32,
+                    height: 32,
+                    fontSize: "0.85rem",
+                    fontWeight: 700,
+                  }}
+                >
+                  {friend.name.slice(0, 1)}
+                </span>
+                <div>
+                  <div style={{ fontSize: "0.88rem", fontWeight: 600, display: "flex", alignItems: "center", gap: 4 }}>
+                    {friend.name}
+                    {friend.verified ? <ChaseBadge size={11} /> : null}
+                  </div>
+                  <div style={{ display: "flex", alignItems: "center", gap: 5, fontSize: "0.72rem", color: "#4ade80" }}>
+                    <span
+                      style={{
+                        width: 7,
+                        height: 7,
+                        borderRadius: "50%",
+                        background: "#22c55e",
+                        boxShadow: "0 0 8px #22c55e",
+                        display: "inline-block",
+                      }}
+                    />
+                    <span>Online</span>
+                  </div>
+                </div>
+              </div>
+
               {friend.streak > 0 ? (
-                <span className="streak-pill" title={`${friend.streak}-day streak preview`}>
+                <span className="streak-pill" title={`${friend.streak}-day streak`}>
                   <Flame size={12} className="flame-icon" aria-hidden="true" />
                   <strong>{friend.streak}</strong>
                 </span>

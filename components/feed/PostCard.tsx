@@ -275,39 +275,65 @@ export function PostCard({ post, mode, onTag }: { post: Post; mode: FeedId; onTa
         </div>
       ) : null}
 
-      {post.videoUrl ? (
+      {post.videoUrl || post.videoLabel ? (
         <div
-          className="media post-video-container"
+          className="media post-video-container featured-4k-card"
           style={{
-            borderRadius: 14,
+            borderRadius: 16,
             overflow: "hidden",
-            margin: "12px 0",
-            background: "#080512",
-            border: "1px solid rgba(168, 85, 247, 0.25)",
-            boxShadow: "0 8px 24px rgba(0, 0, 0, 0.4)",
+            margin: "14px 0",
+            background: "radial-gradient(circle at center, #1b0d36 0%, #080414 100%)",
+            border: "1.5px solid rgba(168, 85, 247, 0.45)",
+            boxShadow: "0 12px 35px rgba(0, 0, 0, 0.6), 0 0 25px rgba(168, 85, 247, 0.25)",
+            position: "relative",
           }}
         >
-          <video
-            src={post.videoUrl}
-            controls
-            playsInline
-            preload="metadata"
-            style={{ width: "100%", maxHeight: 380, display: "block" }}
-          />
-        </div>
-      ) : post.videoLabel ? (
-        <div className="media" data-tone={post.tone}>
-          {videoOn ? (
-            <div className="media-playing">
-              <span>Playing {post.videoLabel}</span>
-              <button type="button" className="btn btn-ghost" onClick={() => setVideoOn(false)}>
-                Pause video
-              </button>
-            </div>
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              padding: "10px 14px",
+              background: "rgba(0, 0, 0, 0.4)",
+              borderBottom: "1px solid rgba(168, 85, 247, 0.2)",
+            }}
+          >
+            <span style={{ fontSize: "0.82rem", fontWeight: 700, color: "#fff", display: "flex", alignItems: "center", gap: 6 }}>
+              <span className="status-dot live" /> Featured 4K Game Stream
+            </span>
+            <span className="pill" style={{ background: "rgba(168, 85, 247, 0.25)", color: "#c084fc", fontWeight: 800, fontSize: "0.72rem" }}>
+              4K 60FPS
+            </span>
+          </div>
+
+          {post.videoUrl ? (
+            <video
+              src={post.videoUrl}
+              controls
+              playsInline
+              preload="metadata"
+              style={{ width: "100%", maxHeight: 380, display: "block" }}
+            />
           ) : (
-            <button type="button" className="btn btn-primary" onClick={() => setVideoOn(true)}>
-              Play sample video ({post.videoLabel})
-            </button>
+            <div style={{ padding: "30px 20px", textAlign: "center" }}>
+              {videoOn ? (
+                <div className="media-playing">
+                  <span>Playing {post.videoLabel}</span>
+                  <button type="button" className="btn btn-ghost" onClick={() => setVideoOn(false)}>
+                    Pause video
+                  </button>
+                </div>
+              ) : (
+                <button
+                  type="button"
+                  className="btn btn-primary"
+                  style={{ borderRadius: 24, padding: "10px 24px", gap: 8 }}
+                  onClick={() => setVideoOn(true)}
+                >
+                  <span>Play 4K Stream ({post.videoLabel})</span>
+                </button>
+              )}
+            </div>
           )}
         </div>
       ) : null}
@@ -324,6 +350,10 @@ export function PostCard({ post, mode, onTag }: { post: Post; mode: FeedId; onTa
 
       {post.poll ? (
         <div className="poll-container" style={{ margin: "14px 0", display: "flex", flexDirection: "column", gap: 8 }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 2 }}>
+            <span style={{ fontSize: "0.85rem", fontWeight: 700, color: "#fff" }}>Interactive Poll Widget</span>
+            <span className="pill" style={{ fontSize: "0.72rem" }}>Community Vote</span>
+          </div>
           {(() => {
             const totalPollVotes = post.poll.reduce((acc, c) => acc + (c.votes || 0), 0);
             return (
@@ -344,8 +374,8 @@ export function PostCard({ post, mode, onTag }: { post: Post; mode: FeedId; onTa
                         alignItems: "center",
                         justifyContent: "space-between",
                         padding: "10px 14px",
-                        borderRadius: 12,
-                        background: isVoted ? "rgba(124, 58, 237, 0.2)" : "rgba(255, 255, 255, 0.04)",
+                        borderRadius: 14,
+                        background: isVoted ? "rgba(124, 58, 237, 0.22)" : "rgba(255, 255, 255, 0.04)",
                         border: isVoted ? "1px solid #a855f7" : "1px solid rgba(255, 255, 255, 0.08)",
                         color: "#fff",
                         textAlign: "left",
@@ -361,17 +391,18 @@ export function PostCard({ post, mode, onTag }: { post: Post; mode: FeedId; onTa
                           bottom: 0,
                           width: `${pct}%`,
                           background: isVoted
-                            ? "linear-gradient(90deg, rgba(124, 58, 237, 0.35), rgba(168, 85, 247, 0.25))"
-                            : "rgba(255, 255, 255, 0.06)",
+                            ? "linear-gradient(90deg, #a855f7, #7c3aed)"
+                            : "linear-gradient(90deg, rgba(168, 85, 247, 0.45), rgba(124, 58, 237, 0.35))",
+                          boxShadow: pct > 0 ? "0 0 10px rgba(168, 85, 247, 0.3)" : "none",
                           pointerEvents: "none",
-                          transition: "width 0.4s cubic-bezier(0.4, 0, 0.2, 1)",
+                          transition: "width 0.45s cubic-bezier(0.4, 0, 0.2, 1)",
                         }}
                       />
                       <span style={{ position: "relative", zIndex: 1, fontWeight: isVoted ? 700 : 500, display: "flex", alignItems: "center", gap: 6 }}>
                         {isVoted && <span style={{ color: "#c084fc" }}>✓</span>}
                         {choice.label}
                       </span>
-                      <span style={{ position: "relative", zIndex: 1, fontSize: "0.85rem", opacity: 0.85, fontWeight: 600 }}>
+                      <span style={{ position: "relative", zIndex: 1, fontSize: "0.85rem", opacity: 0.95, fontWeight: 700 }}>
                         {pct}% ({choice.votes || 0})
                       </span>
                     </button>

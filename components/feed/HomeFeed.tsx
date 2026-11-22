@@ -3,10 +3,11 @@
 import { useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
-import { SlidersHorizontal, Video, Users, MessagesSquare, Check } from "lucide-react";
+import { SlidersHorizontal, Video, Users, MessagesSquare, Check, Search, Bell, MessageCircle } from "lucide-react";
 import { Composer } from "@/components/feed/Composer";
 import { PostCard } from "@/components/feed/PostCard";
 import { StoriesRow } from "@/components/feed/StoriesRow";
+import { NexusAvatar } from "@/components/nexus/NexusAvatar";
 import { useNexus } from "@/components/nexus/NexusProvider";
 import { COMMUNITIES, VIDEOS } from "@/lib/demo-data";
 import { FEEDS, type FeedId, type SpaceId } from "@/lib/types";
@@ -24,7 +25,7 @@ function isFeedId(value: string | null): value is FeedId {
 
 export function HomeFeed() {
   const params = useSearchParams();
-  const { posts, activeSpace, setActiveSpace, customWidgets, setCustomWidget } = useNexus();
+  const { posts, activeSpace, setActiveSpace, customWidgets, setCustomWidget, userAvatar } = useNexus();
   const [tab, setTab] = useState<FeedId>("for-you");
   const [query, setQuery] = useState("");
   const [tag, setTag] = useState("");
@@ -57,6 +58,77 @@ export function HomeFeed() {
 
   return (
     <div className="feed">
+      {/* Top Global Search & Quick Actions Bar (Concept Mockup Match) */}
+      <div
+        className="concept-top-bar"
+        style={{
+          display: "flex",
+          alignItems: "center",
+          gap: 12,
+          marginBottom: 16,
+          background: "rgba(14, 10, 24, 0.65)",
+          backdropFilter: "blur(20px)",
+          border: "1px solid rgba(168, 85, 247, 0.2)",
+          borderRadius: 18,
+          padding: "8px 14px",
+        }}
+      >
+        <div style={{ position: "relative", flex: 1, display: "flex", alignItems: "center", gap: 10 }}>
+          <Search size={16} style={{ color: "var(--muted)" }} />
+          <input
+            type="text"
+            placeholder="Search Chase Nexus, creators, #topics..."
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            style={{
+              background: "transparent",
+              border: "none",
+              outline: "none",
+              color: "#fff",
+              fontSize: "0.88rem",
+              width: "100%",
+            }}
+          />
+        </div>
+        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+          <Link
+            href="/messages"
+            className="icon-btn"
+            style={{ width: 34, height: 34, background: "rgba(255, 255, 255, 0.04)" }}
+            title="Direct Messages"
+          >
+            <MessageCircle size={16} />
+          </Link>
+          <Link
+            href="/notifications"
+            className="icon-btn"
+            style={{ width: 34, height: 34, background: "rgba(255, 255, 255, 0.04)" }}
+            title="Notifications"
+          >
+            <Bell size={16} />
+          </Link>
+          <Link
+            href="/profile"
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: 6,
+              padding: "3px 10px 3px 4px",
+              background: "rgba(124, 58, 237, 0.15)",
+              border: "1px solid rgba(168, 85, 247, 0.3)",
+              borderRadius: 20,
+              textDecoration: "none",
+              color: "#fff",
+              fontSize: "0.8rem",
+              fontWeight: 600,
+            }}
+          >
+            <NexusAvatar config={userAvatar} size={24} showStickerBadge />
+            <span>Profile</span>
+          </Link>
+        </div>
+      </div>
+
       {/* Nexus Spaces Header & Bar */}
       <header className="feed-head">
         <div className="space-header-row">
