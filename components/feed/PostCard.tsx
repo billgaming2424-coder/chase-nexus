@@ -86,13 +86,14 @@ export function PostCard({ post, mode, onTag }: { post: Post; mode: FeedId; onTa
 
       {/* Bitmoji Sticker Attachment */}
       {post.avatarSticker && (
-        <div className="post-sticker-attachment" style={{ margin: "10px 0", display: "inline-block" }}>
+        <div className="post-sticker-attachment" style={{ margin: "12px 0", display: "inline-block" }}>
           <NexusAvatar
             config={{
               ...(post.author.avatarConfig || DEFAULT_AVATAR),
               pose: post.avatarSticker as any,
+              customCaption: post.avatarStickerCaption,
             }}
-            size={84}
+            size={110}
             showStickerBadge
           />
         </div>

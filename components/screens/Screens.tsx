@@ -503,11 +503,11 @@ export function ProfileScreen() {
         </div>
       </div>
 
-      {/* Bitmoji Sticker Sheet - 12 Mood Poses */}
+      {/* Bitmoji Sticker Sheet - Full Comic Sticker Pack */}
       <div className="card sticker-sheet-card">
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 8 }}>
           <div>
-            <h2 style={{ fontSize: "1.15rem", margin: 0 }}>My Bitmoji Stickers (12 Pack)</h2>
+            <h2 style={{ fontSize: "1.15rem", margin: 0 }}>My Bitmoji Stickers & Expressions (20+ Pack)</h2>
             <p className="hint" style={{ margin: "2px 0 0" }}>
               Snapchat-style comic expressions. Tap any sticker to set your active mood!
             </p>
@@ -517,7 +517,7 @@ export function ProfileScreen() {
             className="btn btn-ghost btn-sm"
             onClick={() => setAvatarBuilderOpen(true)}
           >
-            Studio
+            Studio Deluxe
           </button>
         </div>
 
@@ -535,6 +535,16 @@ export function ProfileScreen() {
             { pose: "love", label: "❤️ Love" },
             { pose: "rocket", label: "🚀 Moon" },
             { pose: "levelup", label: "⭐ Level Up" },
+            { pose: "ragequit", label: "💥 Rage Quit" },
+            { pose: "clutch", label: "🎯 1v5 Clutch" },
+            { pose: "mindblown", label: "🤯 Mind Blown" },
+            { pose: "skull", label: "💀 Dead" },
+            { pose: "stream", label: "🔴 Live Now" },
+            { pose: "dance", label: "💃 Hype Dance" },
+            { pose: "flex", label: "💪 Big Flex" },
+            { pose: "wave", label: "👋 Hey There" },
+            { pose: "co-op", label: "🤝 Co-Op Squad" },
+            { pose: "salute", label: "🫡 Respect" },
           ].map((item) => (
             <button
               key={item.pose}
@@ -791,6 +801,16 @@ export function MessagesScreen() {
               { pose: "love", icon: "❤️ Love" },
               { pose: "rocket", icon: "🚀 Moon" },
               { pose: "levelup", icon: "⭐ Level Up" },
+              { pose: "ragequit", icon: "💥 Rage" },
+              { pose: "clutch", icon: "🎯 Clutch" },
+              { pose: "mindblown", icon: "🤯 Mind Blown" },
+              { pose: "skull", icon: "💀 Dead" },
+              { pose: "stream", icon: "🔴 Live" },
+              { pose: "dance", icon: "💃 Dance" },
+              { pose: "flex", icon: "💪 Flex" },
+              { pose: "wave", icon: "👋 Wave" },
+              { pose: "co-op", icon: "🤝 Co-Op" },
+              { pose: "salute", icon: "🫡 Salute" },
             ].map((st) => (
               <button
                 key={st.pose}

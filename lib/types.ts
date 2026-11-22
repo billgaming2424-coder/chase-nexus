@@ -36,17 +36,113 @@ export type BadgeCategory =
 
 export interface AvatarConfig {
   skinTone: string;
-  hairStyle: "buzz" | "fade" | "spikes" | "wavy" | "afro" | "braids" | "flowing" | "bun" | "side-part" | "dreads";
+  hairStyle:
+    | "buzz"
+    | "fade"
+    | "spikes"
+    | "wavy"
+    | "afro"
+    | "braids"
+    | "flowing"
+    | "bun"
+    | "side-part"
+    | "dreads"
+    | "mohawk"
+    | "curls"
+    | "slick-back"
+    | "ponytail"
+    | "neon-locs";
   hairColor: string;
   eyeShape: "almond" | "round" | "sharp" | "starry";
   eyeColor: string;
   mouth: "smile" | "smirk" | "laugh" | "neutral" | "battle" | "wink";
   facialHair?: "none" | "stubble" | "beard" | "mustache" | "goatee";
-  outfit: "varsity-hoodie" | "cyber-jacket" | "survivor-duster" | "trainer-vest" | "nexus-tee" | "armor" | "space-suit" | "retro-arcade" | "purple-tux";
-  accessory: "none" | "gamer-headset" | "cyber-visor" | "snapback" | "bandana" | "earring" | "beanie" | "crown" | "cat-ears" | "aviators";
-  background: "purple-gradient" | "neon-cyan" | "void-dark" | "gold-burst" | "fire-streak" | "cosmic-stars";
-  pose?: "portrait" | "fire" | "gg" | "hype" | "shield" | "verified" | "chill" | "afk" | "raid" | "love" | "rocket" | "levelup";
+  outfit:
+    | "varsity-hoodie"
+    | "cyber-jacket"
+    | "survivor-duster"
+    | "trainer-vest"
+    | "nexus-tee"
+    | "armor"
+    | "space-suit"
+    | "retro-arcade"
+    | "purple-tux"
+    | "mech-pilot"
+    | "ninja-shinobi"
+    | "esports-jersey"
+    | "retro-synth"
+    | "cozy-hoodie";
+  accessory:
+    | "none"
+    | "gamer-headset"
+    | "cyber-visor"
+    | "snapback"
+    | "bandana"
+    | "earring"
+    | "beanie"
+    | "crown"
+    | "cat-ears"
+    | "aviators"
+    | "heart-shades"
+    | "vr-headset"
+    | "halo"
+    | "demon-horns";
+  prop?:
+    | "none"
+    | "rgb-controller"
+    | "energy-drink"
+    | "steam-deck"
+    | "golden-mic"
+    | "laser-sword"
+    | "coffee-mug"
+    | "trophy";
+  background:
+    | "purple-gradient"
+    | "neon-cyan"
+    | "void-dark"
+    | "gold-burst"
+    | "fire-streak"
+    | "cosmic-stars"
+    | "cyber-grid"
+    | "retro-sunset";
+  pose?:
+    | "portrait"
+    | "fire"
+    | "gg"
+    | "hype"
+    | "shield"
+    | "verified"
+    | "chill"
+    | "afk"
+    | "raid"
+    | "love"
+    | "rocket"
+    | "levelup"
+    | "ragequit"
+    | "clutch"
+    | "mindblown"
+    | "skull"
+    | "stream"
+    | "dance"
+    | "facepalm"
+    | "flex"
+    | "wave"
+    | "cry-laugh"
+    | "co-op"
+    | "salute";
   statusBubble?: string;
+  customCaption?: string;
+  duoFriend?: {
+    name: string;
+    avatar: AvatarConfig;
+    duoPose?: string;
+  };
+}
+
+export interface AvatarPreset {
+  id: string;
+  name: string;
+  avatar: AvatarConfig;
 }
 
 export const DEFAULT_AVATAR: AvatarConfig = {
@@ -59,6 +155,7 @@ export const DEFAULT_AVATAR: AvatarConfig = {
   facialHair: "none",
   outfit: "varsity-hoodie",
   accessory: "gamer-headset",
+  prop: "rgb-controller",
   background: "purple-gradient",
   pose: "portrait",
   statusBubble: "Chilling on Chase Nexus ✨",
@@ -122,6 +219,8 @@ export interface Post {
   imageLabel?: string;
   imageUrl?: string;
   avatarSticker?: string;
+  avatarStickerCaption?: string;
+  avatarDuoFriend?: string;
   videoLabel?: string;
   poll?: PollChoice[];
   pollVote?: string;

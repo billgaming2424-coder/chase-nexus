@@ -48,6 +48,7 @@ export function NexusAvatar({
       }}
       aria-label="Nexus Bitmoji Avatar"
     >
+      {/* Optional Speech Bubble */}
       {showStatusBubble && c.statusBubble && (
         <div
           className="avatar-status-speech-bubble"
@@ -95,305 +96,350 @@ export function NexusAvatar({
         <defs>
           {/* Background Gradients */}
           <linearGradient id="bg-purple-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stop-color="#3b0764" />
-            <stop offset="50%" stop-color="#1e1035" />
-            <stop offset="100%" stop-color="#090514" />
+            <stop offset="0%" stopColor="#3b0764" />
+            <stop offset="50%" stopColor="#1e1035" />
+            <stop offset="100%" stopColor="#090514" />
           </linearGradient>
           <linearGradient id="bg-neon-cyan" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stop-color="#0891b2" />
-            <stop offset="100%" stop-color="#164e63" />
+            <stop offset="0%" stopColor="#0891b2" />
+            <stop offset="100%" stopColor="#164e63" />
           </linearGradient>
           <linearGradient id="bg-void-dark" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stop-color="#171026" />
-            <stop offset="100%" stop-color="#07050d" />
+            <stop offset="0%" stopColor="#171026" />
+            <stop offset="100%" stopColor="#07050d" />
           </linearGradient>
           <linearGradient id="bg-gold-burst" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stop-color="#eab308" />
-            <stop offset="100%" stop-color="#713f12" />
+            <stop offset="0%" stopColor="#eab308" />
+            <stop offset="100%" stopColor="#713f12" />
           </linearGradient>
           <linearGradient id="bg-fire-streak" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stop-color="#ef4444" />
-            <stop offset="50%" stop-color="#f97316" />
-            <stop offset="100%" stop-color="#7c2d12" />
+            <stop offset="0%" stopColor="#ef4444" />
+            <stop offset="50%" stopColor="#f97316" />
+            <stop offset="100%" stopColor="#7c2d12" />
           </linearGradient>
           <radialGradient id="bg-cosmic-stars" cx="50%" cy="50%" r="65%">
-            <stop offset="0%" stop-color="#6366f1" />
-            <stop offset="50%" stop-color="#1e1b4b" />
-            <stop offset="100%" stop-color="#090514" />
+            <stop offset="0%" stopColor="#6366f1" />
+            <stop offset="60%" stopColor="#1e1b4b" />
+            <stop offset="100%" stopColor="#09061c" />
           </radialGradient>
+          <linearGradient id="bg-cyber-grid" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="#0f172a" />
+            <stop offset="50%" stopColor="#1e1b4b" />
+            <stop offset="100%" stopColor="#701a75" />
+          </linearGradient>
+          <linearGradient id="bg-retro-sunset" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stopColor="#f43f5e" />
+            <stop offset="50%" stopColor="#8b5cf6" />
+            <stop offset="100%" stopColor="#0f172a" />
+          </linearGradient>
+
+          {/* Skin and Hair Shading Filters */}
+          <linearGradient id="skin-shade" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="#ffffff" stopOpacity="0.25" />
+            <stop offset="100%" stopColor="#000000" stopOpacity="0.18" />
+          </linearGradient>
+          <linearGradient id="gold-metal" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stopColor="#fde047" />
+            <stop offset="50%" stopColor="#ca8a04" />
+            <stop offset="100%" stopColor="#854d0e" />
+          </linearGradient>
+          <linearGradient id="laser-glow" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stopColor="#d946ef" />
+            <stop offset="100%" stopColor="#a855f7" />
+          </linearGradient>
         </defs>
 
         {/* 1. Backdrop */}
-        <circle cx="100" cy="100" r="100" fill={`url(#bg-${c.background || "purple-gradient"})`} />
-        {c.background === "cosmic-stars" && (
-          <g opacity="0.6">
-            <circle cx="45" cy="45" r="1.5" fill="#ffffff" />
-            <circle cx="160" cy="40" r="2" fill="#22d3ee" />
-            <circle cx="140" cy="160" r="1.5" fill="#c084fc" />
-            <circle cx="35" cy="130" r="2" fill="#ffffff" />
-          </g>
-        )}
+        <rect
+          width="200"
+          height="200"
+          fill={`url(#bg-${c.background || "purple-gradient"})`}
+        />
 
-        {/* 2. Neck & Shoulders Base */}
-        <path d="M78 140 L122 140 L122 170 L78 170 Z" fill={skin} />
-        <path d="M78 140 Q100 152 122 140 L122 146 Q100 158 78 146 Z" fill="#000000" opacity="0.15" />
+        {/* 2. Avatar Torso / Wardrobe Base */}
+        <g id="avatar-body">
+          <ellipse cx="100" cy="180" rx="46" ry="32" fill={skin} />
+          <ellipse cx="100" cy="180" rx="46" ry="32" fill="url(#skin-shade)" />
 
-        {/* 3. Outfits / Torso */}
-        {c.outfit === "varsity-hoodie" && (
-          <g id="outfit-varsity">
-            <path d="M42 165 C48 148 68 142 100 142 C132 142 152 148 158 165 L165 200 L35 200 Z" fill="#140a24" />
-            <path d="M85 142 L100 162 L115 142" stroke="#a855f7" stroke-width="4" fill="none" />
-            <circle cx="100" cy="180" r="10" fill="#a855f7" />
-            <text x="100" y="184" text-anchor="middle" fill="#ffffff" font-size="9" font-weight="900" font-family="sans-serif">CS</text>
-          </g>
-        )}
+          {/* Outfits (14 Distinct Fits) */}
+          {c.outfit === "varsity-hoodie" && (
+            <g id="outfit-varsity">
+              <path d="M52 170 C52 145 148 145 148 170 L152 200 L48 200 Z" fill="#140d21" />
+              <path d="M78 152 L100 182 L122 152 Z" fill={skin} />
+              <path d="M82 154 L100 180 L118 154 Z" fill="#7c3aed" />
+              <circle cx="100" cy="164" r="5" fill="#f8fafc" />
+              <text x="100" y="196" textAnchor="middle" fill="#c084fc" fontSize="12" fontWeight="900" fontFamily="sans-serif">CS</text>
+            </g>
+          )}
 
-        {c.outfit === "cyber-jacket" && (
-          <g id="outfit-cyber">
-            <path d="M40 165 C46 146 68 140 100 140 C132 140 154 146 160 165 L168 200 L32 200 Z" fill="#0f172a" />
-            <path d="M70 144 L100 178 L78 200" fill="#06b6d4" />
-            <path d="M130 144 L100 178 L122 200" fill="#0891b2" />
-            <line x1="45" y1="180" x2="60" y2="180" stroke="#22d3ee" stroke-width="3" />
-            <line x1="140" y1="180" x2="155" y2="180" stroke="#22d3ee" stroke-width="3" />
-          </g>
-        )}
+          {c.outfit === "cyber-jacket" && (
+            <g id="outfit-cyber">
+              <path d="M50 166 C50 140 150 140 150 166 L154 200 L46 200 Z" fill="#090d16" />
+              <path d="M74 154 L100 184 L126 154" stroke="#06b6d4" strokeWidth="5" strokeLinecap="round" fill="none" />
+              <path d="M100 184 L100 200" stroke="#06b6d4" strokeWidth="4" />
+              <circle cx="70" cy="178" r="4" fill="#a855f7" />
+              <circle cx="130" cy="178" r="4" fill="#a855f7" />
+            </g>
+          )}
 
-        {c.outfit === "survivor-duster" && (
-          <g id="outfit-duster">
-            <path d="M65 146 L100 146 L135 146 L135 200 L65 200 Z" fill="#b91c1c" />
-            <line x1="100" y1="146" x2="100" y2="200" stroke="#ffffff" stroke-width="2" />
-            <path d="M38 166 C44 146 64 142 80 142 L72 200 L32 200 Z" fill="#5c2e0b" />
-            <path d="M162 166 C156 146 136 142 120 142 L128 200 L168 200 Z" fill="#5c2e0b" />
-          </g>
-        )}
+          {c.outfit === "survivor-duster" && (
+            <g id="outfit-deadeye">
+              <path d="M48 168 C48 138 152 138 152 168 L156 200 L44 200 Z" fill="#3b2518" />
+              <path d="M80 155 L100 180 L120 155 Z" fill="#991b1b" />
+              <line x1="60" y1="164" x2="140" y2="198" stroke="#78350f" strokeWidth="6" />
+              <circle cx="90" cy="178" r="3" fill="#fbbf24" />
+              <circle cx="110" cy="188" r="3" fill="#fbbf24" />
+            </g>
+          )}
 
-        {c.outfit === "trainer-vest" && (
-          <g id="outfit-trainer">
-            <path d="M40 165 C48 146 68 142 100 142 C132 142 152 146 160 165 L168 200 L32 200 Z" fill="#1e3a8a" />
-            <path d="M80 144 L100 168 L120 144" fill="#fbbf24" />
-            <circle cx="100" cy="182" r="8" fill="#ffffff" stroke="#ef4444" stroke-width="3" />
-          </g>
-        )}
+          {c.outfit === "trainer-vest" && (
+            <g id="outfit-trainer">
+              <path d="M52 168 C52 142 148 142 148 168 L152 200 L48 200 Z" fill="#0284c7" />
+              <path d="M76 154 L100 186 L124 154 Z" fill="#f8fafc" />
+              <circle cx="100" cy="174" r="6" fill="#f59e0b" stroke="#78350f" strokeWidth="2" />
+            </g>
+          )}
 
-        {c.outfit === "nexus-tee" && (
-          <g id="outfit-tee">
-            <path d="M42 165 C48 148 68 144 100 144 C132 144 152 148 158 165 L166 200 L34 200 Z" fill="#18181b" />
-            <polygon points="94,168 100,162 106,168 100,174" fill="#c084fc" />
-            <text x="100" y="186" text-anchor="middle" fill="#22d3ee" font-size="8" font-weight="800" letter-spacing="1">NEXUS</text>
-          </g>
-        )}
+          {c.outfit === "nexus-tee" && (
+            <g id="outfit-nexus-tee">
+              <path d="M54 168 C54 146 146 146 146 168 L150 200 L50 200 Z" fill="#18181b" />
+              <ellipse cx="100" cy="154" rx="22" ry="8" fill={skin} />
+              <circle cx="100" cy="182" r="11" fill="none" stroke="#a855f7" strokeWidth="3" />
+              <polygon points="100,175 106,186 94,186" fill="#22d3ee" />
+            </g>
+          )}
 
-        {c.outfit === "armor" && (
-          <g id="outfit-armor">
-            <path d="M38 165 C46 144 68 138 100 138 C132 138 154 144 162 165 L170 200 L30 200 Z" fill="#334155" />
-            <path d="M32 162 L60 146 L68 185 Z" fill="#1e293b" stroke="#94a3b8" stroke-width="1.5" />
-            <path d="M168 162 L140 146 L132 185 Z" fill="#1e293b" stroke="#94a3b8" stroke-width="1.5" />
-            <polygon points="100,150 110,165 100,180 90,165" fill="#a855f7" />
-          </g>
-        )}
+          {c.outfit === "armor" && (
+            <g id="outfit-armor">
+              <path d="M48 164 C48 138 152 138 152 164 L156 200 L44 200 Z" fill="#1e293b" />
+              <path d="M72 152 L100 186 L128 152 Z" fill="#334155" />
+              <path d="M100 160 L100 200" stroke="#f59e0b" strokeWidth="4" />
+              <circle cx="100" cy="180" r="8" fill="#7c3aed" stroke="#f59e0b" strokeWidth="2" />
+            </g>
+          )}
 
-        {c.outfit === "space-suit" && (
-          <g id="outfit-space">
-            <path d="M38 165 C46 144 68 140 100 140 C132 140 154 144 162 165 L170 200 L30 200 Z" fill="#e2e8f0" />
-            <path d="M80 142 L120 142 L120 185 L80 185 Z" fill="#38bdf8" opacity="0.3" stroke="#0284c7" stroke-width="1" />
-            <circle cx="100" cy="165" r="6" fill="#ef4444" />
-          </g>
-        )}
+          {c.outfit === "space-suit" && (
+            <g id="outfit-space">
+              <path d="M46 162 C46 136 154 136 154 162 L158 200 L42 200 Z" fill="#e2e8f0" />
+              <ellipse cx="100" cy="154" rx="26" ry="10" fill="#0f172a" />
+              <rect x="80" y="172" width="40" height="24" rx="4" fill="#0284c7" />
+              <circle cx="92" cy="184" r="4" fill="#22c55e" />
+              <circle cx="108" cy="184" r="4" fill="#ef4444" />
+            </g>
+          )}
 
-        {c.outfit === "retro-arcade" && (
-          <g id="outfit-retro">
-            <path d="M40 165 C48 146 68 142 100 142 C132 142 152 146 160 165 L168 200 L32 200 Z" fill="#4c1d95" />
-            <path d="M50 172 L150 172" stroke="#f43f5e" stroke-width="4" />
-            <path d="M50 180 L150 180" stroke="#f59e0b" stroke-width="3" />
-            <path d="M50 186 L150 186" stroke="#06b6d4" stroke-width="2" />
-          </g>
-        )}
+          {c.outfit === "retro-arcade" && (
+            <g id="outfit-retro">
+              <path d="M50 166 C50 140 150 140 150 166 L154 200 L46 200 Z" fill="#4c1d95" />
+              <polygon points="50,166 100,192 150,166 150,180 100,200 50,180" fill="#f43f5e" />
+              <polygon points="50,180 100,200 150,180 150,192 100,208 50,192" fill="#06b6d4" />
+            </g>
+          )}
 
-        {c.outfit === "purple-tux" && (
-          <g id="outfit-tux">
-            <path d="M38 165 C46 144 68 138 100 138 C132 138 154 144 162 165 L170 200 L30 200 Z" fill="#581c87" />
-            {/* White shirt triangle */}
-            <polygon points="86,142 114,142 100,185" fill="#ffffff" />
-            {/* Purple bow tie */}
-            <polygon points="94,148 106,148 100,153" fill="#a855f7" />
-            <polygon points="94,158 106,158 100,153" fill="#a855f7" />
-            <circle cx="100" cy="153" r="2.5" fill="#c084fc" />
-          </g>
-        )}
+          {c.outfit === "purple-tux" && (
+            <g id="outfit-tux">
+              <path d="M50 164 C50 138 150 138 150 164 L154 200 L46 200 Z" fill="#2e1065" />
+              <polygon points="86,150 100,186 114,150" fill="#f8fafc" />
+              <polygon points="94,158 100,163 106,158 100,166" fill="#0f172a" />
+              <polygon points="86,150 100,184 76,200" fill="#581c87" />
+              <polygon points="114,150 100,184 124,200" fill="#581c87" />
+            </g>
+          )}
 
-        {/* 4. Head & Face */}
-        <g id="head-base">
-          <circle cx="56" cy="100" r="14" fill={skin} />
-          <circle cx="144" cy="100" r="14" fill={skin} />
-          <circle cx="56" cy="100" r="8" fill="#000000" opacity="0.1" />
-          <circle cx="144" cy="100" r="8" fill="#000000" opacity="0.1" />
+          {c.outfit === "mech-pilot" && (
+            <g id="outfit-mech">
+              <path d="M46 160 C46 134 154 134 154 160 L158 200 L42 200 Z" fill="#1e293b" />
+              <path d="M70 150 L100 188 L130 150 Z" fill="#0f172a" />
+              <polygon points="100,162 112,180 88,180" fill="#06b6d4" />
+              <line x1="56" y1="172" x2="144" y2="172" stroke="#38bdf8" strokeWidth="3" />
+            </g>
+          )}
 
-          <path
-            d="M60 88 C60 52 140 52 140 88 C140 125 125 144 100 144 C75 144 60 125 60 88 Z"
-            fill={skin}
-          />
+          {c.outfit === "ninja-shinobi" && (
+            <g id="outfit-ninja">
+              <path d="M48 165 C48 140 152 140 152 165 L156 200 L44 200 Z" fill="#09090b" />
+              <path d="M80 152 L100 184 L120 152 Z" fill="#7f1d1d" />
+              <line x1="50" y1="160" x2="150" y2="196" stroke="#991b1b" strokeWidth="4" />
+              <line x1="150" y1="160" x2="50" y2="196" stroke="#991b1b" strokeWidth="4" />
+            </g>
+          )}
 
-          <ellipse cx="74" cy="112" rx="8" ry="4" fill="#ef4444" opacity="0.22" />
-          <ellipse cx="126" cy="112" rx="8" ry="4" fill="#ef4444" opacity="0.22" />
+          {c.outfit === "esports-jersey" && (
+            <g id="outfit-esports">
+              <path d="M50 166 C50 142 150 142 150 166 L154 200 L46 200 Z" fill="#0f172a" />
+              <polygon points="50,166 100,190 150,166" fill="#7c3aed" />
+              <text x="100" y="196" textAnchor="middle" fill="#f8fafc" fontSize="13" fontWeight="900">#24</text>
+            </g>
+          )}
+
+          {c.outfit === "retro-synth" && (
+            <g id="outfit-synth">
+              <path d="M50 164 C50 138 150 138 150 164 L154 200 L46 200 Z" fill="#18181b" />
+              <path d="M72 152 L100 186 L128 152" stroke="#ec4899" strokeWidth="4" fill="none" />
+              <circle cx="100" cy="188" r="6" fill="#facc15" />
+            </g>
+          )}
+
+          {c.outfit === "cozy-hoodie" && (
+            <g id="outfit-cozy">
+              <path d="M46 160 C46 134 154 134 154 160 L158 200 L42 200 Z" fill="#e0e7ff" />
+              <ellipse cx="100" cy="154" rx="24" ry="10" fill="#c7d2fe" />
+              <circle cx="86" cy="180" r="5" fill="#818cf8" />
+              <circle cx="114" cy="180" r="5" fill="#818cf8" />
+            </g>
+          )}
         </g>
 
-        {/* 5. Eyes */}
-        <g id="eyes">
-          {c.eyeShape === "almond" && (
-            <>
-              <ellipse cx="80" cy="95" rx="10" ry="7" fill="#ffffff" />
-              <circle cx="81" cy="95" r="5.5" fill={eye} />
-              <circle cx="81" cy="95" r="3" fill="#09060f" />
-              <circle cx="83" cy="93" r="1.8" fill="#ffffff" />
+        {/* 3. Neck */}
+        <rect x="88" y="128" width="24" height="26" rx="6" fill={skin} />
+        <rect x="88" y="128" width="24" height="26" rx="6" fill="url(#skin-shade)" />
 
-              <ellipse cx="120" cy="95" rx="10" ry="7" fill="#ffffff" />
-              <circle cx="119" cy="95" r="5.5" fill={eye} />
-              <circle cx="119" cy="95" r="3" fill="#09060f" />
-              <circle cx="121" cy="93" r="1.8" fill="#ffffff" />
-            </>
+        {/* 4. Head */}
+        <ellipse cx="100" cy="100" rx="42" ry="46" fill={skin} />
+        <ellipse cx="100" cy="100" rx="42" ry="46" fill="url(#skin-shade)" />
+
+        {/* Ears */}
+        <circle cx="58" cy="102" r="10" fill={skin} />
+        <circle cx="142" cy="102" r="10" fill={skin} />
+
+        {/* 5. Eyes */}
+        <g id="avatar-eyes">
+          {c.eyeShape === "almond" && (
+            <g>
+              <ellipse cx="82" cy="98" rx="9" ry="6" fill="#ffffff" />
+              <circle cx="83" cy="98" r="4" fill={eye} />
+              <circle cx="84" cy="96" r="1.5" fill="#ffffff" />
+              <ellipse cx="118" cy="98" rx="9" ry="6" fill="#ffffff" />
+              <circle cx="117" cy="98" r="4" fill={eye} />
+              <circle cx="118" cy="96" r="1.5" fill="#ffffff" />
+            </g>
           )}
 
           {c.eyeShape === "round" && (
-            <>
-              <circle cx="80" cy="95" r="9" fill="#ffffff" />
-              <circle cx="80" cy="95" r="6" fill={eye} />
-              <circle cx="80" cy="95" r="3" fill="#09060f" />
-              <circle cx="82" cy="93" r="2" fill="#ffffff" />
-
-              <circle cx="120" cy="95" r="9" fill="#ffffff" />
-              <circle cx="120" cy="95" r="6" fill={eye} />
-              <circle cx="120" cy="95" r="3" fill="#09060f" />
-              <circle cx="122" cy="93" r="2" fill="#ffffff" />
-            </>
+            <g>
+              <circle cx="82" cy="98" r="8" fill="#ffffff" />
+              <circle cx="82" cy="98" r="4.5" fill={eye} />
+              <circle cx="84" cy="96" r="1.8" fill="#ffffff" />
+              <circle cx="118" cy="98" r="8" fill="#ffffff" />
+              <circle cx="118" cy="98" r="4.5" fill={eye} />
+              <circle cx="120" cy="96" r="1.8" fill="#ffffff" />
+            </g>
           )}
 
           {c.eyeShape === "sharp" && (
-            <>
-              <path d="M68 97 Q80 88 92 95 Q80 102 68 97 Z" fill="#ffffff" />
-              <circle cx="81" cy="94" r="5" fill={eye} />
-              <circle cx="81" cy="94" r="2.5" fill="#000" />
-              <circle cx="83" cy="93" r="1.5" fill="#fff" />
-
-              <path d="M108 95 Q120 88 132 97 Q120 102 108 95 Z" fill="#ffffff" />
-              <circle cx="119" cy="94" r="5" fill={eye} />
-              <circle cx="119" cy="94" r="2.5" fill="#000" />
-              <circle cx="121" cy="93" r="1.5" fill="#fff" />
-            </>
+            <g>
+              <polygon points="73,98 84,93 92,98 84,103" fill="#ffffff" />
+              <circle cx="83" cy="98" r="3.5" fill={eye} />
+              <polygon points="108,98 116,93 127,98 116,103" fill="#ffffff" />
+              <circle cx="117" cy="98" r="3.5" fill={eye} />
+            </g>
           )}
 
           {c.eyeShape === "starry" && (
-            <>
-              <circle cx="80" cy="95" r="9" fill="#ffffff" />
-              <circle cx="80" cy="95" r="6" fill={eye} />
-              <polygon points="80,90 82,94 86,95 82,96 80,100 78,96 74,95 78,94" fill="#ffffff" />
-
-              <circle cx="120" cy="95" r="9" fill="#ffffff" />
-              <circle cx="120" cy="95" r="6" fill={eye} />
-              <polygon points="120,90 122,94 126,95 122,96 120,100 118,96 114,95 118,94" fill="#ffffff" />
-            </>
+            <g>
+              <ellipse cx="82" cy="98" rx="9" ry="7" fill="#ffffff" />
+              <circle cx="82" cy="98" r="4.5" fill={eye} />
+              <polygon points="82,93 84,97 88,98 84,99 82,103 80,99 76,98 80,97" fill="#ffffff" />
+              <ellipse cx="118" cy="98" rx="9" ry="7" fill="#ffffff" />
+              <circle cx="118" cy="98" r="4.5" fill={eye} />
+              <polygon points="118,93 120,97 124,98 120,99 118,103 116,99 112,98 116,97" fill="#ffffff" />
+            </g>
           )}
 
           {/* Eyebrows */}
-          <path d="M70 84 Q80 80 90 84" stroke={hair} stroke-width="3" stroke-linecap="round" fill="none" />
-          <path d="M110 84 Q120 80 130 84" stroke={hair} stroke-width="3" stroke-linecap="round" fill="none" />
+          <path d="M74 88 Q82 83 91 87" stroke={hair} strokeWidth="3" strokeLinecap="round" fill="none" />
+          <path d="M109 87 Q118 83 126 88" stroke={hair} strokeWidth="3" strokeLinecap="round" fill="none" />
         </g>
 
-        {/* 6. Mouth & Expressions */}
-        <g id="mouth">
-          <path d="M98 106 Q100 108 102 106" stroke="#000000" stroke-width="2" stroke-linecap="round" fill="none" opacity="0.3" />
+        {/* Nose */}
+        <path d="M98 102 Q100 110 103 110" stroke="#000000" strokeWidth="2" strokeOpacity="0.3" strokeLinecap="round" fill="none" />
 
+        {/* 6. Mouth / Expressions */}
+        <g id="avatar-mouth">
           {c.mouth === "smile" && (
-            <path d="M88 118 Q100 130 112 118" stroke="#000000" stroke-width="3" stroke-linecap="round" fill="none" />
+            <path d="M88 120 Q100 132 112 120" stroke="#000000" strokeWidth="3" strokeLinecap="round" fill="none" />
           )}
-
           {c.mouth === "smirk" && (
-            <path d="M90 121 Q104 124 114 116" stroke="#000000" stroke-width="3" stroke-linecap="round" fill="none" />
+            <path d="M90 122 Q102 124 114 116" stroke="#000000" strokeWidth="3" strokeLinecap="round" fill="none" />
           )}
-
           {c.mouth === "laugh" && (
-            <path d="M86 116 Q100 116 114 116 Q100 132 86 116 Z" fill="#881337" stroke="#000000" stroke-width="2" />
+            <path d="M86 118 Q100 138 114 118 Z" fill="#e11d48" stroke="#000000" strokeWidth="2" />
           )}
-
           {c.mouth === "neutral" && (
-            <line x1="90" y1="120" x2="110" y2="120" stroke="#000000" stroke-width="3" stroke-linecap="round" />
+            <line x1="90" y1="122" x2="110" y2="122" stroke="#000000" strokeWidth="3" strokeLinecap="round" />
           )}
-
           {c.mouth === "battle" && (
-            <path d="M88 118 L94 116 L100 118 L106 116 L112 118" stroke="#000000" stroke-width="3" stroke-linecap="round" fill="none" />
+            <g>
+              <rect x="88" y="118" width="24" height="8" rx="3" fill="#ffffff" stroke="#000000" strokeWidth="2" />
+              <line x1="94" y1="118" x2="94" y2="126" stroke="#000000" strokeWidth="1" />
+              <line x1="100" y1="118" x2="100" y2="126" stroke="#000000" strokeWidth="1" />
+              <line x1="106" y1="118" x2="106" y2="126" stroke="#000000" strokeWidth="1" />
+            </g>
           )}
-
           {c.mouth === "wink" && (
-            <path d="M88 118 Q100 128 112 118" stroke="#000000" stroke-width="3" stroke-linecap="round" fill="none" />
+            <g>
+              <path d="M88 120 Q100 130 112 120" stroke="#000000" strokeWidth="3" strokeLinecap="round" fill="none" />
+              {/* Wink left eye */}
+              <path d="M75 98 Q82 93 90 98" stroke="#000000" strokeWidth="3.5" strokeLinecap="round" fill="none" />
+            </g>
           )}
         </g>
 
         {/* 7. Facial Hair */}
         {c.facialHair === "stubble" && (
-          <g opacity="0.3" fill={hair}>
-            <circle cx="90" cy="128" r="1" /><circle cx="96" cy="132" r="1" /><circle cx="104" cy="132" r="1" /><circle cx="110" cy="128" r="1" />
-            <circle cx="86" cy="124" r="1" /><circle cx="114" cy="124" r="1" /><circle cx="100" cy="136" r="1" />
-          </g>
+          <ellipse cx="100" cy="126" rx="20" ry="12" fill="#000000" opacity="0.12" />
         )}
-
         {c.facialHair === "mustache" && (
-          <path d="M86 114 Q94 112 100 115 Q106 112 114 114 Q108 118 100 116 Q92 118 86 114 Z" fill={hair} />
+          <path d="M86 116 Q100 110 114 116 Q100 120 86 116 Z" fill={hair} />
         )}
-
         {c.facialHair === "goatee" && (
           <g>
-            <path d="M88 114 Q100 116 112 114" stroke={hair} stroke-width="2.5" fill="none" />
-            <path d="M94 126 L106 126 L100 140 Z" fill={hair} />
+            <path d="M88 116 Q100 112 112 116" stroke={hair} strokeWidth="3" fill="none" />
+            <polygon points="94,124 106,124 100,136" fill={hair} />
           </g>
         )}
-
         {c.facialHair === "beard" && (
-          <path
-            d="M62 98 C62 136 80 152 100 152 C120 152 138 136 138 98 L130 98 C130 130 116 142 100 142 C84 142 70 130 70 98 Z"
-            fill={hair}
-          />
+          <path d="M68 108 C68 144 132 144 132 108 C132 148 68 148 68 108 Z" fill={hair} opacity="0.9" />
         )}
 
-        {/* 8. Hair Styles */}
-        <g id="hair">
-          {c.hairStyle === "buzz" && (
-            <path d="M58 84 C58 48 142 48 142 84 C132 58 68 58 58 84 Z" fill={hair} />
-          )}
-
+        {/* 8. Hairstyles (15 distinct cuts) */}
+        <g id="avatar-hair">
           {c.hairStyle === "fade" && (
             <g>
-              <path d="M58 86 C56 46 144 46 142 86 C136 50 64 50 58 86 Z" fill={hair} />
-              <path d="M60 76 Q100 48 140 70 Q100 58 60 76 Z" fill="#ffffff" opacity="0.2" />
+              <path d="M58 88 C58 46 142 46 142 88 C130 64 70 64 58 88 Z" fill={hair} />
+              <path d="M60 88 C60 62 140 62 140 88 C136 76 64 76 60 88 Z" fill="#ffffff" opacity="0.15" />
             </g>
           )}
 
+          {c.hairStyle === "buzz" && (
+            <path d="M60 84 C60 52 140 52 140 84 Z" fill={hair} opacity="0.85" />
+          )}
+
           {c.hairStyle === "spikes" && (
-            <path
-              d="M58 86 L56 64 L72 44 L84 62 L100 36 L116 62 L128 44 L144 64 L142 86 C130 52 70 52 58 86 Z"
+            <polygon
+              points="58,88 64,54 76,68 86,40 100,64 114,38 124,68 136,52 142,88"
               fill={hair}
             />
           )}
 
           {c.hairStyle === "wavy" && (
-            <g>
-              <path
-                d="M56 88 C54 44 146 44 144 88 C144 110 136 122 136 122 C146 80 134 56 100 54 C66 56 54 80 64 122 C64 122 56 110 56 88 Z"
-                fill={hair}
-              />
-              <path d="M74 58 Q100 48 126 58" stroke="#ffffff" stroke-width="3" stroke-linecap="round" fill="none" opacity="0.25" />
-            </g>
+            <path
+              d="M56 88 C54 44 146 44 144 88 C136 58 110 52 100 68 C90 52 64 58 56 88 Z"
+              fill={hair}
+            />
           )}
 
           {c.hairStyle === "afro" && (
-            <circle cx="100" cy="74" r="50" fill={hair} />
+            <circle cx="100" cy="80" r="50" fill={hair} />
           )}
 
           {c.hairStyle === "braids" && (
             <g>
-              <path d="M58 82 C58 48 142 48 142 82 Z" fill={hair} />
-              <line x1="68" y1="64" x2="68" y2="136" stroke={hair} stroke-width="6" stroke-linecap="round" />
-              <line x1="80" y1="56" x2="80" y2="142" stroke={hair} stroke-width="6" stroke-linecap="round" />
-              <line x1="120" y1="56" x2="120" y2="142" stroke={hair} stroke-width="6" stroke-linecap="round" />
-              <line x1="132" y1="64" x2="132" y2="136" stroke={hair} stroke-width="6" stroke-linecap="round" />
+              <ellipse cx="100" cy="74" rx="46" ry="34" fill={hair} />
+              <line x1="70" y1="80" x2="65" y2="130" stroke={hair} strokeWidth="5" strokeLinecap="round" />
+              <line x1="80" y1="80" x2="75" y2="135" stroke={hair} strokeWidth="5" strokeLinecap="round" />
+              <line x1="120" y1="80" x2="125" y2="135" stroke={hair} strokeWidth="5" strokeLinecap="round" />
+              <line x1="130" y1="80" x2="135" y2="130" stroke={hair} strokeWidth="5" strokeLinecap="round" />
             </g>
           )}
 
@@ -425,35 +471,78 @@ export function NexusAvatar({
               <circle cx="140" cy="90" r="10" fill={hair} />
             </g>
           )}
+
+          {c.hairStyle === "mohawk" && (
+            <g>
+              <polygon points="90,88 92,30 100,24 108,30 110,88" fill={hair} />
+              <polygon points="92,54 94,22 100,16 106,22 108,54" fill="#a855f7" />
+            </g>
+          )}
+
+          {c.hairStyle === "curls" && (
+            <g>
+              <circle cx="75" cy="65" r="18" fill={hair} />
+              <circle cx="100" cy="55" r="20" fill={hair} />
+              <circle cx="125" cy="65" r="18" fill={hair} />
+              <circle cx="60" cy="80" r="14" fill={hair} />
+              <circle cx="140" cy="80" r="14" fill={hair} />
+            </g>
+          )}
+
+          {c.hairStyle === "slick-back" && (
+            <g>
+              <path d="M58 84 C58 42 142 42 142 84 C132 58 68 58 58 84 Z" fill={hair} />
+              <path d="M68 62 L132 62" stroke="#ffffff" strokeWidth="2" opacity="0.3" />
+              <path d="M72 70 L128 70" stroke="#ffffff" strokeWidth="2" opacity="0.3" />
+            </g>
+          )}
+
+          {c.hairStyle === "ponytail" && (
+            <g>
+              <path d="M58 84 C58 48 142 48 142 84 Z" fill={hair} />
+              <ellipse cx="148" cy="60" rx="14" ry="24" fill={hair} />
+              <circle cx="138" cy="54" r="6" fill="#a855f7" />
+            </g>
+          )}
+
+          {c.hairStyle === "neon-locs" && (
+            <g>
+              <circle cx="100" cy="74" r="48" fill={hair} />
+              <line x1="68" y1="82" x2="60" y2="136" stroke="#22d3ee" strokeWidth="5" strokeLinecap="round" />
+              <line x1="80" y1="82" x2="74" y2="140" stroke="#a855f7" strokeWidth="5" strokeLinecap="round" />
+              <line x1="120" y1="82" x2="126" y2="140" stroke="#a855f7" strokeWidth="5" strokeLinecap="round" />
+              <line x1="132" y1="82" x2="140" y2="136" stroke="#22d3ee" strokeWidth="5" strokeLinecap="round" />
+            </g>
+          )}
         </g>
 
-        {/* 9. Accessories & Headwear */}
+        {/* 9. Accessories & Headwear (14 total) */}
         {c.accessory === "gamer-headset" && (
           <g id="acc-headset">
-            <path d="M50 96 C48 38 152 38 150 96" stroke="#09060f" stroke-width="7" stroke-linecap="round" fill="none" />
-            <path d="M50 96 C48 38 152 38 150 96" stroke="#a855f7" stroke-width="3" stroke-linecap="round" fill="none" />
-            <rect x="42" y="82" width="16" height="30" rx="8" fill="#140b22" stroke="#a855f7" stroke-width="2.5" />
+            <path d="M50 96 C48 38 152 38 150 96" stroke="#09060f" strokeWidth="7" strokeLinecap="round" fill="none" />
+            <path d="M50 96 C48 38 152 38 150 96" stroke="#a855f7" strokeWidth="3" strokeLinecap="round" fill="none" />
+            <rect x="42" y="82" width="16" height="30" rx="8" fill="#140b22" stroke="#a855f7" strokeWidth="2.5" />
             <circle cx="50" cy="97" r="4" fill="#22d3ee" />
-            <rect x="142" y="82" width="16" height="30" rx="8" fill="#140b22" stroke="#a855f7" stroke-width="2.5" />
+            <rect x="142" y="82" width="16" height="30" rx="8" fill="#140b22" stroke="#a855f7" strokeWidth="2.5" />
             <circle cx="150" cy="97" r="4" fill="#22d3ee" />
-            <path d="M50 106 Q60 128 78 126" stroke="#09060f" stroke-width="3" stroke-linecap="round" fill="none" />
+            <path d="M50 106 Q60 128 78 126" stroke="#09060f" strokeWidth="3" strokeLinecap="round" fill="none" />
             <circle cx="80" cy="126" r="3.5" fill="#22d3ee" />
           </g>
         )}
 
         {c.accessory === "cyber-visor" && (
           <g id="acc-visor">
-            <path d="M64 90 L136 90 L132 102 L68 102 Z" fill="#22d3ee" opacity="0.85" stroke="#ffffff" stroke-width="1.5" />
-            <line x1="68" y1="94" x2="132" y2="94" stroke="#ffffff" stroke-width="1" />
+            <path d="M64 90 L136 90 L132 102 L68 102 Z" fill="#22d3ee" opacity="0.85" stroke="#ffffff" strokeWidth="1.5" />
+            <line x1="68" y1="94" x2="132" y2="94" stroke="#ffffff" strokeWidth="1" />
           </g>
         )}
 
         {c.accessory === "aviators" && (
           <g id="acc-aviators">
-            <ellipse cx="80" cy="96" rx="14" ry="11" fill="#0f172a" stroke="#fbbf24" stroke-width="2" />
-            <ellipse cx="120" cy="96" rx="14" ry="11" fill="#0f172a" stroke="#fbbf24" stroke-width="2" />
-            <line x1="94" y1="94" x2="106" y2="94" stroke="#fbbf24" stroke-width="2.5" />
-            <line x1="72" y1="91" x2="88" y2="91" stroke="#ffffff" stroke-width="1.5" opacity="0.6" />
+            <ellipse cx="80" cy="96" rx="14" ry="11" fill="#0f172a" stroke="#fbbf24" strokeWidth="2" />
+            <ellipse cx="120" cy="96" rx="14" ry="11" fill="#0f172a" stroke="#fbbf24" strokeWidth="2" />
+            <line x1="94" y1="94" x2="106" y2="94" stroke="#fbbf24" strokeWidth="2.5" />
+            <line x1="72" y1="91" x2="88" y2="91" stroke="#ffffff" strokeWidth="1.5" opacity="0.6" />
           </g>
         )}
 
@@ -462,7 +551,7 @@ export function NexusAvatar({
             <path d="M56 70 C56 44 144 44 144 70 Z" fill="#7c3aed" />
             <path d="M52 70 L148 70 L160 76 L40 76 Z" fill="#581c87" />
             <circle cx="100" cy="56" r="6" fill="#ffffff" />
-            <text x="100" y="58" text-anchor="middle" fill="#581c87" font-size="6" font-weight="900">C</text>
+            <text x="100" y="58" textAnchor="middle" fill="#581c87" fontSize="6" fontWeight="900">C</text>
           </g>
         )}
 
@@ -476,7 +565,7 @@ export function NexusAvatar({
 
         {c.accessory === "crown" && (
           <g id="acc-crown">
-            <polygon points="65,68 75,44 100,56 125,44 135,68" fill="#f59e0b" stroke="#b45309" stroke-width="2" />
+            <polygon points="65,68 75,44 100,56 125,44 135,68" fill="#f59e0b" stroke="#b45309" strokeWidth="2" />
             <circle cx="75" cy="44" r="3" fill="#a855f7" />
             <circle cx="100" cy="56" r="3.5" fill="#22d3ee" />
             <circle cx="125" cy="44" r="3" fill="#a855f7" />
@@ -485,9 +574,9 @@ export function NexusAvatar({
 
         {c.accessory === "cat-ears" && (
           <g id="acc-cat">
-            <polygon points="56,70 60,34 82,56" fill="#ec4899" stroke="#9d174d" stroke-width="2" />
+            <polygon points="56,70 60,34 82,56" fill="#ec4899" stroke="#9d174d" strokeWidth="2" />
             <polygon points="62,64 65,42 78,56" fill="#fbcfe8" />
-            <polygon points="144,70 140,34 118,56" fill="#ec4899" stroke="#9d174d" stroke-width="2" />
+            <polygon points="144,70 140,34 118,56" fill="#ec4899" stroke="#9d174d" strokeWidth="2" />
             <polygon points="138,64 135,42 122,56" fill="#fbcfe8" />
           </g>
         )}
@@ -501,102 +590,281 @@ export function NexusAvatar({
 
         {c.accessory === "earring" && (
           <g id="acc-earring">
-            <circle cx="144" cy="114" r="3" fill="#fbbf24" stroke="#d97706" stroke-width="1" />
+            <circle cx="144" cy="114" r="3" fill="#fbbf24" stroke="#d97706" strokeWidth="1" />
           </g>
         )}
 
-        {/* 10. Comic Pose Stickers */}
+        {c.accessory === "heart-shades" && (
+          <g id="acc-hearts">
+            <path d="M72 90 A 6 6 0 0 1 84 90 Q 84 98 78 104 Q 72 98 72 90 Z" fill="#e11d48" stroke="#be123c" strokeWidth="1.5" />
+            <path d="M116 90 A 6 6 0 0 1 128 90 Q 128 98 122 104 Q 116 98 116 90 Z" fill="#e11d48" stroke="#be123c" strokeWidth="1.5" />
+            <line x1="84" y1="92" x2="116" y2="92" stroke="#be123c" strokeWidth="2" />
+          </g>
+        )}
+
+        {c.accessory === "vr-headset" && (
+          <g id="acc-vr">
+            <rect x="62" y="86" width="76" height="24" rx="8" fill="#09090b" stroke="#a855f7" strokeWidth="2" />
+            <line x1="70" y1="98" x2="130" y2="98" stroke="#22d3ee" strokeWidth="2" />
+            <circle cx="100" cy="98" r="4" fill="#a855f7" />
+          </g>
+        )}
+
+        {c.accessory === "halo" && (
+          <g id="acc-halo">
+            <ellipse cx="100" cy="42" rx="36" ry="10" fill="none" stroke="#facc15" strokeWidth="4" />
+            <ellipse cx="100" cy="42" rx="36" ry="10" fill="none" stroke="#ffffff" strokeWidth="1.5" opacity="0.8" />
+          </g>
+        )}
+
+        {c.accessory === "demon-horns" && (
+          <g id="acc-horns">
+            <path d="M68 64 C64 42 54 34 48 38 C54 50 62 60 68 64 Z" fill="#b91c1c" />
+            <path d="M132 64 C136 42 146 34 152 38 C146 50 138 60 132 64 Z" fill="#b91c1c" />
+          </g>
+        )}
+
+        {/* 10. Handheld Props (Held in foreground) */}
+        {c.prop === "rgb-controller" && (
+          <g id="prop-controller">
+            <rect x="76" y="160" width="48" height="28" rx="10" fill="#18181b" stroke="#a855f7" strokeWidth="2" />
+            <circle cx="86" cy="172" r="4" fill="#3b82f6" />
+            <circle cx="114" cy="170" r="3" fill="#ef4444" />
+            <circle cx="118" cy="176" r="3" fill="#22c55e" />
+          </g>
+        )}
+
+        {c.prop === "energy-drink" && (
+          <g id="prop-drink">
+            <rect x="136" y="148" width="18" height="36" rx="4" fill="#14532d" stroke="#22c55e" strokeWidth="2" />
+            <text x="145" y="170" textAnchor="middle" fill="#86efac" fontSize="9" fontWeight="900">⚡</text>
+          </g>
+        )}
+
+        {c.prop === "steam-deck" && (
+          <g id="prop-deck">
+            <rect x="65" y="162" width="70" height="26" rx="6" fill="#09090b" stroke="#3b82f6" strokeWidth="2" />
+            <rect x="80" y="166" width="40" height="18" rx="2" fill="#1e293b" />
+            <circle cx="72" cy="175" r="4" fill="#475569" />
+            <circle cx="128" cy="175" r="4" fill="#475569" />
+          </g>
+        )}
+
+        {c.prop === "golden-mic" && (
+          <g id="prop-mic">
+            <rect x="138" y="144" width="12" height="24" rx="6" fill="url(#gold-metal)" />
+            <line x1="144" y1="168" x2="144" y2="190" stroke="#000000" strokeWidth="4" />
+          </g>
+        )}
+
+        {c.prop === "laser-sword" && (
+          <g id="prop-sword">
+            <line x1="130" y1="185" x2="175" y2="125" stroke="url(#laser-glow)" strokeWidth="6" strokeLinecap="round" />
+            <line x1="130" y1="185" x2="175" y2="125" stroke="#ffffff" strokeWidth="2" strokeLinecap="round" />
+            <line x1="126" y1="190" x2="134" y2="180" stroke="#475569" strokeWidth="6" strokeLinecap="round" />
+          </g>
+        )}
+
+        {c.prop === "coffee-mug" && (
+          <g id="prop-coffee">
+            <rect x="136" y="156" width="22" height="26" rx="4" fill="#f8fafc" stroke="#64748b" strokeWidth="1.5" />
+            <path d="M158 162 C164 162 164 176 158 176" stroke="#64748b" strokeWidth="3" fill="none" />
+            <text x="147" y="174" textAnchor="middle" fill="#7c3aed" fontSize="11" fontWeight="900">C</text>
+          </g>
+        )}
+
+        {c.prop === "trophy" && (
+          <g id="prop-trophy">
+            <path d="M136 150 L156 150 L152 170 C150 178 142 178 140 170 Z" fill="url(#gold-metal)" />
+            <line x1="146" y1="174" x2="146" y2="184" stroke="url(#gold-metal)" strokeWidth="4" />
+            <rect x="138" y="184" width="16" height="6" rx="2" fill="#78350f" />
+          </g>
+        )}
+
+        {/* 11. Comic Poses & Meme Badges (24 Varieties) */}
         {c.pose === "fire" && (
           <g id="pose-fire">
-            <text x="100" y="194" text-anchor="middle" font-size="20">🔥</text>
+            <text x="100" y="194" textAnchor="middle" fontSize="22">🔥</text>
           </g>
         )}
 
         {c.pose === "gg" && (
           <g id="pose-gg">
-            <rect x="74" y="174" width="52" height="20" rx="10" fill="#10b981" />
-            <text x="100" y="188" text-anchor="middle" fill="#ffffff" font-size="10" font-weight="900">🎮 GG!</text>
+            <rect x="70" y="174" width="60" height="20" rx="10" fill="#10b981" stroke="#ffffff" strokeWidth="1" />
+            <text x="100" y="188" textAnchor="middle" fill="#ffffff" fontSize="10" fontWeight="900">🎮 GG!</text>
           </g>
         )}
 
         {c.pose === "hype" && (
           <g id="pose-hype">
-            <rect x="70" y="174" width="60" height="20" rx="10" fill="#a855f7" />
-            <text x="100" y="188" text-anchor="middle" fill="#ffffff" font-size="10" font-weight="900">⚡ HYPE!</text>
+            <rect x="66" y="174" width="68" height="20" rx="10" fill="#a855f7" stroke="#ffffff" strokeWidth="1" />
+            <text x="100" y="188" textAnchor="middle" fill="#ffffff" fontSize="10" fontWeight="900">⚡ HYPE!</text>
           </g>
         )}
 
         {c.pose === "verified" && (
           <g id="pose-verified">
-            <circle cx="100" cy="180" r="12" fill="#a855f7" stroke="#ffffff" stroke-width="2" />
-            <path d="M96 180 L99 183 L105 177" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none" />
+            <circle cx="100" cy="180" r="13" fill="#7c3aed" stroke="#ffffff" strokeWidth="2" />
+            <path d="M95 180 L99 184 L106 177" stroke="#ffffff" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" fill="none" />
           </g>
         )}
 
         {c.pose === "chill" && (
           <g id="pose-chill">
-            <rect x="70" y="174" width="60" height="20" rx="10" fill="#0284c7" />
-            <text x="100" y="188" text-anchor="middle" fill="#ffffff" font-size="10" font-weight="900">☕ CHILL</text>
+            <rect x="66" y="174" width="68" height="20" rx="10" fill="#0284c7" stroke="#ffffff" strokeWidth="1" />
+            <text x="100" y="188" textAnchor="middle" fill="#ffffff" fontSize="10" fontWeight="900">☕ CHILL</text>
           </g>
         )}
 
         {c.pose === "afk" && (
           <g id="pose-afk">
-            <rect x="74" y="174" width="52" height="20" rx="10" fill="#475569" />
-            <text x="100" y="188" text-anchor="middle" fill="#ffffff" font-size="10" font-weight="900">💤 AFK</text>
+            <rect x="72" y="174" width="56" height="20" rx="10" fill="#475569" stroke="#ffffff" strokeWidth="1" />
+            <text x="100" y="188" textAnchor="middle" fill="#ffffff" fontSize="10" fontWeight="900">💤 AFK</text>
           </g>
         )}
 
         {c.pose === "raid" && (
           <g id="pose-raid">
-            <rect x="66" y="174" width="68" height="20" rx="10" fill="#dc2626" />
-            <text x="100" y="188" text-anchor="middle" fill="#ffffff" font-size="9" font-weight="900">⚔️ RAID ON</text>
+            <rect x="68" y="174" width="64" height="20" rx="10" fill="#dc2626" stroke="#ffffff" strokeWidth="1" />
+            <text x="100" y="188" textAnchor="middle" fill="#ffffff" fontSize="10" fontWeight="900">⚔️ RAID</text>
           </g>
         )}
 
         {c.pose === "love" && (
           <g id="pose-love">
-            <rect x="74" y="174" width="52" height="20" rx="10" fill="#ec4899" />
-            <text x="100" y="188" text-anchor="middle" fill="#ffffff" font-size="10" font-weight="900">❤️ LOVE</text>
+            <text x="100" y="194" textAnchor="middle" fontSize="22">❤️</text>
           </g>
         )}
 
         {c.pose === "rocket" && (
           <g id="pose-rocket">
-            <rect x="68" y="174" width="64" height="20" rx="10" fill="#f59e0b" />
-            <text x="100" y="188" text-anchor="middle" fill="#ffffff" font-size="9" font-weight="900">🚀 MOON</text>
+            <text x="100" y="194" textAnchor="middle" fontSize="22">🚀</text>
           </g>
         )}
 
         {c.pose === "levelup" && (
           <g id="pose-levelup">
-            <rect x="64" y="174" width="72" height="20" rx="10" fill="#6366f1" />
-            <text x="100" y="188" text-anchor="middle" fill="#ffffff" font-size="9" font-weight="900">💎 LEVEL UP</text>
+            <rect x="64" y="174" width="72" height="20" rx="10" fill="#f59e0b" stroke="#ffffff" strokeWidth="1" />
+            <text x="100" y="188" textAnchor="middle" fill="#ffffff" fontSize="10" fontWeight="900">⭐ LEVEL UP</text>
           </g>
         )}
 
-        {c.pose === "shield" && (
-          <g id="pose-shield">
-            <rect x="68" y="174" width="64" height="20" rx="10" fill="#140b22" stroke="#a855f7" stroke-width="1.5" />
-            <text x="100" y="188" text-anchor="middle" fill="#22d3ee" font-size="9" font-weight="900">🛡️ SQUAD</text>
+        {c.pose === "ragequit" && (
+          <g id="pose-rage">
+            <rect x="60" y="174" width="80" height="20" rx="10" fill="#ef4444" stroke="#ffffff" strokeWidth="1" />
+            <text x="100" y="188" textAnchor="middle" fill="#ffffff" fontSize="9" fontWeight="900">💥 RAGE QUIT</text>
+          </g>
+        )}
+
+        {c.pose === "clutch" && (
+          <g id="pose-clutch">
+            <rect x="66" y="174" width="68" height="20" rx="10" fill="#8b5cf6" stroke="#ffffff" strokeWidth="1" />
+            <text x="100" y="188" textAnchor="middle" fill="#ffffff" fontSize="9" fontWeight="900">🎯 1v5 CLUTCH</text>
+          </g>
+        )}
+
+        {c.pose === "mindblown" && (
+          <g id="pose-mindblown">
+            <text x="100" y="194" textAnchor="middle" fontSize="22">🤯</text>
+          </g>
+        )}
+
+        {c.pose === "skull" && (
+          <g id="pose-skull">
+            <text x="100" y="194" textAnchor="middle" fontSize="22">💀</text>
+          </g>
+        )}
+
+        {c.pose === "stream" && (
+          <g id="pose-stream">
+            <rect x="64" y="174" width="72" height="20" rx="10" fill="#9333ea" stroke="#ffffff" strokeWidth="1" />
+            <text x="100" y="188" textAnchor="middle" fill="#ffffff" fontSize="9" fontWeight="900">🔴 LIVE NOW</text>
+          </g>
+        )}
+
+        {c.pose === "dance" && (
+          <g id="pose-dance">
+            <text x="100" y="194" textAnchor="middle" fontSize="22">💃</text>
+          </g>
+        )}
+
+        {c.pose === "facepalm" && (
+          <g id="pose-facepalm">
+            <text x="100" y="194" textAnchor="middle" fontSize="22">🤦</text>
+          </g>
+        )}
+
+        {c.pose === "flex" && (
+          <g id="pose-flex">
+            <text x="100" y="194" textAnchor="middle" fontSize="22">💪</text>
+          </g>
+        )}
+
+        {c.pose === "wave" && (
+          <g id="pose-wave">
+            <text x="100" y="194" textAnchor="middle" fontSize="22">👋</text>
+          </g>
+        )}
+
+        {c.pose === "cry-laugh" && (
+          <g id="pose-crylaugh">
+            <text x="100" y="194" textAnchor="middle" fontSize="22">😂</text>
+          </g>
+        )}
+
+        {c.pose === "co-op" && (
+          <g id="pose-coop">
+            <rect x="66" y="174" width="68" height="20" rx="10" fill="#059669" stroke="#ffffff" strokeWidth="1" />
+            <text x="100" y="188" textAnchor="middle" fill="#ffffff" fontSize="9" fontWeight="900">🤝 CO-OP</text>
+          </g>
+        )}
+
+        {c.pose === "salute" && (
+          <g id="pose-salute">
+            <text x="100" y="194" textAnchor="middle" fontSize="22">🫡</text>
+          </g>
+        )}
+
+        {/* 12. Custom Comic Meme Caption Ribbon Banner */}
+        {c.customCaption && (
+          <g id="avatar-comic-caption">
+            <rect x="10" y="170" width="180" height="24" rx="6" fill="#fde047" stroke="#000000" strokeWidth="3" />
+            <text
+              x="100"
+              y="186"
+              textAnchor="middle"
+              fill="#000000"
+              fontSize="11"
+              fontWeight="900"
+              fontFamily="Impact, sans-serif"
+              letterSpacing="0.5"
+            >
+              {c.customCaption.toUpperCase().slice(0, 24)}
+            </text>
           </g>
         )}
       </svg>
 
-      {/* Small badge overlay */}
+      {/* Mini Sticker Badge Overlay */}
       {showStickerBadge && c.pose && c.pose !== "portrait" && (
         <span
-          className="avatar-sticker-badge"
+          className="avatar-mood-badge-pill"
           style={{
             position: "absolute",
             bottom: -2,
             right: -2,
-            fontSize: "12px",
-            lineHeight: 1,
-            background: "var(--surface)",
+            background: "var(--accent)",
+            color: "#ffffff",
             borderRadius: "50%",
-            padding: "2px",
-            boxShadow: "0 0 6px rgba(0,0,0,0.5)",
+            width: Math.max(18, Math.floor(dimension * 0.32)),
+            height: Math.max(18, Math.floor(dimension * 0.32)),
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            fontSize: Math.max(10, Math.floor(dimension * 0.2)),
+            border: "2px solid var(--surface)",
+            boxShadow: "0 2px 6px rgba(0,0,0,0.4)",
+            pointerEvents: "none",
           }}
         >
           {c.pose === "fire"
@@ -605,6 +873,8 @@ export function NexusAvatar({
             ? "🎮"
             : c.pose === "hype"
             ? "⚡"
+            : c.pose === "verified"
+            ? "👑"
             : c.pose === "chill"
             ? "☕"
             : c.pose === "afk"
@@ -616,8 +886,24 @@ export function NexusAvatar({
             : c.pose === "rocket"
             ? "🚀"
             : c.pose === "levelup"
-            ? "💎"
-            : "👑"}
+            ? "⭐"
+            : c.pose === "ragequit"
+            ? "💥"
+            : c.pose === "clutch"
+            ? "🎯"
+            : c.pose === "mindblown"
+            ? "🤯"
+            : c.pose === "skull"
+            ? "💀"
+            : c.pose === "stream"
+            ? "🔴"
+            : c.pose === "dance"
+            ? "💃"
+            : c.pose === "flex"
+            ? "💪"
+            : c.pose === "wave"
+            ? "👋"
+            : "✨"}
         </span>
       )}
     </div>

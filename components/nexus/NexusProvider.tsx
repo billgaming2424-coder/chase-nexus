@@ -34,6 +34,8 @@ export interface NewPostInput {
   imageUrl?: string;
   imageLabel?: string;
   avatarSticker?: string;
+  avatarStickerCaption?: string;
+  avatarDuoFriend?: string;
   poll?: { id: string; label: string }[];
   quote?: Post["quote"];
 }
@@ -582,6 +584,8 @@ export function NexusProvider({ children }: { children: ReactNode }) {
           imageUrl: input.imageUrl,
           imageLabel: input.imageLabel,
           avatarSticker: input.avatarSticker,
+          avatarStickerCaption: input.avatarStickerCaption,
+          avatarDuoFriend: input.avatarDuoFriend,
           poll: input.poll?.map((choice) => ({ ...choice, votes: 0 })),
           quote: input.quote,
           reactions: { like: 0, celebrate: 0, support: 0 },
