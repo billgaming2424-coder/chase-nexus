@@ -781,7 +781,7 @@ export function NexusProvider({ children }: { children: ReactNode }) {
           avatarSticker: input.avatarSticker,
           avatarStickerCaption: input.avatarStickerCaption,
           avatarDuoFriend: input.avatarDuoFriend,
-          poll: input.poll?.map((choice) => ({ ...choice, votes: 0 })),
+          poll: undefined,
           quote: input.quote,
           reactions: { like: 0, celebrate: 0, support: 0 },
           comments: [],
