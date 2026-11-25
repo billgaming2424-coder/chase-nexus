@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useDeferredValue, useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { SlidersHorizontal, Video, Users, MessagesSquare, Check, Search, Bell, MessageCircle } from "lucide-react";
@@ -40,6 +40,9 @@ export function HomeFeed() {
   const [tab, setTab] = useState<FeedId>("for-you");
   const [query, setQuery] = useState("");
   const [tag, setTag] = useState("");
+  const deferredQuery = useDeferredValue(query);
+  const [limit, setLimit] = useState(15);
+  useEffect(() => setLimit(15), [tab, deferredQuery, tag, activeSpace]);
 
   useEffect(() => {
     const feed = params.get("feed");
@@ -55,7 +58,7 @@ export function HomeFeed() {
   }, [activeSpace]);
 
   const visible = useMemo(() => {
-    const needle = query.trim().toLowerCase();
+    const needle = deferredQuery.trim().toLowerCase();
     return posts.filter((post) => {
       let inFeed = false;
       const isYours = Boolean(post.yours);
@@ -74,7 +77,7 @@ export function HomeFeed() {
       const matchesTag = !tag || post.hashtags.some((item) => item.toLowerCase() === tag.toLowerCase());
       return inFeed && matchesQuery && matchesTag;
     });
-  }, [posts, query, tab, tag, isFollowing, isFriend]);
+  }, [posts, deferredQuery, tab, tag, isFollowing, isFriend]);
 
   const currentSpaceMeta = SPACES.find((s) => s.id === activeSpace) ?? SPACES[0];
 
@@ -89,7 +92,7 @@ export function HomeFeed() {
           gap: 12,
           marginBottom: 14,
           background: "rgba(20, 12, 34, 0.75)",
-          backdropFilter: "blur(20px)",
+          
           border: "1px solid rgba(168, 85, 247, 0.18)",
           borderRadius: 16,
           padding: "7px 14px",
@@ -362,9 +365,10 @@ export function HomeFeed() {
                 <p className="empty card">No posts found matching the current search or feed filter.</p>
               )
             ) : (
-              visible.map((post) => <PostCard key={post.id} post={post} mode={tab} onTag={setTag} />)
+              visible.slice(0, limit).map((post) => <PostCard key={post.id} post={post} mode={tab} onTag={setTag} />)
             )}
           </div>
+          {visible.length > limit && <button type="button" className="btn btn-ghost" onClick={() => setLimit((n) => n + 15)}>Load more posts</button>}
         </>
       ) : (
         <p className="empty card">Feed widget is disabled in your Custom Space layout.</p>
