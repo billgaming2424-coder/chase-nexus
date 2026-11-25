@@ -24,7 +24,7 @@ import {
   Grid,
   type LucideIcon,
 } from "lucide-react";
-import { NAV_ITEMS, type NavItem } from "@/lib/navigation";
+import { type NavItem } from "@/lib/navigation";
 import { useNexus } from "@/components/nexus/NexusProvider";
 import { ChaseBadge } from "@/components/nexus/ChaseBadge";
 import { NexusAvatar } from "@/components/nexus/NexusAvatar";
@@ -51,7 +51,7 @@ const ICONS: Record<NavItem["icon"], LucideIcon> = {
 const CORE_NAV: NavItem[] = [
   { href: "/", label: "Home", icon: "home" },
   { href: "/explore", label: "Explore", icon: "explore" },
-  { href: "/video", label: "Nexus Video", icon: "video" },
+  { href: "/stories", label: "Stories", icon: "stories" },
   { href: "/messages", label: "Messages", icon: "messages" },
   { href: "/notifications", label: "Notifications", icon: "notifications" },
   { href: "/communities", label: "Communities", icon: "communities" },
@@ -59,6 +59,7 @@ const CORE_NAV: NavItem[] = [
 ];
 
 const HUBS_NAV: NavItem[] = [
+  { href: "/video", label: "Nexus Video", icon: "video" },
   { href: "/arcade", label: "Arcade Realm", icon: "arcade" },
   { href: "/studio", label: "Creator Studio", icon: "studio" },
   { href: "/audio", label: "Audio Pods", icon: "audio" },
@@ -95,6 +96,8 @@ export function Sidebar({
         <Link
           key={item.href}
           href={item.href}
+          aria-label={item.label}
+          title={item.label}
           className={active ? "nav-link is-active" : "nav-link"}
           aria-current={active ? "page" : undefined}
           onClick={onNavigate}
