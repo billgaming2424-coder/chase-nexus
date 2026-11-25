@@ -4,7 +4,7 @@ import { useEffect, useState, type ReactNode } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
-  Compass,
+  Compass, Bell, Phone, PenSquare,
   Home,
   Menu,
   MessageCircle,
@@ -32,7 +32,7 @@ function AppShellContent({ children }: { children: ReactNode }) {
   const [chaseOsOpen, setChaseOsOpen] = useState(false);
   const [isOnline, setIsOnline] = useState(true);
   const [bannerDismissed, setBannerDismissed] = useState(false);
-  const { currentUser, isAuthLoading, userAvatar, onboardingModalOpen, setOnboardingModalOpen } = useNexus();
+  const { currentUser, userProfile, isAuthLoading, userAvatar, onboardingModalOpen, setOnboardingModalOpen } = useNexus();
 
   useEffect(() => {
     setOpen(false);
@@ -57,7 +57,7 @@ function AppShellContent({ children }: { children: ReactNode }) {
       <a className="skip" href="#main">
         Skip to content
       </a>
-      <header className="nexus-desktop-header"><Link href="/" className="nexus-brand"><img src="/chase-studios-logo.svg" alt="" width={36} height={36}/><span>CHASE <strong>NEXUS</strong></span></Link><Link href="/explore" className="nexus-global-search"><Compass size={18}/> Discover Nexus</Link><div className="nexus-header-actions"><Link href="/messages" aria-label="Messages"><MessageCircle size={22}/></Link><button onClick={()=>setAuthModalOpen(true)} aria-label="Chase Account"><NexusAvatar config={userAvatar} size={32}/></button></div></header><div className={showRail ? "shell shell-rail nexus-social-shell" : "shell"}>
+      <header className="nexus-desktop-header"><Link href="/" className="nexus-brand"><img src="/chase-studios-logo.svg" alt="" width={36} height={36}/><span>CHASE <strong>NEXUS</strong></span></Link><Link href="/explore" className="nexus-global-search"><Compass size={18}/> Discover Nexus</Link><div className="nexus-header-actions"><Link href="/notifications" aria-label="Notifications"><Bell size={22}/></Link><Link href="/calls" aria-label="Calls"><Phone size={22}/></Link><Link href="/messages" aria-label="Messages"><MessageCircle size={22}/></Link><button onClick={()=>setAuthModalOpen(true)} aria-label="Chase Account"><NexusAvatar config={userAvatar} size={32}/></button></div></header><div className={showRail ? "shell shell-rail nexus-social-shell" : "shell"}>
         <Sidebar
           open={open}
           onNavigate={() => setOpen(false)}
@@ -187,7 +187,7 @@ function AppShellContent({ children }: { children: ReactNode }) {
 
           <main id="main">{children}</main>
         </div>
-        {showRail && <aside className="nexus-social-rail"><section className="nexus-rail-hero"><img src="/chase-studios-logo.svg" alt="" width={48} height={48}/><h2>Find your people.</h2><p>Connect. Create. Discover.</p><span>Chase Nexus • 2.0 Preview</span></section><section className="card nexus-rail-panel"><h2><Users size={18}/> Your circle</h2><p>{currentUser ? "Live friend presence is coming in the communications update." : "Sign in to start building your circle."}</p>{!currentUser && <button className="btn btn-primary" onClick={()=>setAuthModalOpen(true)}>Sign in</button>}<Link href="/explore">Discover Nexus</Link></section><section className="card nexus-rail-panel"><h2>Explore Nexus</h2><Link href="/communities"><Users size={18}/> Communities</Link><Link href="/stories"><Compass size={18}/> Stories</Link><Link href="/video"><Grid size={18}/> Nexus Video</Link><a href="https://chase-studios.org">Chase Studios</a></section></aside>}
+        {showRail && <aside className="nexus-social-rail"><section className="nexus-rail-hero"><img src="/chase-studios-logo.svg" alt="" width={48} height={48}/><h2>{currentUser ? userProfile?.display_name || "Chase Member" : "Welcome to Nexus"}</h2><p>Connect. Create. Discover.</p><span>Chase Nexus • 2.0 Preview</span></section><section className="card nexus-rail-panel"><h2>Quick actions</h2><Link href="/"><PenSquare size={18}/> New post</Link><Link href="/messages"><MessageCircle size={18}/> Messages</Link><Link href="/calls"><Phone size={18}/> Calls</Link></section><section className="card nexus-rail-panel"><h2><Users size={18}/> Your circle</h2><p>{currentUser ? "Live friend presence is coming in the communications update." : "Sign in to start building your circle."}</p>{!currentUser && <button className="btn btn-primary" onClick={()=>setAuthModalOpen(true)}>Sign in</button>}<Link href="/explore">Discover Nexus</Link></section><section className="card nexus-rail-panel"><h2>Explore Nexus</h2><Link href="/communities"><Users size={18}/> Communities</Link><Link href="/stories"><Compass size={18}/> Stories</Link><Link href="/video"><Grid size={18}/> Nexus Video</Link><a href="https://chase-studios.org">Chase Studios</a></section></aside>}
       </div>
 
       {/* Mobile Bottom Navigation */}
