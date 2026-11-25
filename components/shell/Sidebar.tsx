@@ -54,12 +54,13 @@ const CORE_NAV: NavItem[] = [
   { href: "/video", label: "Nexus Video", icon: "video" },
   { href: "/messages", label: "Messages", icon: "messages" },
   { href: "/notifications", label: "Notifications", icon: "notifications" },
+  { href: "/communities", label: "Communities", icon: "communities" },
+  { href: "/calls", label: "Calls", icon: "calls" },
 ];
 
 const HUBS_NAV: NavItem[] = [
   { href: "/arcade", label: "Arcade Realm", icon: "arcade" },
   { href: "/studio", label: "Creator Studio", icon: "studio" },
-  { href: "/communities", label: "Communities", icon: "communities" },
   { href: "/audio", label: "Audio Pods", icon: "audio" },
   { href: "/marketplace", label: "Marketplace", icon: "marketplace" },
 ];
@@ -109,7 +110,7 @@ export function Sidebar({
     <aside className={open ? "sidebar is-open" : "sidebar"} aria-label="Primary">
       <Link href="/" className="logo" onClick={onNavigate}>
         <span className="logo-mark" aria-hidden="true">
-          N
+          <img src="/chase-studios-logo.svg" alt="" width={30} height={30} />
         </span>
         <span className="logo-copy">
           <span className="logo-title">Chase Nexus</span>
@@ -124,10 +125,7 @@ export function Sidebar({
         </div>
 
         {/* Ecosystem & Hubs */}
-        <div className="nav-section" style={{ marginTop: 14 }}>
-          <span className="nav-section-title">HUBS & REALMS</span>
-          {renderNavGroup(HUBS_NAV)}
-        </div>
+        <details className="nav-section"><summary>More</summary>{renderNavGroup(HUBS_NAV)}</details>
 
         {/* Library & Settings */}
         <div className="nav-section" style={{ marginTop: 14 }}>
@@ -191,7 +189,7 @@ export function Sidebar({
       </div>
 
       <p className="side-foot">
-        Chase Studios · <span>Alpha 0.1</span>
+        Chase Studios · <span>2.0 Preview</span>
       </p>
     </aside>
   );
