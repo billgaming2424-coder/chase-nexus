@@ -198,8 +198,8 @@ function readPersisted(): PersistedState | null {
     if (!raw) return null;
     const parsed = JSON.parse(raw) as PersistedState;
     if (parsed.version !== STORAGE_VERSION || !Array.isArray(parsed.posts)) return null;
-    const posts = parsed.posts.map(normalizePost).filter((post): post is Post => post !== null);
-    if (posts.length === 0) return null;
+    const demoIds = new Set(POSTS.map((post) => post.id));
+    const posts = parsed.posts.map(normalizePost).filter((post): post is Post => post !== null && !demoIds.has(post.id));
     return {
       version: STORAGE_VERSION,
       theme: THEMES.includes(parsed.theme) ? parsed.theme : "chase-purple",
@@ -218,7 +218,7 @@ function readPersisted(): PersistedState | null {
 
 export function NexusProvider({ children }: { children: ReactNode }) {
   const [ready, setReady] = useState(false);
-  const [posts, setPosts] = useState<Post[]>(POSTS);
+  const [posts, setPosts] = useState<Post[]>([]);
   const [displayName, setDisplayNameState] = useState("You");
   const [theme, setTheme] = useState<ThemeName>("chase-purple");
   const [accent, setAccentState] = useState<string | null>(null);
