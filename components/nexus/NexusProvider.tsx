@@ -745,6 +745,9 @@ export function NexusProvider({ children }: { children: ReactNode }) {
         return true;
       },
       addPost: async (input: NewPostInput) => {
+        if (!currentUser) throw new Error("Sign in before publishing.");
+        if (input.audience !== "public") throw new Error("Private audiences are not supported in this preview.");
+        if (input.imageUrl || input.videoUrl || input.avatarSticker || input.poll || input.quote) throw new Error("Attachments, polls and quotes are not yet supported for publishing.");
         const authorName =
           userProfile?.display_name ||
           (displayName !== "You" ? displayName : "Chase Member");
@@ -790,14 +793,11 @@ export function NexusProvider({ children }: { children: ReactNode }) {
           yours: true,
         };
 
-        // Instant optimistic addition
-        setPosts((current) => [post, ...current]);
-        setQuoteTarget(null);
 
         // If authenticated, persist to live Supabase backend
         if (currentUser) {
           try {
-            await supabase.from("nexus_posts").insert({
+            const { error } = await supabase.from("nexus_posts").insert({
               id: newPostId,
               user_id: currentUser.id,
               author_name: authorName,
@@ -811,8 +811,11 @@ export function NexusProvider({ children }: { children: ReactNode }) {
               poll_data: input.poll ? JSON.parse(JSON.stringify(input.poll)) : null,
               quote_data: input.quote ? JSON.parse(JSON.stringify(input.quote)) : null,
             });
+            if (error) throw new Error("Could not publish your post. Please try again.");
+            setPosts((current) => current.some((item) => item.id === post.id) ? current : [post, ...current]);
+            setQuoteTarget(null);
           } catch (err) {
-            console.warn("Could not persist to Supabase:", err);
+            throw err;
           }
         }
       },
