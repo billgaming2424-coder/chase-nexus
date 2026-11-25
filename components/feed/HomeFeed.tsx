@@ -214,7 +214,7 @@ export function HomeFeed() {
               </Link>
             </div>
           </div>
-          <div className="creator-metrics-grid">
+          <div className="creator-metrics-grid" hidden>
             <div className="metric-box">
               <small>Demo Views</small>
               <strong>12.8K</strong>
@@ -362,7 +362,7 @@ export function HomeFeed() {
                   </button>
                 </div>
               ) : (
-                <p className="empty card">No posts found matching the current search or feed filter.</p>
+                <p className="empty card">No posts yet in this feed. Share an update or follow someone.</p>
               )
             ) : (
               visible.slice(0, limit).map((post) => <PostCard key={post.id} post={post} mode={tab} onTag={setTag} />)
