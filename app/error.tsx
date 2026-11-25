@@ -15,26 +15,18 @@ export default function ErrorBoundary({
     console.error("Chase Nexus caught runtime error:", error);
   }, [error]);
 
-  const handleHardReset = () => {
+  const handleHardReset = async () => {
     try {
-      if (typeof window !== "undefined") {
-        if ("serviceWorker" in navigator) {
-          navigator.serviceWorker.getRegistrations().then((regs) => {
-            for (const r of regs) r.unregister();
-          });
-        }
-        if ("caches" in window) {
-          caches.keys().then((keys) => {
-            for (const k of keys) caches.delete(k);
-          });
-        }
-        localStorage.removeItem("chase-nexus-alpha");
-        sessionStorage.clear();
-        window.location.href = "/";
+      if ("caches" in window) {
+        const cleanup = caches.keys().then((keys) =>
+          Promise.all(keys.filter((key) => key.startsWith("chase-nexus-")).map((key) => caches.delete(key)))
+        );
+        await Promise.race([cleanup, new Promise((resolve) => setTimeout(resolve, 1500))]);
       }
     } catch {
-      window.location.reload();
+      // Reload even if cache storage is unavailable.
     }
+    window.location.reload();
   };
 
   return (
