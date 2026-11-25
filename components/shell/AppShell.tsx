@@ -25,7 +25,7 @@ import { ChaseOsLauncher } from "@/components/shell/ChaseOsLauncher";
 
 function AppShellContent({ children }: { children: ReactNode }) {
   const pathname = usePathname();
-  const showRail = pathname === "/";
+  const showRail = false;
   const [open, setOpen] = useState(false);
   const [authModalOpen, setAuthModalOpen] = useState(false);
   const [avatarStudioOpen, setAvatarStudioOpen] = useState(false);
@@ -141,7 +141,7 @@ function AppShellContent({ children }: { children: ReactNode }) {
                 gap: 6,
               }}
             >
-              <span>⚠️ Offline cached mode. Syncs when reconnected.</span>
+              <span>⚠️ You are offline. Some features may be unavailable.</span>
             </div>
           )}
 
