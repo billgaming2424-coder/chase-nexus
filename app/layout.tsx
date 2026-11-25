@@ -63,18 +63,21 @@ window.addEventListener('error', function(event) {
     event.message.indexOf('Loading chunk') !== -1 ||
     event.message.indexOf('Failed to fetch dynamically imported module') !== -1
   )) {
-    console.warn('Stale build chunk detected. Clearing cache and reloading...');
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.getRegistrations().then(function(regs) {
-        for (var i = 0; i < regs.length; i++) regs[i].unregister();
-      });
-    }
-    if ('caches' in window) {
-      caches.keys().then(function(keys) {
-        for (var i = 0; i < keys.length; i++) caches.delete(keys[i]);
-      });
-    }
-    window.location.reload();
+    // Recover at most once per tab within a five-minute window.
+    try {
+      var key = 'nexus-chunk-recovery';
+      var last = Number(sessionStorage.getItem(key) || 0);
+      if (Date.now() - last < 300000) return;
+      sessionStorage.setItem(key, String(Date.now()));
+    } catch (error) { return; }
+    var cleanup = 'caches' in window ? caches.keys().then(function(keys) {
+      return Promise.all(keys.filter(function(key) {
+        return key.indexOf('chase-nexus-') === 0;
+      }).map(function(key) { return caches.delete(key); }));
+    }) : Promise.resolve();
+    Promise.race([cleanup.catch(function() {}), new Promise(function(resolve) {
+      setTimeout(resolve, 1500);
+    })]).then(function() { window.location.reload(); });
   }
 });
 `;
