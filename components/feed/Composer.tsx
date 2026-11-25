@@ -32,8 +32,10 @@ const STICKER_PACK = [
 ];
 
 export function Composer() {
-  const { quoteTarget, setQuoteTarget, addPost, userAvatar } = useNexus();
+  const { quoteTarget, setQuoteTarget, addPost, userAvatar, currentUser } = useNexus();
   const [body, setBody] = useState("");
+  const [publishing, setPublishing] = useState(false);
+  const [publishError, setPublishError] = useState("");
   const [audience, setAudience] = useState<Audience>("public");
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const [videoUrl, setVideoUrl] = useState<string | null>(null);
@@ -50,7 +52,7 @@ export function Composer() {
   const pollReady = !pollOn || (body.trim().length > 0 && filledChoices.length >= 2);
   const hasContent = body.trim().length > 0 || Boolean(imageUrl) || Boolean(videoUrl) || Boolean(avatarSticker);
   const quoteReady = !quoteTarget || body.trim().length > 0;
-  const canSubmit = hasContent && pollReady && quoteReady;
+  const canSubmit = Boolean(currentUser) && !publishing && hasContent && pollReady && quoteReady;
 
   const reset = () => {
     setBody("");
@@ -71,11 +73,13 @@ export function Composer() {
     <>
       <form
         className="composer card"
-        onSubmit={(event) => {
+        onSubmit={async (event) => {
           event.preventDefault();
           if (!canSubmit) return;
-          sounds.playFanfare();
-          addPost({
+          setPublishing(true);
+          setPublishError("");
+          try {
+          await addPost({
             body,
             audience,
             imageUrl: imageUrl ?? undefined,
@@ -96,8 +100,14 @@ export function Composer() {
               : undefined,
           });
           reset();
+          sounds.playFanfare();
+          } catch (error) {
+            setPublishError(error instanceof Error ? error.message : "Publishing failed. Please try again.");
+          } finally { setPublishing(false); }
         }}
       >
+        {!currentUser && <p className="hint">Sign in to publish posts.</p>}
+        {publishError && <p role="alert">{publishError}</p>}
         <div className="composer-top">
           <button
             type="button"
