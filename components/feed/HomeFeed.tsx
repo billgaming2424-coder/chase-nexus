@@ -9,7 +9,6 @@ import { PostCard } from "@/components/feed/PostCard";
 import { StoriesRow } from "@/components/feed/StoriesRow";
 import { NexusAvatar } from "@/components/nexus/NexusAvatar";
 import { useNexus } from "@/components/nexus/NexusProvider";
-import { COMMUNITIES, VIDEOS } from "@/lib/demo-data";
 import { FEEDS, type FeedId, type SpaceId } from "@/lib/types";
 
 const SPACES: { id: SpaceId; label: string; icon: string; subtitle: string }[] = [
@@ -48,7 +47,7 @@ export function HomeFeed() {
     const feed = params.get("feed");
     const nextTag = params.get("tag");
     if (isFeedId(feed)) setTab(feed);
-    if (nextTag) setTag(nextTag);
+    setTag(nextTag ?? "");
   }, [params]);
 
   // If switched to creator space, default to videos feed; if community, default to communities/discussions
@@ -103,6 +102,7 @@ export function HomeFeed() {
           <Search size={16} style={{ color: "var(--muted)" }} />
           <input
             type="text"
+            aria-label="Search posts"
             placeholder="Search posts, creators, #hashtags..."
             value={query}
             onChange={(e) => setQuery(e.target.value)}
@@ -207,27 +207,14 @@ export function HomeFeed() {
             </div>
             <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
               <Link href="/studio" className="btn btn-primary small-btn">
-                Creator Studio & Payouts
+                Creator Studio
               </Link>
               <Link href="/video" className="btn btn-secondary small-btn">
                 Video Hub
               </Link>
             </div>
           </div>
-          <div className="creator-metrics-grid" hidden>
-            <div className="metric-box">
-              <small>Demo Views</small>
-              <strong>12.8K</strong>
-            </div>
-            <div className="metric-box">
-              <small>Watch Time</small>
-              <strong>418 hrs</strong>
-            </div>
-            <div className="metric-box">
-              <small>Subscribers</small>
-              <strong>1,490</strong>
-            </div>
-          </div>
+          <p className="hint">Creator analytics are not available in this preview.</p>
         </section>
       ) : null}
 
@@ -237,20 +224,13 @@ export function HomeFeed() {
           <div className="creator-stats-row">
             <div>
               <p className="eyebrow">Nexus Communities Hub</p>
-              <h3>Featured Active Realms</h3>
+              <h3>Discover Communities</h3>
             </div>
             <Link href="/communities" className="btn btn-primary small-btn">
               All Communities
             </Link>
           </div>
-          <div className="community-pills-row">
-            {COMMUNITIES.map((c) => (
-              <span key={c.id} className="community-chip">
-                <Users size={14} />
-                <strong>{c.name}</strong>
-              </span>
-            ))}
-          </div>
+          <p className="hint">Community discovery is in development.</p>
         </section>
       ) : null}
 
