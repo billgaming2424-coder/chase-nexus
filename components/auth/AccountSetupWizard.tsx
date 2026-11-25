@@ -19,7 +19,7 @@ import { useNexus } from "@/components/nexus/NexusProvider";
 import { NexusAvatar } from "@/components/nexus/NexusAvatar";
 import { ChaseBadge } from "@/components/nexus/ChaseBadge";
 import { sounds } from "@/lib/sounds";
-import { DEFAULT_SUGGESTED_CREATORS } from "@/lib/demo-data";
+
 import type { AvatarConfig, OnboardingData } from "@/lib/types";
 
 interface AccountSetupWizardProps {
@@ -465,55 +465,15 @@ export function AccountSetupWizard({ isOpen, onClose }: AccountSetupWizardProps)
               <div style={{ textAlign: "center", marginBottom: 16 }}>
                 <h2 style={{ margin: "0 0 6px", fontSize: "1.35rem" }}>Follow Creators & Friends</h2>
                 <p className="hint" style={{ margin: "0 0 10px" }}>
-                  Follow verified studio members and leaders. Your Friends & Following feed will remain clean until you add them.
+                  Find real people once account discovery is available.
                 </p>
                 <span className="pill" style={{ background: "rgba(34, 197, 94, 0.15)", color: "#4ade80", fontSize: "0.75rem" }}>
-                  ✓ Zero generic accounts pre-populated
+                  No automatic follows
                 </span>
               </div>
 
               <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-                {DEFAULT_SUGGESTED_CREATORS.map((creator) => {
-                  const isFollowing = followedHandles.includes(creator.handle);
-                  return (
-                    <div
-                      key={creator.id}
-                      style={{
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "space-between",
-                        padding: "10px 14px",
-                        background: "rgba(255, 255, 255, 0.03)",
-                        border: "1px solid rgba(255, 255, 255, 0.08)",
-                        borderRadius: 14,
-                        gap: 12,
-                      }}
-                    >
-                      <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                        <NexusAvatar config={creator.avatar} size={42} />
-                        <div>
-                          <div style={{ display: "flex", alignItems: "center", gap: 5 }}>
-                            <strong style={{ fontSize: "0.9rem", color: "#fff" }}>{creator.name}</strong>
-                            <ChaseBadge type={creator.badgeType} />
-                          </div>
-                          <span style={{ fontSize: "0.75rem", color: "var(--muted)" }}>{creator.handle}</span>
-                          <p style={{ margin: "2px 0 0", fontSize: "0.74rem", color: "var(--silver)", lineHeight: 1.3 }}>
-                            {creator.bio}
-                          </p>
-                        </div>
-                      </div>
-
-                      <button
-                        type="button"
-                        className={`btn btn-sm ${isFollowing ? "btn-secondary" : "btn-primary"}`}
-                        style={{ borderRadius: 16, flexShrink: 0, padding: "6px 14px" }}
-                        onClick={() => toggleFollowCreator(creator.handle)}
-                      >
-                        {isFollowing ? "Following ✓" : "+ Follow"}
-                      </button>
-                    </div>
-                  );
-                })}
+                <p className="hint">Real account discovery is coming soon. You can continue without following anyone.</p>
               </div>
             </div>
           )}
