@@ -53,13 +53,13 @@ const CORE_NAV: NavItem[] = [
   { href: "/explore", label: "Explore", icon: "explore" },
   { href: "/stories", label: "Stories", icon: "stories" },
   { href: "/messages", label: "Messages", icon: "messages" },
-  { href: "/notifications", label: "Notifications", icon: "notifications" },
-  { href: "/communities", label: "Communities", icon: "communities" },
   { href: "/calls", label: "Calls", icon: "calls" },
+  { href: "/communities", label: "Communities", icon: "communities" },
+  { href: "/video", label: "Nexus Video", icon: "video" },
+  { href: "/notifications", label: "Notifications", icon: "notifications" },
 ];
 
 const HUBS_NAV: NavItem[] = [
-  { href: "/video", label: "Nexus Video", icon: "video" },
   { href: "/arcade", label: "Arcade Realm", icon: "arcade" },
   { href: "/studio", label: "Creator Studio", icon: "studio" },
   { href: "/audio", label: "Audio Pods", icon: "audio" },
@@ -191,7 +191,7 @@ export function Sidebar({
         </div>
       </div>
 
-      <p className="side-foot">
+      <a className="nexus-studio-link" href="https://chase-studios.org"><img src="/chase-studios-logo.svg" alt="" width={32} height={32}/><span><strong>Chase Studios</strong><small>Games · Apps · Community</small></span></a><section className="nexus-plus-promo"><h3>♛ Chase+</h3><p>Exclusive perks and rewards.</p><a href="https://chase-studios.org">Learn about Chase Studios</a></section><p className="side-foot">
         Chase Studios · <span>2.0 Preview</span>
       </p>
     </aside>
