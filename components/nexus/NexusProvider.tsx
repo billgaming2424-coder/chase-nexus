@@ -555,6 +555,7 @@ export function NexusProvider({ children }: { children: ReactNode }) {
           fetchProfile(user.id);
         }
       })
+      .catch(() => { /* Session unavailable; allow the interface to load. */ })
       .finally(() => {
         if (mounted) setIsAuthLoading(false);
       });
@@ -567,21 +568,25 @@ export function NexusProvider({ children }: { children: ReactNode }) {
       const user = session?.user ?? null;
       setCurrentUser(user);
       if (user) {
-        fetchProfile(user.id);
+        // Do not start a Supabase query inside its auth callback lock.
+        setTimeout(() => { if (mounted) void fetchProfile(user.id); }, 0);
       } else {
         setUserProfile(null);
       }
       setIsAuthLoading(false);
     });
 
-    // Load any existing posts from Supabase cloud
-    loadCloudPosts();
 
     return () => {
       mounted = false;
       subscription.unsubscribe();
     };
-  }, [fetchProfile, loadCloudPosts]);
+  }, [fetchProfile]);
+
+  // Refresh the feed separately from session initialization.
+  useEffect(() => {
+    loadCloudPosts();
+  }, [loadCloudPosts]);
 
   useEffect(() => {
     document.documentElement.dataset.theme = theme;
