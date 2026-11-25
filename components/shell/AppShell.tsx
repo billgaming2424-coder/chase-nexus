@@ -10,7 +10,7 @@ import {
   MessageCircle,
   ShieldCheck,
   UserRound,
-  Video,
+  Users,
   Grid,
   X,
 } from "lucide-react";
@@ -209,12 +209,12 @@ function AppShellContent({ children }: { children: ReactNode }) {
           <span>Explore</span>
         </Link>
         <Link
-          href="/video"
-          className={pathname.startsWith("/video") ? "mobile-nav-item is-active" : "mobile-nav-item"}
-          aria-current={pathname.startsWith("/video") ? "page" : undefined}
+          href="/communities"
+          className={pathname.startsWith("/communities") ? "mobile-nav-item is-active" : "mobile-nav-item"}
+          aria-current={pathname.startsWith("/communities") ? "page" : undefined}
         >
-          <Video size={20} aria-hidden="true" />
-          <span>Video</span>
+          <Users size={20} aria-hidden="true" />
+          <span>Groups</span>
         </Link>
         <Link
           href="/messages"
