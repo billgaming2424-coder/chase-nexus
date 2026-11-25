@@ -77,17 +77,13 @@ export function AccountSetupWizard({ isOpen, onClose }: AccountSetupWizardProps)
     : "@chase_member";
   const [displayName, setDisplayName] = useState(userProfile?.display_name || "Chase Member");
   const [handle, setHandle] = useState(defaultHandle);
-  const [bio, setBio] = useState("Exploring Chase Nexus · Gamer & Creative Explorer.");
+  const [bio, setBio] = useState("");
 
   // Step 2: Avatar Customization
   const [avatar, setAvatar] = useState<AvatarConfig>(userAvatar);
 
   // Step 3: Interests
-  const [selectedInterests, setSelectedInterests] = useState<string[]>([
-    "#Gaming",
-    "#DEADEYE",
-    "#UnimonLegends",
-  ]);
+  const [selectedInterests, setSelectedInterests] = useState<string[]>([]);
 
   // Step 4: Followed Creators (Zero forced friends!)
   const [followedHandles, setFollowedHandles] = useState<string[]>([]);
@@ -215,7 +211,7 @@ export function AccountSetupWizard({ isOpen, onClose }: AccountSetupWizardProps)
 
         {/* Wizard Step Body */}
         <div style={{ padding: "20px 22px", overflowY: "auto", flex: 1 }}>
-          {/* STEP 1: IDENTITY & PROFILE */}
+          <section className="nexus-guide"><img src="/chase-studios-logo.svg" alt="" width={48} height={48}/><div><strong>Chase • Your guide</strong><p>{["Hey! I’m Chase. Welcome to Nexus! Let’s create your identity.","Let’s give you a look that’s uniquely yours!","What are you into? Choose your interests.","You can find your people later. No automatic follows!","Ready to join Nexus? Let’s finish your setup."][step-1]}</p></div></section>{/* STEP 1: IDENTITY & PROFILE */}
           {step === 1 && (
             <div>
               <div style={{ textAlign: "center", marginBottom: 20 }}>
