@@ -3,7 +3,7 @@
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const now = Date.now();
   try {
-    if (now - Number(sessionStorage.getItem(key) || 0) < 15 * 60 * 1000) return;
+    if (now - Number(sessionStorage.getItem(key) || 0) < 24 * 60 * 60 * 1000) return;
     sessionStorage.setItem(key, String(now));
   } catch {}
 
@@ -153,6 +153,7 @@
     const close = () => {
       if (closed) return;
       closed = true;
+      el.style.pointerEvents = 'none';
       el.classList.add('nexus-hide');
       setTimeout(() => {
         try {
@@ -167,7 +168,7 @@
     // Instant tap-to-dismiss anywhere on splash screen for zero mobile lag
     el.addEventListener('touchstart', close, { passive: true, once: true });
     el.addEventListener('click', close, { once: true });
-    setTimeout(close, reduce ? 350 : 1500);
+    setTimeout(close, reduce ? 0 : 350);
   };
 
   if (document.readyState === 'loading') {
