@@ -157,7 +157,7 @@ export function AuthModal({ isOpen, onClose }: { isOpen: boolean; onClose: () =>
               </button>
             </div>
 
-            <div className="auth-info-banner">
+            {mode === "signup" && <section className="nexus-signup-intro"><img src="/chase-studios-logo.svg" width={64} height={64} alt="Chase Studios"/><h2>Welcome to Chase Nexus!</h2><p>I’m Chase! Let’s get your account set up and get you into the Nexus.</p><ol><li>Create your account</li><li>Build your profile</li><li>Choose your Persona</li><li>Your interests</li></ol></section>}<div className="auth-info-banner">
               <Sparkles size={16} className="purple-icon" />
               <span>
                 Registering creates a free <strong>Chase Studios Account</strong> with the universal purple verified checkmark.
