@@ -2296,3 +2296,22 @@ html.reduce-motion, html.reduce-motion *, html.reduce-motion *::before, html.red
   html { scroll-behavior: auto; }
   *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
 }
+
+/* Stability pass: avoid expensive full-feed compositing and idle animations. */
+.sidebar, .rail-card, .card, .mobile-bar, .scrim, .modal-backdrop, .concept-top-bar {
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+.card, .rail-card { box-shadow: 0 3px 12px rgba(0,0,0,.12); }
+.card:hover, .rail-card:hover { box-shadow: 0 3px 12px rgba(0,0,0,.12); }
+.status-bubble-pill, .aura-cosmic, .aura-lightning, .aura-halo, .aura-flame, .aura-matrix {
+  animation: none;
+  will-change: auto;
+}
+.mobile-bar { will-change: auto; transform: none; }
+@media (max-width: 768px) {
+  html, body, .shell, .shell-rail, .workspace, #main, .page {
+    overscroll-behavior-y: auto;
+  }
+  .shell, .shell-rail, .workspace, #main, .page { overflow-x: clip; }
+}
