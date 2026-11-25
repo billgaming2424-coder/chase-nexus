@@ -1,5 +1,5 @@
 // Chase Nexus Service Worker · Production v15 (Mobile iOS & Android Performance & Freeze Defenses)
-const CACHE_NAME = "chase-nexus-v15";
+const CACHE_NAME = "chase-nexus-v16";
 const PRECACHE_ASSETS = ["/icon.svg", "/chase-studios-logo.svg", "/splash.js"];
 
 self.addEventListener("install", (event) => {
@@ -13,32 +13,22 @@ self.addEventListener("activate", (event) => {
   event.waitUntil(
     caches.keys().then((keys) =>
       Promise.all(
-        keys.filter((key) => key !== CACHE_NAME).map((key) => caches.delete(key))
+        keys.filter((key) => key.startsWith("chase-nexus-") && key !== CACHE_NAME).map((key) => caches.delete(key))
       )
     )
   );
   self.clients.claim();
 });
 
-// Non-blocking fetch handler: only intercept same-origin GET requests
+// Leave application navigation, API requests and Next.js chunks to the browser.
 self.addEventListener("fetch", (event) => {
   if (event.request.method !== "GET") return;
   const url = new URL(event.request.url);
-
-  // Bypass service worker for external APIs, Supabase calls, and audio streams to prevent thread stalls
-  if (url.origin !== self.location.origin) return;
-
-  if (event.request.mode === "navigate") {
-    event.respondWith(
-      fetch(event.request).catch(() => caches.match(event.request) || caches.match("/"))
-    );
-    return;
-  }
-
-  // Static cache fallback
-  event.respondWith(
-    fetch(event.request).catch(() => caches.match(event.request))
-  );
+  if (url.origin !== self.location.origin || !PRECACHE_ASSETS.includes(url.pathname)) return;
+  event.respondWith(fetch(event.request).catch(async () => {
+    const cached = await caches.match(event.request);
+    return cached || Response.error();
+  }));
 });
 
 // Prepared Web Push notification handler
