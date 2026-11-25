@@ -597,6 +597,7 @@ export function NexusProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     if (!ready) return;
+    const persist = () => {
     const payload: PersistedState = {
       version: STORAGE_VERSION,
       theme,
@@ -616,6 +617,10 @@ export function NexusProvider({ children }: { children: ReactNode }) {
     } catch {
       // Storage fallback
     }
+    };
+    const timer = window.setTimeout(persist, 250);
+    window.addEventListener('pagehide', persist);
+    return () => { window.clearTimeout(timer); window.removeEventListener('pagehide', persist); };
   }, [ready, posts, theme, accent, reducedMotion, displayName, activeSpace, customWidgets, userAvatar]);
 
   const value = useMemo<NexusContextValue>(() => {
