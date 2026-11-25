@@ -32,7 +32,7 @@ function AppShellContent({ children }: { children: ReactNode }) {
   const [chaseOsOpen, setChaseOsOpen] = useState(false);
   const [isOnline, setIsOnline] = useState(true);
   const [bannerDismissed, setBannerDismissed] = useState(false);
-  const { currentUser, userProfile, userAvatar, onboardingModalOpen, setOnboardingModalOpen } = useNexus();
+  const { currentUser, isAuthLoading, userAvatar, onboardingModalOpen, setOnboardingModalOpen } = useNexus();
 
   useEffect(() => {
     setOpen(false);
@@ -145,7 +145,7 @@ function AppShellContent({ children }: { children: ReactNode }) {
             </div>
           )}
 
-          {!currentUser && !bannerDismissed ? (
+          {!isAuthLoading && !currentUser && !bannerDismissed ? (
             <div className="banner cloud-banner" style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 10 }}>
               <div className="banner-content" style={{ display: "flex", alignItems: "center", gap: 8 }}>
                 <span className="status-dot live" aria-hidden="true" />
